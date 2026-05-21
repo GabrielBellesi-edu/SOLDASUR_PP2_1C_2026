@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLDASUR - Calefacción y Agua Caliente en Tierra del Fuego</title>
+    <link rel="icon" type="image/png" href="img/soldy_head.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="soldasur.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
+    <!-- Banner de Demo -->
+    <div class="demo-banner">
+        Equipo Nro 2 - Practicas Profesionalizantes II - Centro Politécnico Malvinas Argentinas
+    </div>
+    
+    <!-- Hero Section -->
+    <section class="hero-section text-white pt-16 pb-32 px-4 relative overflow-hidden">
+        <!-- Imagen de fondo -->
+        <div class="absolute inset-0 z-0">
+            <img src="images/welcome.webp" alt="Welcome" class="w-full h-full object-cover">
+        </div>
+        <!-- Overlay con gradiente -->
+        <div class="absolute inset-0 z-10 hero-gradient" style="opacity: 0.85;"></div>
+        
+        <!-- Contenido -->
+        <div class="container mx-auto max-w-6xl relative z-20">
+            <div class="text-center">
+                <!-- Logo de la empresa -->
+                <div class="flex justify-center mb-8">
+                    <img src="images/logo_white.png" alt="SOLDASUR Logo" class="h-24 md:h-32 lg:h-40 w-auto object-contain drop-shadow-2xl">
+                </div>
+                <h1 class="text-6xl md:text-7xl font-bold mb-6 leading-tight drop-shadow-lg">
+                    BIENVENIDOS A<br>
+                    <span class="text-cyan-300">SOLDASUR</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto drop-shadow-md">
+                    Más de 30 años climatizando hogares con tecnología de vanguardia y atención personalizada
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Características Principales -->
+    <section class="py-16 px-4 relative overflow-hidden">
+        <!-- Imagen de fondo con opacidad -->
+        <div class="absolute inset-0 z-0">
+        </div>
+        
+        <!-- Contenido -->
+        <div class="container mx-auto max-w-6xl relative z-10">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">¿Por qué elegir SOLDASUR?</h2>
+                <p class="text-xl text-gray-600">Experiencia, calidad y tecnología al servicio de tu confort</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white bg-opacity-95 rounded-2xl shadow-lg p-8 card-hover text-center backdrop-blur-sm">
+                    <div class="feature-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">+30 Años</h3>
+                    <p class="text-gray-600">de experiencia en el mercado fueguino, conociendo las necesidades del clima austral</p>
+                </div>
+                
+                <div class="bg-white bg-opacity-95 rounded-2xl shadow-lg p-8 card-hover text-center backdrop-blur-sm">
+                    <div class="feature-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Tecnología IA</h3>
+                    <p class="text-gray-600">Soldy, nuestro asistente inteligente, te ayuda a encontrar la solución perfecta 24/7</p>
+                </div>
+                
+                <div class="bg-white bg-opacity-95 rounded-2xl shadow-lg p-8 card-hover text-center backdrop-blur-sm">
+                    <div class="feature-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">2 Sucursales</h3>
+                    <p class="text-gray-600">Presencia en Río Grande y Ushuaia para estar siempre cerca tuyo</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Productos y Servicios -->
+    <section id="productos" class="py-16 px-4 relative overflow-hidden">
+        <!-- Imagen de fondo con opacidad -->
+        <div class="absolute inset-0 z-0">
+            <img src="images/soldasur_ushuaia.jpg" alt="SOLDASUR Ushuaia" class="w-full h-full object-cover" style="opacity: 0.10;">
+        </div>
+        
+        <!-- Contenido -->
+        <div class="container mx-auto max-w-6xl relative z-10">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Nuestros Productos</h2>
+                <p class="text-xl text-gray-600">Soluciones completas para tu hogar</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gradient-to-br from-orange-50 to-red-50 bg-opacity-95 rounded-2xl shadow-lg p-8 card-hover border-2 border-orange-200 backdrop-blur-sm">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Calefacción</h3>
+                    <p class="text-gray-700 mb-4">Calderas de última generación, radiadores eléctricos y sistemas de piso radiante</p>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li>✓ Calderas PEISA</li>
+                        <li>✓ Radiadores Broen</li>
+                        <li>✓ Piso radiante</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 bg-opacity-95 rounded-2xl shadow-lg p-8 card-hover border-2 border-blue-200 backdrop-blur-sm">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Agua Caliente</h3>
+                    <p class="text-gray-700 mb-4">Termotanques, calefones y sistemas solares para agua caliente sanitaria</p>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li>✓ Termotanques eléctricos</li>
+                        <li>✓ Calefones a gas</li>
+                        <li>✓ Sistemas solares</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 bg-opacity-95 rounded-2xl shadow-lg p-8 card-hover border-2 border-green-200 backdrop-blur-sm">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Energía Renovable</h3>
+                    <p class="text-gray-700 mb-4">Bombas de calor y climatizadores de piscina eficientes y ecológicos</p>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li>✓ Bombas de calor</li>
+                        <li>✓ Climatización piscinas</li>
+                        <li>✓ Alta eficiencia</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Soldy -->
+    <section class="py-16 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <div class="rounded-3xl shadow-2xl p-12 text-white pulse-animation" style="background: linear-gradient(to right, #667eea 0%, #764ba2 25%, #4a148c 45%, #1a0033 50%, #000000 100%);">
+                <!-- Layout de 2 columnas -->
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <!-- Columna 1: Texto -->
+                    <div class="text-left">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-6">Conocé a Soldy</h2>
+                        <p class="text-xl md:text-2xl mb-8 text-blue-100 leading-relaxed">
+                            Nuestro asistente inteligente con IA está listo para ayudarte a encontrar la solución perfecta para tu hogar
+                        </p>
+                        <button onclick="toggleChat()" class="bg-white text-blue-900 px-10 py-5 rounded-full font-bold text-xl hover:bg-cyan-50 transition shadow-lg hover:shadow-xl transform hover:scale-105 inline-flex items-center gap-3">
+                            <span>Hablar con Soldy ahora</span>
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                        </button>
+                        <p class="text-sm mt-6 text-blue-200">💡 Hacé clic en el botón flotante en la esquina inferior derecha</p>
+                    </div>
+                    
+                    <!-- Columna 2: Video de Soldy con mini Soldys flotantes -->
+                    <div class="flex justify-center md:justify-end relative">
+                        <!-- Video principal -->
+                        <video autoplay loop muted playsinline class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl rounded-2xl relative z-10">
+                            <source src="images/soldy_dance.mp4" type="video/mp4">
+                            Tu navegador no soporta el elemento de video.
+                        </video>
+                        
+                        <!-- Mini Soldys flotantes -->
+                        <img src="images/soldy2.png" alt="Mini Soldy" class="mini-soldy mini-soldy-1" style="z-index: 20;">
+                        <img src="images/soldy3.png" alt="Mini Soldy" class="mini-soldy mini-soldy-2" style="z-index: 20;">
+                        <img src="images/soldy4.png" alt="Mini Soldy" class="mini-soldy mini-soldy-3" style="z-index: 20;">
+                        <img src="images/soldy5.png" alt="Mini Soldy" class="mini-soldy mini-soldy-4" style="z-index: 20;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sucursales -->
+    <section class="py-16 px-4 relative overflow-hidden">
+        <!-- Imagen de fondo con opacidad -->
+        <div class="absolute inset-0 z-0">
+            <img src="images/soldasur_galpon.webp" alt="SOLDASUR Galpón" class="w-full h-full object-cover" style="opacity: 0.12;">
+        </div>
+        
+        <!-- Contenido -->
+        <div class="container mx-auto max-w-6xl relative z-10">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Nuestras Sucursales</h2>
+                <p class="text-xl text-gray-600">Visitanos en Río Grande o Ushuaia</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 bg-opacity-95 rounded-2xl shadow-lg p-8 card-hover backdrop-blur-sm">
+                    <h3 class="text-2xl font-bold text-blue-900 mb-6 flex items-center gap-3">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Río Grande
+                    </h3>
+                    <div class="space-y-4 text-gray-700">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-blue-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <div>
+                                <p class="font-semibold">Islas Malvinas 1950</p>
+                                <p class="text-sm">Tel. 02964 422350</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-blue-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <div>
+                                <p class="font-semibold">Av. San Martín 366</p>
+                                <p class="text-sm">Tel. 02964 422131</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-blue-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <p class="font-semibold">ventasrg@soldasur.com.ar</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-cyan-50 to-cyan-100 bg-opacity-95 rounded-2xl shadow-lg p-8 card-hover backdrop-blur-sm">
+                    <h3 class="text-2xl font-bold text-cyan-900 mb-6 flex items-center gap-3">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Ushuaia
+                    </h3>
+                    <div class="space-y-4 text-gray-700">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-cyan-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <div>
+                                <p class="font-semibold">Héroes de Malvinas 4180</p>
+                                <p class="text-sm">Tel. 02901 436392</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-cyan-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <div>
+                                <p class="font-semibold">Gobernador Paz 665</p>
+                                <p class="text-sm">Tel. 02901 430886</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-cyan-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <p class="font-semibold">ventasush@soldasur.com.ar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Overlay de Login (Oculto) -->
+    <div id="login-overlay" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75 z-50 hidden">
+        <div class="bg-white w-full max-w-sm rounded-lg shadow-lg p-8 space-y-6">
+            <h2 class="text-2xl font-bold text-center text-gray-800">Iniciar Sesión</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="login-username" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
+                    <input id="login-username" type="text" required class="w-full border border-gray-300 rounded px-3 py-2" placeholder="admin">
+                </div>
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                    <input id="login-password" type="password" required class="w-full border border-gray-300 rounded px-3 py-2" placeholder="admin">
+                </div>
+                <p id="login-error" class="text-red-600 text-sm"></p>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Acceder</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mensaje de bienvenida de Soldy -->
+    <div class="soldy-message" id="soldy-message">
+        <div class="soldy-message-text">
+            <span class="soldy-hand"></span> ¡Hola! Soy <strong>Soldy</strong>, tu asistente de SOLDASUR
+        </div>
+        <div class="soldy-message-cta">
+            ¿En qué puedo ayudarte hoy?
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Botón flotante del chatbot - Soldy -->
+    <div class="chat-button" id="chat-toggle-btn" onclick="toggleChat()">
+        <img src="app/img/soldy.png" alt="Soldy - Asistente Virtual">
+    </div>
+
+    <!-- Imagen de Soldy (aparece cuando se abre el chat) -->
+    <div class="soldy-header-image" id="soldy-chat-image" style="display: none;" onclick="toggleChat()" title="Cerrar chat">
+        <img src="app/img/soldy_head.png" alt="Soldy">
+    </div>
+
+    <!-- Contenedor del chat flotante -->
+    <div class="chat-container-wrapper" id="chat-widget">
+        <div class="bg-white rounded-lg shadow-2xl overflow-hidden flex flex-col h-full">
+            <!-- Header -->
+            <div class="bg-blue-800 text-white p-4 relative">
+                <div class="flex justify-between items-center">
+                    <div class="flex-1">
+                        <h1 class="text-lg font-bold">SOLDASUR S.A</h1>
+                        <p class="text-xs opacity-80">Asistente Inteligente Unificado</p>
+                    </div>
+                    <!-- Botones de navegación -->
+                    <div class="flex items-center gap-2">
+                        <!-- Botón Volver (flecha) -->
+                        <button id="back-button" class="hidden w-8 h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition flex items-center justify-center" onclick="goBack()" title="Volver">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Botón Maximizar/Minimizar -->
+                        <button id="maximize-button" class="w-8 h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition flex items-center justify-center" onclick="toggleMaximize()" title="Maximizar">
+                            <svg id="maximize-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                            </svg>
+                            <svg id="minimize-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Botón Cerrar (X) -->
+                        <button class="w-8 h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition flex items-center justify-center" onclick="toggleChat()" title="Cerrar">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel de contexto (opcional) -->
+            <div id="context-panel" class="context-panel hidden">
+                <div class="font-semibold mb-2"> Contexto actual:</div>
+                <div id="context-items"></div>
+            </div>
+            
+            <!-- Chat container -->
+            <div id="chat-container" class="flex-1 p-4 pb-6 overflow-y-auto space-y-3" style="padding-top: 50px;"></div>
+            
+            <!-- Input area -->
+            <div id="input-area" class="p-4 border-t border-gray-200 bg-gray-50 mt-auto"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 px-4">
+        <div class="container mx-auto max-w-6xl text-center">
+            <p class="text-gray-400 mb-2">© 2025 SOLDASUR S.A. - Todos los derechos reservados</p>
+            <p class="text-sm text-gray-500">Desarrollado por: Biason Franco - Bolaña Silvia - Cussi Nicolás - Luna Luciano</p>
+        </div>
+    </footer>
+
+    <!-- Widget de consulta de sucursal (oculto por defecto) -->
+    <div id="sucursal-widget" class="hidden max-w-4xl mx-auto px-4 py-6">
+        <div class="bg-white rounded-lg shadow p-4 flex items-center gap-3">
+            <label for="city-select" class="font-medium">Consultar sucursal:</label>
+            <select id="city-select" class="border border-gray-300 rounded px-3 py-2">
+                <option value="rio_grande">Río Grande</option>
+                <option value="ushuaia">Ushuaia</option>
+            </select>
+            <button id="consult-btn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="consultSucursal()">Consultar</button>
+            <div id="sucursal-result" class="ml-auto text-sm text-gray-700"></div>
+        </div>
+    </div>
+<!-- Cargar módulos en orden -->
+<!-- productCatalog.js ya no se usa - el chatbot carga desde products_catalog.json -->
+<script src="app/modules/expertSystem/expertSystem.js"></script>
+<script src="app/modules/chatbot/chatbot.js"></script>
+<script src="soldasur.js"></script>
+</body>
+</html>

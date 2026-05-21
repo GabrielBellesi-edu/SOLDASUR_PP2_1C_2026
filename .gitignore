@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+*.env
+*.venv/
+.venv/
+env/
+venv/
+.idea/
+.vscode/
+.DS_Store
+docker-compose.yml
+Dockerfile
