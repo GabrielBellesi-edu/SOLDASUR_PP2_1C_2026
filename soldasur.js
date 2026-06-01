@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
 });
 
 /* ── Inicio de conversación ──────────────────────────────────────────────── */
@@ -58,25 +59,50 @@ function startConversation() {
 
 /* ── Routing de opciones del menú principal ──────────────────────────────── */
 function handleOptionClick(option) {
-    appendMessage('user', option);
+    let cleanOption = typeof option === 'string' ? option.replace(/<[^>]*>/g, '').trim() : option;
+
+    // Si es un botón con logo únicamente (sin texto visible)
+    if (typeof option === 'string' && cleanOption === '') {
+        if (option.toLowerCase().includes('peisa')) cleanOption = 'PEISA';
+        else if (option.toLowerCase().includes('weber')) cleanOption = 'WEBER';
+    }
+
+    appendMessage('user', cleanOption);
 
     // ── Navegación por catálogo (cuando ya salimos del menú principal) ──
     if (conversationStep === 0) {
-        const productCategories = [...new Set(productCatalog.map(p => p.family))].filter(Boolean);
-
-        if (productCategories.includes(option)) {
-            showProductsByCategory(option);
-            return;
-        }
-        if (option === 'Ver todos') {
-            showAllProducts();
-            return;
-        }
-        if (option === 'Ver otras categorías' || option === 'Ver por categoría') {
+        if (cleanOption === 'PEISA') {
+            browsingBrand = 'PEISA';
             showCategoryMenu();
             return;
         }
-        if (option === 'Volver al inicio') {
+        if (cleanOption === 'WEBER') {
+            browsingBrand = 'WEBER';
+            showCategoryMenu();
+            return;
+        }
+        if (cleanOption === 'Ver otras marcas' || cleanOption === 'Ver todas las marcas') {
+            browsingBrand = null;
+            showBrandMenu();
+            return;
+        }
+
+        const peisaCategories = [...new Set(peisaCatalog.map(p => p.family))].filter(Boolean);
+        const weberCategories = [...new Set(weberCatalog.map(p => p.category))].filter(Boolean);
+
+        if (peisaCategories.includes(cleanOption) || weberCategories.includes(cleanOption)) {
+            showProductsByCategory(cleanOption);
+            return;
+        }
+        if (cleanOption === 'Ver todos' || cleanOption === 'Ver todos los productos') {
+            showAllProducts();
+            return;
+        }
+        if (cleanOption === 'Ver otras categorías' || cleanOption === 'Ver por categoría') {
+            showCategoryMenu();
+            return;
+        }
+        if (cleanOption === 'Volver al inicio') {
             goBack();
             return;
         }
@@ -84,16 +110,16 @@ function handleOptionClick(option) {
 
     // ── Opciones del menú principal ──
     if (conversationStep === 0) {
-        if (option.includes('PEISA') || option.includes('Guíame') || option.includes('cálculo')) {
+        if (cleanOption.includes('Calculadora PEISA') || cleanOption.includes('Guíame') || cleanOption.includes('cálculo')) {
             showBackButton();
             startExpertSystem();          // módulo peisa_expert.js
-        } else if (option.includes('Weber') || option.includes('Construcción')) {
+        } else if (cleanOption.includes('Calculadora Weber') || cleanOption.includes('Construcción')) {
             showBackButton();
             iniciarExpertoWeber();        // módulo weber_expert.js
-        } else if (option.includes('pregunta')) {
+        } else if (cleanOption.includes('pregunta') || cleanOption.includes('Tengo una pregunta')) {
             showBackButton();
             startChatbot();               // módulo chatbot.js
-        } else if (option.includes('Buscar') || option.includes('productos')) {
+        } else if (cleanOption.includes('Buscar') || cleanOption.includes('productos')) {
             showBackButton();
             showCategoryMenu();           // core.js
         }
@@ -101,19 +127,19 @@ function handleOptionClick(option) {
     }
 
     // ── Opciones post-cálculo ──
-    if (option === 'Nuevo cálculo') {
+    if (cleanOption === 'Nuevo cálculo') {
         resetExpertSystem();
         showBackButton();
         startExpertSystem();
         return;
     }
-    if (option === 'Hacer una pregunta' || option.includes('pregunta')) {
+    if (cleanOption === 'Hacer una pregunta' || cleanOption.includes('pregunta')) {
         startChatbot();
         return;
     }
 
     // ── Respuestas del sistema experto PEISA ──
     if (conversationStep >= 1 && conversationStep <= 8) {
-        handleExpertSystemResponse(option);   // peisa_expert.js
+        handleExpertSystemResponse(cleanOption);   // peisa_expert.js
     }
 }

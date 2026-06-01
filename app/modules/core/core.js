@@ -12,10 +12,14 @@ let currentMode      = 'hybrid';
 let inMainMenu       = true;
 let chatIsOpen       = false;
 let isMaximized      = false;
+let conversationStep = 0; // Estado compartido del cuestionario/routing
 
 /* ── Catálogo de productos (cargado al inicio) ─────────────────────────── */
 let productCatalog       = [];   // catálogo completo (usado en la navegación por categorías)
 let peisaProductsFromJSON = [];  // alias que usa chatbot.js
+let peisaCatalog = [];
+let weberCatalog = [];
+let browsingBrand = null; // 'PEISA' o 'WEBER'
 
 /* ── Toggle del chat flotante ──────────────────────────────────────────── */
 function toggleMaximize() {
@@ -76,6 +80,7 @@ function hideBackButton() {
 
 function goBack() {
     resetExpertSystem();
+    browsingBrand = null;
     document.getElementById('chat-container').innerHTML = '';
     startConversation();
     hideBackButton();
@@ -83,6 +88,7 @@ function goBack() {
 
 function switchMode(mode) {
     currentMode = mode;
+    browsingBrand = null;
     conversationId = 'user_' + Math.random().toString(36).substr(2, 9);
     document.getElementById('chat-container').innerHTML = '';
     lastUserResponse = null;
@@ -122,8 +128,8 @@ function renderOptions(options, isResponse = false) {
         const btn = document.createElement('button');
         btn.className = `option-btn w-full ${isResponse
             ? 'bg-green-100 hover:bg-green-200 text-green-800'
-            : 'bg-blue-100 hover:bg-blue-200 text-blue-800'} py-2 px-4 rounded`;
-        btn.textContent = option;
+            : 'bg-blue-100 hover:bg-blue-200 text-blue-800'} py-2 px-4 rounded-lg`;
+        btn.innerHTML = option;
         btn.onclick = () => handleOptionClick(option);
         container.appendChild(btn);
     });
@@ -159,9 +165,9 @@ function createNumberInput(config) {
     form.innerHTML = `
         <div class="flex flex-col space-y-2">
             <input type="number" id="input-value" required step="0.1"
-                class="border border-gray-300 rounded px-3 py-2"
+                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
                 placeholder="${config.input_label || 'Ej: 50'}">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm font-semibold">
                 Enviar
             </button>
         </div>
@@ -193,13 +199,13 @@ function createDimensionsInput() {
         <div class="flex flex-col space-y-2">
             <div class="grid grid-cols-3 gap-2">
                 <input type="number" id="input-largo" required step="0.1" min="0.1"
-                    class="border border-gray-300 rounded px-3 py-2" placeholder="Largo (m)">
+                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" placeholder="Largo (m)">
                 <input type="number" id="input-ancho" required step="0.1" min="0.1"
-                    class="border border-gray-300 rounded px-3 py-2" placeholder="Ancho (m)">
+                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" placeholder="Ancho (m)">
                 <input type="number" id="input-alto" required step="0.1" min="0.1"
-                    class="border border-gray-300 rounded px-3 py-2" placeholder="Alto (m)">
+                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" placeholder="Alto (m)">
             </div>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm font-semibold">
                 Enviar
             </button>
         </div>
@@ -211,7 +217,7 @@ function createDimensionsInput() {
 function createRestartButton() {
     const inputArea = document.getElementById('input-area');
     const btn = document.createElement('button');
-    btn.className = 'w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition';
+    btn.className = 'w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition text-sm font-semibold';
     btn.textContent = 'Iniciar nuevo cálculo';
     btn.onclick = () => { if (!isLoading) switchMode(currentMode); };
     inputArea.appendChild(btn);
@@ -270,16 +276,29 @@ function updateModeIndicator(mode, label) {
 }
 
 /* ── Carga del catálogo ────────────────────────────────────────────────── */
+
 async function loadProductCatalog() {
     try {
-        const response = await fetch('../data/products_catalog.json');
-        if (!response.ok) throw new Error('Error cargando catálogo');
-        const data = await response.json();
-        productCatalog = data;
-        peisaProductsFromJSON = data;   // alias para chatbot.js
-        console.log(`✅ Catálogo cargado: ${data.length} productos`);
+        const responsePeisa = await fetch('data/products_catalog.json');
+        if (responsePeisa.ok) {
+            peisaCatalog = await responsePeisa.json();
+            peisaCatalog.forEach(p => { p.brand = 'PEISA'; });
+            peisaProductsFromJSON = peisaCatalog;   // alias para chatbot.js
+        }
+
+        const responseWeber = await fetch('data/weber_catalog.json');
+        if (responseWeber.ok) {
+            weberCatalog = await responseWeber.json();
+            weberCatalog.forEach(p => { 
+                p.brand = 'WEBER'; 
+                p.family = 'Weber'; 
+            });
+        }
+
+        productCatalog = [...peisaCatalog, ...weberCatalog];
+        console.log(`✅ Catálogos cargados: ${peisaCatalog.length} PEISA, ${weberCatalog.length} WEBER`);
     } catch (error) {
-        console.error('❌ Error cargando catálogo:', error);
+        console.error('❌ Error cargando catálogos:', error);
         productCatalog = [];
         peisaProductsFromJSON = [];
     }
@@ -288,19 +307,49 @@ async function loadProductCatalog() {
 loadProductCatalog();
 
 /* ── Catálogo navegable por categorías ────────────────────────────────── */
+function showBrandMenu() {
+    appendMessage('system', '<strong>Seleccioná una marca de productos:</strong>');
+    const options = [
+        '<img src="images/peisa-logo.png" class="h-8 mx-auto py-1" alt="PEISA">',
+        '<img src="images/weber-logo.png" class="h-8 mx-auto py-1" alt="WEBER">'
+    ];
+    renderOptions(options, false);
+}
+
 function showCategoryMenu() {
-    appendMessage('system', '<strong>Seleccioná una categoría de productos:</strong>');
-    const categories = [...new Set(productCatalog.map(p => p.family))].filter(Boolean);
+    if (!browsingBrand) {
+        showBrandMenu();
+        return;
+    }
+
+    appendMessage('system', `<strong>${browsingBrand}</strong> — Seleccioná una categoría de productos:`);
+    
+    let categories = [];
+    if (browsingBrand === 'PEISA') {
+        categories = [...new Set(peisaCatalog.map(p => p.family))].filter(Boolean);
+    } else if (browsingBrand === 'WEBER') {
+        categories = [...new Set(weberCatalog.map(p => p.category))].filter(Boolean);
+    }
+
     if (categories.length === 0) {
         appendMessage('system', 'No se pudieron cargar las categorías. Por favor, intentá más tarde.');
         return;
     }
+    
+    categories.push('Ver todas las marcas');
     renderOptions(categories, false);
 }
 
 function showProductsByCategory(category) {
     appendMessage('user', `Ver productos de: ${category}`);
-    const products = productCatalog.filter(p => p.family === category);
+    
+    let products = [];
+    if (browsingBrand === 'PEISA') {
+        products = peisaCatalog.filter(p => p.family === category);
+    } else if (browsingBrand === 'WEBER') {
+        products = weberCatalog.filter(p => p.category === category);
+    }
+
     if (products.length === 0) {
         appendMessage('system', `No se encontraron productos en la categoría ${category}.`);
         renderOptions(['Ver otras categorías'], false);
@@ -318,6 +367,7 @@ function showProductsByCategory(category) {
         card.onmouseover = () => card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
         card.onmouseout  = () => card.style.boxShadow = 'none';
         const hasUrl = product.url && product.url !== '#';
+        const brandLabel = product.brand || 'PEISA';
         card.innerHTML = `
             <div style="font-weight:600; color:#1f2937; margin-bottom:6px; font-size:14px;">${product.model || 'Producto'}</div>
             <div style="color:#6b7280; font-size:12px; margin-bottom:8px; line-height:1.4;">
@@ -327,7 +377,7 @@ function showProductsByCategory(category) {
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
                 ${hasUrl ? `<a href="${product.url}" target="_blank"
                     style="display:inline-block; background:#3b82f6; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:12px;">
-                    Ver en PEISA
+                    Ver en ${brandLabel}
                 </a>` : ''}
                 <button onclick="consultFromProduct('${product.model.replace(/'/g, "\\'")}')"
                     style="background:#10b981; color:white; padding:6px 12px; border:none; border-radius:6px; cursor:pointer; font-size:12px;">
@@ -349,10 +399,20 @@ function showAllProducts() {
         appendMessage('system', 'No se pudieron cargar los productos. Por favor, intentá más tarde.');
         return;
     }
-    appendMessage('system', `<strong>Catálogo completo</strong> — ${productCatalog.length} productos disponibles:`);
+    
+    let productsToDisplay = [];
+    if (browsingBrand === 'PEISA') {
+        productsToDisplay = peisaCatalog;
+    } else if (browsingBrand === 'WEBER') {
+        productsToDisplay = weberCatalog;
+    } else {
+        productsToDisplay = productCatalog;
+    }
+
+    appendMessage('system', `<strong>Catálogo completo (${browsingBrand || 'Todas las marcas'})</strong> — ${productsToDisplay.length} productos disponibles:`);
     const byCategory = {};
-    productCatalog.forEach(p => {
-        const cat = p.family || 'Otros';
+    productsToDisplay.forEach(p => {
+        const cat = browsingBrand === 'WEBER' ? (p.category || 'Otros') : (p.family || 'Otros');
         if (!byCategory[cat]) byCategory[cat] = [];
         byCategory[cat].push(p);
     });
@@ -366,13 +426,14 @@ function showAllProducts() {
             const card = document.createElement('div');
             card.style.cssText = 'background:white; border:1px solid #e5e7eb; border-radius:8px; padding:12px;';
             const hasUrl = product.url && product.url !== '#';
+            const brandLabel = product.brand || 'PEISA';
             card.innerHTML = `
                 <div style="font-weight:600; color:#1f2937; margin-bottom:6px; font-size:14px;">${product.model || 'Producto'}</div>
                 <div style="color:#6b7280; font-size:12px; margin-bottom:8px;">
                     ${product.description ? product.description.substring(0, 80) + '...' : ''}
                 </div>
                 <div style="display:flex; gap:6px;">
-                    ${hasUrl ? `<a href="${product.url}" target="_blank" style="display:inline-block; background:#3b82f6; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:12px;">Ver</a>` : ''}
+                    ${hasUrl ? `<a href="${product.url}" target="_blank" style="display:inline-block; background:#3b82f6; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:12px;">Ver en ${brandLabel}</a>` : ''}
                     <button onclick="consultFromProduct('${product.model.replace(/'/g, "\\'")}')"
                         style="background:#10b981; color:white; padding:6px 12px; border:none; border-radius:6px; cursor:pointer; font-size:12px;">
                         Consultar
@@ -477,11 +538,10 @@ function updateContextPanel() {
     const panel          = document.getElementById('context-panel');
     const itemsContainer = document.getElementById('context-items');
     if (!panel || !itemsContainer) return;
-    if (typeof contextData === 'undefined' || Object.keys(contextData).length === 0) {
-        panel.classList.add('hidden');
-        return;
-    }
-    panel.classList.remove('hidden');
+    
+    // Ocultado en v4.1.0 para maximizar el espacio útil del chat
+    panel.classList.add('hidden');
+    return;
     itemsContainer.innerHTML = '';
     for (const [key, value] of Object.entries(contextData)) {
         if (!key.includes('_texto') && typeof value !== 'object') {

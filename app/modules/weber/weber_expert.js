@@ -59,12 +59,12 @@ const WEBER_FLOW = {
    Equivale a la función resolver_calculo() de weber_expert_engine.py
    ─────────────────────────────────────────────────────────────────────── */
 const WEBER_RENDIMIENTOS = {
-    tradicional:                { producto: 'Weber col mortero',          rendimiento_kg_m2: 5.0,  descripcion: 'Adhesivo cementicio para superficies porosas' },
-    yeso:                       { producto: 'Weber col pasta',            rendimiento_kg_m2: 3.5,  descripcion: 'Adhesivo especial para placas de yeso (Durlock)' },
-    piso_sobre_piso:            { producto: 'Weber col piso sobre piso',  rendimiento_kg_m2: 6.0,  descripcion: 'Adhesivo de alta adherencia para renovación' },
-    impermeabilizacion_losa:    { producto: 'Weber tec Membrana',         rendimiento_kg_m2: 2.0,  descripcion: 'Membrana impermeabilizante para losas y techos expuestos' },
-    impermeabilizacion_banio:   { producto: 'Weber tec Flex',             rendimiento_kg_m2: 1.5,  descripcion: 'Impermeabilizante flexible para ambientes húmedos' },
-    impermeabilizacion_piscina: { producto: 'Weber tec Piscina',          rendimiento_kg_m2: 2.5,  descripcion: 'Mortero impermeabilizante para piscinas y aljibes' }
+    tradicional:                { producto: 'weber gris cerámicos',                  rendimiento_kg_m2: 5.0,  descripcion: 'Adhesivo cementicio para superficies porosas' },
+    yeso:                       { producto: 'weber pasta listo',                    rendimiento_kg_m2: 3.5,  descripcion: 'Adhesivo especial para placas de yeso (Durlock)' },
+    piso_sobre_piso:            { producto: 'weber piso sobre piso 12hs',           rendimiento_kg_m2: 6.0,  descripcion: 'Adhesivo de alta adherencia para renovación' },
+    impermeabilizacion_losa:    { producto: 'webertec membrana',                    rendimiento_kg_m2: 2.0,  descripcion: 'Membrana impermeabilizante para losas y techos expuestos' },
+    impermeabilizacion_banio:   { producto: 'weber impermeable cerámicos con ceresita', rendimiento_kg_m2: 1.5,  descripcion: 'Adhesivo impermeable para ambientes húmedos' },
+    impermeabilizacion_piscina: { producto: 'weber piscinas',                       rendimiento_kg_m2: 2.5,  descripcion: 'Mortero impermeabilizante para piscinas y aljibes' }
 };
 
 const WEBER_PESO_BOLSA_KG = 25;
@@ -76,7 +76,7 @@ let weberCurrentNodeId = 'inicio_weber';
 
 /* ── Función de cálculo (equivale a resolver_calculo en Python) ──────── */
 function calcularMaterialesWeber(soporte, m2) {
-    const config = WEBER_RENDIMIENTOS[soporte] || { producto: 'Weber basic cerámicos', rendimiento_kg_m2: 5.0, descripcion: 'Adhesivo universal' };
+    const config = WEBER_RENDIMIENTOS[soporte] || { producto: 'weber basic cerámicos', rendimiento_kg_m2: 5.0, descripcion: 'Adhesivo universal' };
     const kgNecesarios      = m2 * config.rendimiento_kg_m2;
     const kgConDesperdicio  = kgNecesarios * (1 + WEBER_DESPERDICIO);
     const bolsasNecesarias  = Math.ceil(kgConDesperdicio / WEBER_PESO_BOLSA_KG);
@@ -124,7 +124,7 @@ function renderWeberNode(nodo) {
 
         nodo.opciones.forEach((opcion, index) => {
             const btn = document.createElement('button');
-            btn.className = 'w-full text-left bg-white border border-gray-200 hover:bg-yellow-50 hover:border-yellow-400 text-gray-700 p-2.5 rounded-lg transition-all text-sm font-medium shadow-sm';
+            btn.className = 'w-full text-left bg-blue-100 border border-blue-200 hover:bg-blue-200 text-blue-800 p-2.5 rounded-lg transition-all text-sm font-medium shadow-sm';
             btn.textContent = opcion.texto;
             btn.onclick = () => {
                 appendMessage('user', opcion.texto);
@@ -169,10 +169,10 @@ function renderWeberNode(nodo) {
 
         form.innerHTML = `
             <input type="number" id="weber-txt-input" required step="0.1" min="0.1"
-                   class="border border-gray-300 rounded-lg px-3 py-2 flex-1 text-sm text-gray-800 focus:outline-none focus:border-yellow-500"
+                   class="border border-gray-300 rounded-lg px-3 py-2 flex-1 text-sm text-gray-800 focus:outline-none focus:border-blue-500"
                    placeholder="Ej: 25.5">
             <button type="submit"
-                    class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-lg transition-all text-sm shadow">
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-all text-sm shadow">
                 Enviar
             </button>
         `;
@@ -184,7 +184,7 @@ function renderWeberNode(nodo) {
     else if (nodo.tipo === 'respuesta') {
         inputArea.innerHTML = `
             <button onclick="iniciarExpertoWeber()"
-                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm shadow">
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm shadow">
                 🔄 Calcular otra superficie
             </button>`;
     }
@@ -222,9 +222,8 @@ function _ejecutarCalculoWeber() {
     // Mensaje de resultado enriquecido (igual estilo que el sistema PEISA)
     const textoResultado = `
         <strong>📊 Resultado del Asesoramiento Weber</strong><br><br>
-        Para cubrir <strong>${m2} m²</strong>, te recomendamos:<br><br>
-        🏷️ <strong>${resultado.producto.toUpperCase()}</strong><br>
-        <em>${resultado.descripcion}</em><br><br>
+        Para cubrir <strong>${m2} m²</strong>, te recomendamos:<br>
+        <strong>${resultado.producto}</strong><br><br>
         • <strong>Cantidad necesaria:</strong> ${resultado.bolsas_necesarias} bolsas de ${WEBER_PESO_BOLSA_KG} kg<br>
         • <strong>Rendimiento estimado:</strong> ${resultado.rendimiento_kg_m2} kg/m²<br>
         • <strong>Material total (con +10% de desperdicio):</strong> ${resultado.kg_totales} kg
@@ -232,12 +231,21 @@ function _ejecutarCalculoWeber() {
 
     appendMessage('system', textoResultado);
 
+    // Buscar y mostrar la tarjeta de producto real
+    const targetModel = resultado.producto.toLowerCase();
+    const recommendedProduct = productCatalog.find(p => p.model.toLowerCase() === targetModel);
+    if (recommendedProduct) {
+        setTimeout(() => {
+            renderProducts([recommendedProduct]);
+        }, 300);
+    }
+
     // Mostrar botón de reinicio
     const inputArea = document.getElementById('input-area');
     if (inputArea) {
         inputArea.innerHTML = `
             <button onclick="iniciarExpertoWeber()"
-                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm shadow">
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm shadow">
                 🔄 Calcular otra superficie
             </button>`;
     }

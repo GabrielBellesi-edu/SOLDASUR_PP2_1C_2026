@@ -88,28 +88,21 @@ function showContactInfo(city) {
 
 /* Mostrar input de chat */
 function showChatInput() {
-    const inputArea = document.getElementById('input-area');
-    const showResetButton = conversationHistory.length > 2; // Mostrar después de 2 mensajes
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput) {
+        chatInput.value = '';
+        chatInput.focus();
+    }
 
-    inputArea.innerHTML = `
-        <div class="space-y-2">
-            <div class="flex gap-2">
-                <input type="text" id="chat-input" class="flex-1 border border-gray-300 rounded px-3 py-2" placeholder="Escribe tu pregunta...">
-                <button onclick="handleChatInput()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                    Enviar
-                </button>
-            </div>
-            ${showResetButton ? `
-                <button onclick="handleResetConversation()" class="w-full text-xs text-gray-500 hover:text-gray-700 py-1">
-                     Nueva conversación
-                </button>
-            ` : ''}
-        </div>
-    `;
-    document.getElementById('chat-input').focus();
-    document.getElementById('chat-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleChatInput();
-    });
+    const showResetButton = conversationHistory.length > 2; // Mostrar después de 2 mensajes
+    const extraActions = document.getElementById('chat-extra-actions');
+    if (extraActions) {
+        extraActions.innerHTML = showResetButton ? `
+            <button onclick="handleResetConversation()" class="w-full text-xs text-gray-500 hover:text-gray-700 py-1 mt-1">
+                 Nueva conversación
+            </button>
+        ` : '';
+    }
 }
 
 /* Manejar reset de conversación */
@@ -683,8 +676,10 @@ function renderProducts(products) {
 
 /* Indicadores de carga */
 function showLoadingIndicator() {
-    document.getElementById('input-area').innerHTML =
-        '<div class="text-center py-2"><div class="loading-spinner inline-block"></div></div>';
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput) chatInput.disabled = true;
+    const chatSendBtn = document.getElementById('chat-send-btn');
+    if (chatSendBtn) chatSendBtn.disabled = true;
 
     const chatContainer = document.getElementById('chat-container');
     const thinkingDiv = document.createElement('div');
@@ -710,6 +705,11 @@ function showLoadingIndicator() {
 }
 
 function hideLoadingIndicator() {
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput) chatInput.disabled = false;
+    const chatSendBtn = document.getElementById('chat-send-btn');
+    if (chatSendBtn) chatSendBtn.disabled = false;
+
     if (window.thinkingInterval) {
         clearInterval(window.thinkingInterval);
         window.thinkingInterval = null;

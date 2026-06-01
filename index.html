@@ -7,7 +7,7 @@
     <title>SOLDASUR - Calefacción y Agua Caliente en Tierra del Fuego</title>
     <link rel="icon" type="image/png" href="img/soldy_head.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="soldasur.css">
+    <link rel="stylesheet" href="soldasur.css?v=4.1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -435,8 +435,21 @@
             <!-- Chat container -->
             <div id="chat-container" class="flex-1 p-4 pb-6 overflow-y-auto space-y-3" style="padding-top: 50px;"></div>
 
-            <!-- Input area -->
-            <div id="input-area" class="p-4 border-t border-gray-200 bg-gray-50 mt-auto"></div>
+            <!-- Área de Opciones y Formularios del Asistente -->
+            <div id="input-area" class="px-4 py-3 bg-gray-50 border-t border-gray-100 empty:hidden"></div>
+
+            <!-- Área Permanente de Entrada del Chat -->
+            <div id="chat-input-area" class="p-4 border-t border-gray-200 bg-gray-50 mt-auto">
+                <form onsubmit="event.preventDefault(); handleChatInput();" class="space-y-2">
+                    <div class="flex gap-2">
+                        <input type="text" id="chat-input" class="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500" placeholder="Escribe tu pregunta a Soldy...">
+                        <button type="submit" id="chat-send-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold transition">
+                            Enviar
+                        </button>
+                    </div>
+                    <div id="chat-extra-actions" class="text-center"></div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -464,15 +477,15 @@
     </div>
     <!-- ── Módulos (cargar en este orden) ────────────────────────────── -->
     <!-- 1. Core: estado global, helpers, catálogo, sucursales           -->
-    <script src="app/modules/core/core.js"></script>
+    <script src="app/modules/core/core.js?v=4.1.0"></script>
     <!-- 2. Sistema experto PEISA (calefacción) — 100% frontend          -->
-    <script src="app/modules/peisa/peisa_expert.js"></script>
+    <script src="app/modules/peisa/peisa_expert.js?v=4.1.0"></script>
     <!-- 3. Sistema experto Weber (construcción) — 100% frontend         -->
-    <script src="app/modules/weber/weber_expert.js"></script>
+    <script src="app/modules/weber/weber_expert.js?v=4.1.0"></script>
     <!-- 4. Chatbot libre de texto (requiere backend Ollama/FastAPI)      -->
-    <script src="app/modules/chatbot/chatbot.js"></script>
+    <script src="app/modules/chatbot/chatbot.js?v=4.1.0"></script>
     <!-- 5. Orquestador principal                                         -->
-    <script src="soldasur.js"></script>
+    <script src="soldasur.js?v=4.1.0"></script>
 </body>
 
 </html>

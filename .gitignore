@@ -16,4 +16,4 @@ venv/
 .DS_Store
 docker-compose.yml
 Dockerfile
-venv.7z
+IA-RULES.md

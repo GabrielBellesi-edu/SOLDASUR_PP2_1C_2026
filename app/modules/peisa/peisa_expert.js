@@ -6,7 +6,7 @@
    ========================================================================== */
 
 /* ── Estado del sistema experto PEISA ─────────────────────────────────── */
-let conversationStep = 0;
+// conversationStep se encuentra declarado globalmente en core.js
 let userInputs       = {};
 let contextData      = {};
 let lastRecommendedProduct = null;
