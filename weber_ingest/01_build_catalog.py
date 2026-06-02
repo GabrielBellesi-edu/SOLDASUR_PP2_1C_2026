@@ -55,6 +55,14 @@ CATEGORY_MAP = {
     "reparacion-de-hormigon":   "Reparación de hormigón",
     "preparacion-de-superficies": "Pinturas y preparación",
     "pinturas":                 "Pinturas",
+    "revestimientos-plasticos": "Revestimientos plásticos",
+    "revestimientos-cementicios": "Revestimientos cementícios",
+    "revestimiento-de-paredes": "Revestimientos de paredes",
+    "revestimientos-decorativos": "Revestimientos decorativos",
+    "anclaje-y-fijacion":       "Fijación y anclaje",
+    "selladores-y-espumas":     "Selladores y espumas",
+    "mezclas-de-asiento":       "Mezclas de asiento",
+    "revoque-monocapa":         "Revoques monocapa",
 }
 
 
@@ -314,13 +322,16 @@ def build_catalog(weber_data_dir: str, output_path: str = "data/weber_catalog.js
     base = Path(weber_data_dir)
     productos_dir = base / "productos"
     docs_dir = base / "documents"
+    if not docs_dir.exists() and (base / "documentos").exists():
+        docs_dir = base / "documentos"
 
-    if not productos_dir.exists():
-        print(f"ERROR: No se encontró la carpeta {productos_dir}")
-        return
+    if not productos_dir.exists() or not docs_dir.exists():
+        print(f"Aviso: La carpeta de origen de datos o sus subcarpetas no existen en {base}. Creando estructura de directorios...")
+        productos_dir.mkdir(parents=True, exist_ok=True)
+        docs_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"📂 Leyendo JSONs desde: {productos_dir}")
-    print(f"📂 Buscando PDFs en:    {docs_dir}")
+    print(f"Leyendo JSONs desde: {productos_dir}")
+    print(f"Buscando PDFs en:    {docs_dir}")
     print()
 
     catalog = []
@@ -335,12 +346,12 @@ def build_catalog(weber_data_dir: str, output_path: str = "data/weber_catalog.js
             skipped += 1
             continue
         catalog.append(entry)
-        pdf_ok = "✅ PDF" if entry["tiene_pdf"] else "⚠️  sin PDF"
+        pdf_ok = "[PDF]" if entry["tiene_pdf"] else "[sin PDF]"
         print(f"  {pdf_ok}  {entry['model'][:50]}")
 
     print()
-    print(f"✅ Productos procesados: {len(catalog)}")
-    print(f"⏭️  Páginas de búsqueda ignoradas: {skipped}")
+    print(f"Productos procesados: {len(catalog)}")
+    print(f"Paginas de busqueda ignoradas: {skipped}")
 
     # Guardar
     output = Path(output_path)
@@ -348,8 +359,8 @@ def build_catalog(weber_data_dir: str, output_path: str = "data/weber_catalog.js
     with open(output, "w", encoding="utf-8") as f:
         json.dump(catalog, f, ensure_ascii=False, indent=2)
 
-    print(f"\n💾 Catálogo guardado en: {output}")
-    print(f"   {len(catalog)} productos listos para ingestión en el RAG.")
+    print(f"\nCatalogo guardado en: {output}")
+    print(f"   {len(catalog)} productos listos para ingestion en el RAG.")
     return catalog
 
 

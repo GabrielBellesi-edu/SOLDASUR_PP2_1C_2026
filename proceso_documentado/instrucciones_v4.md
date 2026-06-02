@@ -89,3 +89,52 @@ La interfaz principal integra tres áreas clave de trabajo:
 *   **Funcionamiento:** Gestionado por el script [chatbot.js](../app/modules/chatbot/chatbot.js) que conecta con el backend de FastAPI en `/api/chat`. Realiza una consulta semántica vectorial en la base de datos local y le provee al modelo local de Ollama (`llama3.2:3b`) el contexto necesario.
 *   **Tolerancia a fallos:** Al usar embeddings semánticos, el asistente comprende sinónimos y maneja errores de ortografía de forma nativa.
 *   *Nota: Si Ollama no está activo, el sistema mostrará un aviso de error de conexión en la ventana del chat, pero las calculadoras de PEISA y Weber seguirán funcionando normalmente en el navegador.*
+
+---
+
+## 4. Actualización del Catálogo y Base de Conocimientos (RAG)
+
+Si deseas actualizar los productos de la base de conocimientos del Chatbot (RAG) o descargar nuevos materiales directamente del sitio oficial de **Weber Argentina**, debes seguir este flujo de 3 pasos dentro de tu entorno virtual (`venv`):
+
+### Paso A: Ejecutar el Scraper (Descarga de información y PDFs)
+El scraper descarga los datos crudos de los productos y sus archivos PDF adjuntos desde la web oficial. Hay dos alternativas de scraper disponibles (se recomienda **Gscraper.py** ya que recorre interactivamente la lista de búsqueda oficial de productos y asegura la captura de la totalidad del catálogo):
+
+1. **Instalar los navegadores de Playwright** (necesario solo la primera vez):
+   ```bash
+   playwright install
+   ```
+2. **Ejecutar el Scraper (Opción A - Recomendada: Gscraper desde el Buscador):**
+   * **Prueba rápida** (Procesa 5 productos y no descarga los archivos PDF):
+     ```bash
+     python weber_ingest/Gscraper.py --max-productos 5 --sin-pdfs
+     ```
+   * **Extracción completa** (Recorre de forma paginada las búsquedas de Drupal y descarga todo el catálogo):
+     ```bash
+     python weber_ingest/Gscraper.py
+     ```
+3. **Ejecutar el Scraper (Opción B - Alternativa: Scraper desde el Sitemap):**
+   * **Prueba rápida** (Procesa 5 productos):
+     ```bash
+     python weber_ingest/weber_rag_scraper.py --max-productos 5 --sin-pdfs
+     ```
+   * **Extracción completa**:
+     ```bash
+     python weber_ingest/weber_rag_scraper.py
+     ```
+   *Los datos e imágenes extraídas se guardarán localmente en la carpeta `weber_data/` en cualquiera de las dos opciones.*
+
+### Paso B: Construcción del Catálogo Integrado
+Consolida la información de todos los productos extraídos (archivos `.json` y textos de los PDFs) en un único archivo JSON de catálogo.
+```bash
+python weber_ingest/01_build_catalog.py
+```
+*Este proceso generará el archivo `data/weber_catalog.json`.*
+
+### Paso C: Generación de Embeddings Vectoriales (Base de Datos FAISS)
+Procesa el catálogo anterior para vectorizar la información técnica con IA y actualizar el motor de búsqueda semántica local.
+```bash
+python weber_ingest/02_build_embeddings.py
+```
+*Este proceso generará el índice de búsqueda en `embeddings/weber_products.faiss` y sus metadatos en `embeddings/weber_metadata.json`.*
+
+**¡Listo! El Chatbot utilizará los nuevos productos y fichas técnicas vectorizadas de forma inmediata.**

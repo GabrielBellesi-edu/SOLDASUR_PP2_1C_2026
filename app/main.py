@@ -21,7 +21,7 @@ from app.modules.chatbot.llm_wrapper import answer
 from app.app import replace_variables, filter_radiators, perform_calculation, format_radiator_recommendations, exec_expression
 from app.app import init_knowledge_base, get_node_by_id
 
-app = FastAPI(title="PEISA - SOLDASUR S.A", description="Asistente para cálculos de calefacción")
+app = FastAPI(title="SOLDASUR S.A - Asistente Técnico", description="Asistente técnico para calefacción (PEISA) y construcción (Weber)")
 
 weber_expert = WeberExpertEngine() #Agregamos esto
 weber_sessions = {} #Agregamos esto
@@ -211,7 +211,7 @@ async def get_next_message(conversation_id: str) -> ConversationResponse:
 @app.get("/health")
 async def health_check():
     """Endpoint de verificación de salud del servicio"""
-    return {"status": "ok", "service": "PEISA - SOLDASUR S.A"}
+    return {"status": "ok", "service": "SOLDASUR S.A - Asistente Técnico"}
 
 @app.get("/ask")
 def ask(question: str = Query(..., min_length=5)):

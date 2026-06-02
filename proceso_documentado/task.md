@@ -20,3 +20,52 @@ Este documento registra el progreso de tareas completadas durante el desarrollo 
 - [x] Crear la documentación de unificación de servidores en FastAPI [v4.0.2.md](v4.0.2.md).
 - [x] Crear la bitácora de cierre y verificación [walkthrough.md](walkthrough.md) detallando las pruebas de funcionamiento.
 - [x] Exportar el registro de tareas actual [task.md](task.md) con enlaces relativos a la carpeta de proceso documentado.
+- [x] Neutralizar la marca corporativa unificando PEISA y Weber: actualizar el slogan en [index.html](../index.html), corregir a 4 sucursales, agregar 3 tarjetas de productos Weber, unificar metadatos en [main.py](../app/main.py), adaptar [chatbot.js](../app/modules/chatbot/chatbot.js) a `productCatalog` y crear la bitácora de cambios en [v4.1.1.md](v4.1.1.md).
+- [x] Portar el scraper de Weber [weber_rag_scraper.py](../weber_ingest/weber_rag_scraper.py) a la carpeta de ingestión de la v4 para que sea autocontenido.
+- [x] Actualizar dependencias de scraping (`playwright`, `tqdm`) en [requirements.txt](../requirements.txt) y configurar exclusiones en [.gitignore](../.gitignore).
+- [x] Actualizar el documento de [instrucciones_v4.md](instrucciones_v4.md) detallando el flujo paso a paso de Scraping e Ingesta RAG.
+- [x] Crear el nuevo scraper robusto [Gscraper.py](../weber_ingest/Gscraper.py) para extraer directamente del catálogo paginado de Weber y actualizar las instrucciones de puesta en marcha.
+
+
+## Tareas Pendientes
+
+- [ ] Correr la ingesta completa RAG de Weber con el nuevo catálogo (Ejecutar `Gscraper.py` completo con descarga de PDFs, luego `01_build_catalog.py` y `02_build_embeddings.py` para regenerar la base de datos vectorial de 100 productos).
+- [ ] Investigar y agregar la extracción de metadatos adicionales de los productos Weber (tales como "área" de aplicación [ej: fachada], "actividad" [ej: pisos], "colores" [ej: blanco], "ancho de juntas" [ej: 5mm], etc.) a nivel de scraping y mapeo en el catálogo RAG.
+- [ ] Ampliar el módulo del sistema experto [weber_expert.js](../app/modules/weber/weber_expert.js) para integrar el cálculo de otros productos faltantes del catálogo (ej. Weber Microcolor/Microbase, pastinas, morteros de nivelación, revoques finos y otros impermeabilizantes).
+- [x] Agregar soporte para revestimientos plásticos/decorativos de paredes, selladores, fijaciones y mezclas de asiento en el scraper ([weber_rag_scraper.py](../weber_ingest/weber_rag_scraper.py)) y en el catalogador ([01_build_catalog.py](../weber_ingest/01_build_catalog.py)) agregando las nuevas palabras clave y mapeos de categorías.
+- [ ] Implementar el **Enrutamiento Semántico (Opción 1 - Comparación de Similitud por Embeddings)** en el endpoint `/api/chat` de [main.py](../app/main.py#L272-L322) para clasificar dinámicamente si el mensaje del usuario es de Weber (construcción) o PEISA (calefacción), superando las limitaciones de la lista estática `WEBER_KEYWORDS` (línea 246):
+  * **Archivos a modificar:** [main.py](../app/main.py) (reemplazar la lógica de `_is_weber_query` y actualizar `api_chat`).
+  * **Detalle técnico:** Utilizar el modelo de SentenceTransformers ya instanciado en el RAG de Weber (`"sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"`) en [weber_rag_engine.py](../app/modules/chatbot/weber_rag_engine.py) para codificar la consulta del usuario y calcular su similitud del coseno contra dos vectores ancla estáticos precalculados:
+    * *Ancla Weber (Construcción):* "colocación de revestimientos cerámicas porcelanatos baldosas impermeabilización de losas piscinas pastina revoque fino mezcla adhesivo cemento"
+    * *Ancla PEISA (Calefacción):* "calefacción caldera radiador toallero calefón termotanque agua caliente sanitaria climatización"
+  * **Objetivo de usabilidad:** Permitir enrutar correctamente consultas complejas o con errores de ortografía y sinónimos (ej: "vaño pared umedad", "baldosas para el piso") en menos de 50ms y sin depender de llamadas adicionales al LLM (evitando latencia y problemas de cold start).
+- [ ] Reestructurar el repositorio (Versión v4.2.0) para separar responsabilidades y modularizar el código:
+  * **Estructura de carpetas propuesta:**
+    ```text
+    Repo/
+    ├── scraping/                  # 1. TODO LO RELACIONADO A SCRAPPING
+    │   ├── peisa_scraper.py
+    │   ├── weber_scraper.py
+    │   └── data_raw/              # Descargas crudas (CSVs, HTMLs, PDFs)
+    │
+    ├── RAG_engine/                # 2. EL MOTOR DE BÚSQUEDA Y BASE DE DATOS
+    │   ├── database/              # Archivos SQLite (.db) y FAISS (.faiss)
+    │   ├── scripts/               # Scripts de ingesta (ingest.py, etc.)
+    │   └── query/                 # Motores de búsqueda RAG (query.py, weber_rag_engine.py)
+    │
+    ├── web_app/                   # 3. LA APLICACIÓN QUE CORRE EN EL SERVIDOR/WEB
+    │   ├── backend/               # Servidor FastAPI (main.py, routers, configs)
+    │   └── frontend/              # Archivos estáticos de la web
+    │       ├── index.html
+    │       ├── soldasur.css
+    │       ├── soldasur.js
+    │       ├── img/
+    │       └── js_modules/        # Scripts que se ejecutan en el navegador
+    │           ├── core.js
+    │           ├── peisa_expert.js
+    │           └── weber_expert.js
+    ```
+
+
+
+

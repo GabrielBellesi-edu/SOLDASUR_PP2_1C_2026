@@ -16,4 +16,10 @@ venv/
 .DS_Store
 docker-compose.yml
 Dockerfile
+
+# Playwright/Chromium user profile
+user_data/
+weber_ingest/user_data/
+weber_data/documentos/
+
 IA-RULES.md

@@ -216,13 +216,18 @@ function filterRelevantProducts(userMessage, catalog) {
     const msg = userMessage.toLowerCase();
     let relevantProducts = [];
 
-    // Detectar tipo de necesidad
+    // Detectar tipo de necesidad (PEISA)
     const needsHeating = msg.includes('frío') || msg.includes('frio') || msg.includes('calefacción') || msg.includes('calefaccion') || msg.includes('calentar');
     const needsHotWater = msg.includes('agua caliente') || msg.includes('ducha') || msg.includes('baño');
     const needsRadiator = msg.includes('radiador') || msg.includes('ambiente') || msg.includes('habitación') || msg.includes('habitacion');
     const needsBoiler = msg.includes('caldera') || msg.includes('casa') || msg.includes('toda');
     const needsElectric = msg.includes('eléctrico') || msg.includes('electrico') || msg.includes('enchufe');
     const needsTowelRack = msg.includes('toallero') || msg.includes('toalla');
+
+    // Detectar tipo de necesidad (Weber)
+    const needsWeber = msg.includes('weber') || msg.includes('construc') || msg.includes('obra') || msg.includes('pegar') || msg.includes('baldosa') || msg.includes('cerámic') || msg.includes('ceram');
+    const needsWaterproof = msg.includes('impermeab') || msg.includes('humedad') || msg.includes('techo') || msg.includes('losa') || msg.includes('filtrac') || msg.includes('piscina');
+    const needsFloors = msg.includes('piso') || msg.includes('nivelar') || msg.includes('microcemento') || msg.includes('carpeta') || msg.includes('alisado');
 
     // Filtrar por familia/categoría relevante
     if (needsTowelRack) {
@@ -255,11 +260,19 @@ function filterRelevantProducts(userMessage, catalog) {
             p.model.toLowerCase().includes('electrico') ||
             p.model.toLowerCase().includes('broen e')
         );
+    } else if (needsWeber || needsWaterproof || needsFloors) {
+        // Priorizar productos Weber
+        relevantProducts = catalog.filter(p => p.brand === 'WEBER');
+        if (needsWaterproof) {
+            relevantProducts = relevantProducts.filter(p => p.category?.toLowerCase().includes('impermeabilizantes') || p.model.toLowerCase().includes('imper') || p.model.toLowerCase().includes('membrana'));
+        } else if (needsFloors) {
+            relevantProducts = relevantProducts.filter(p => p.category?.toLowerCase().includes('pisos') || p.model.toLowerCase().includes('piso') || p.model.toLowerCase().includes('micro') || p.model.toLowerCase().includes('autonivela'));
+        }
     } else {
-        // Caso general: productos más populares
-        const popularModels = ['Prima Tec Smart', 'Radiador Eléctrico Broen E', 'Diva Tecno', 'Broen', 'Caldera Diva'];
+        // Caso general: productos populares balanceados de ambas marcas
+        const popularModels = ['Prima Tec Smart', 'Radiador Eléctrico Broen E', 'weber impermeable cerámicos con ceresita', 'weber gris cerámicos', 'weber flex porcellanato'];
         relevantProducts = catalog.filter(p =>
-            popularModels.some(pm => p.model.includes(pm))
+            popularModels.some(pm => p.model.toLowerCase() === pm.toLowerCase() || p.model.includes(pm))
         );
     }
 
@@ -431,7 +444,7 @@ function consultProduct(product) {
 
 /* Actualizar contexto de conversación con más detalle */
 function updateConversationContext() {
-    const catalogToUse = peisaProductsFromJSON;
+    const catalogToUse = productCatalog;
 
     // Extraer información clave de la conversación
     const userNeeds = [];
@@ -496,7 +509,7 @@ function updateConversationContext() {
 /* Detectar productos mencionados en la respuesta */
 function detectMentionedProducts(message) {
     // Usar el catálogo JSON actualizado
-    const catalogToUse = peisaProductsFromJSON;
+    const catalogToUse = productCatalog;
 
     const mentioned = [];
     const messageLower = message.toLowerCase();
@@ -556,9 +569,9 @@ function cleanHtmlFromMessage(message) {
     cleaned = cleaned.replace(/\s+/g, ' ').trim();
 
     // Resaltar nombres de productos en negrita
-    if (peisaProductsFromJSON && peisaProductsFromJSON.length > 0) {
+    if (productCatalog && productCatalog.length > 0) {
         // Ordenar productos por longitud de nombre (más largos primero para evitar reemplazos parciales)
-        const sortedProducts = [...peisaProductsFromJSON].sort((a, b) => b.model.length - a.model.length);
+        const sortedProducts = [...productCatalog].sort((a, b) => b.model.length - a.model.length);
         const replacedProducts = new Set();
 
         for (const product of sortedProducts) {
@@ -587,7 +600,7 @@ function escapeRegex(string) {
 
 /* Enriquecer mensaje con enlaces a productos mencionados */
 function enrichMessageWithLinks(message) {
-    if (!peisaProductsFromJSON || peisaProductsFromJSON.length === 0) {
+    if (!productCatalog || productCatalog.length === 0) {
         return message;
     }
 
@@ -595,7 +608,7 @@ function enrichMessageWithLinks(message) {
     const replacedProducts = new Set();
 
     // Ordenar productos por longitud de nombre (más largos primero)
-    const sortedProducts = [...peisaProductsFromJSON].sort((a, b) => b.model.length - a.model.length);
+    const sortedProducts = [...productCatalog].sort((a, b) => b.model.length - a.model.length);
 
     // Buscar productos mencionados y reemplazar con enlaces
     for (const product of sortedProducts) {
