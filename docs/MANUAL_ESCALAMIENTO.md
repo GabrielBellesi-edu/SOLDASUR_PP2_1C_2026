@@ -4,10 +4,10 @@ Guía práctica para que un nuevo equipo pueda mantener, extender y escalar el s
 
 ## 1) Arquitectura (visión)
 
-- Front-end: `index.html`, `soldasur.js`, `soldasur.css` + módulos `app/modules/chatbot` y `app/modules/expertSystem`.
-- Sistema experto (IA simbólica): `expert_engine.py` + KB JSON, con funciones auxiliares para cálculos y recomendaciones.
-- Chatbot (RAG + LLM): `rag_engine_v2.py` + `llm_wrapper.py` + catálogo JSON y/o embeddings FAISS.
-- API (FastAPI): `app/main.py` (endpoints de conversación y demo RAG) y `app/orchestrator.py` (modo híbrido e intenciones, listo para consolidar servidor-side).
+- Front-end: `web_app/` (contiene `index.html`, `soldasur.js`, `soldasur.css` y módulos `js_modules/`).
+- Sistema experto (IA simbólica): `peisa_expert.js` y `weber_expert.js` en frontend (offline), apoyados por `app/app.py` y `app/modules/expertSystem/weber_expert_engine.py` en el backend.
+- Chatbot (RAG + LLM): Componentes simétricos en `RAG_engine/query/` (`peisa_rag_query.py` / `peisa_rag_llm.py` y `weber_rag_query.py` / `weber_rag_llm.py`).
+- API (FastAPI): `app/main.py` (endpoints unificados) y `app/orchestrator.py`.
 
 ## 2) Puesta en marcha
 
@@ -21,9 +21,9 @@ Guía práctica para que un nuevo equipo pueda mantener, extender y escalar el s
 
 ## 3) Datos y catálogo
 
-- Actualizar catálogo por scraping: `python app/modules/scraping/product_scraper.py`
-- Regenerar embeddings (opcional; desde CSV procesado): `python ingest/ingest.py data/processed/products_mock.csv`
-- Verificar consultas: `python query/query.py "¿Tienen calderas > 17000 W?"`
+- Actualizar catálogo por scraping: `python scraping/peisa_product_scraper.py` o `python scraping/weber_product_scraper.py`
+- Regenerar embeddings (SQLite / FAISS): `python RAG_engine/scripts/ingest.py --all` (o `--peisa` / `--weber`)
+- Verificar consultas: `python RAG_engine/query/peisa_rag_query.py "¿Tienen calderas > 17000 W?"`
 
 ## 4) Agregar reglas al sistema experto
 
@@ -33,9 +33,9 @@ Guía práctica para que un nuevo equipo pueda mantener, extender y escalar el s
 
 ## 5) Extender el chatbot/RAG
 
-- Enriquecer `data/products_catalog.json` (descripciones y ventajas claras).
-- Ajustar top_k y modelos de embeddings en `rag_engine_v2.py`.
-- Afinar `llm_wrapper.py` (prompt, temperatura, longitud, sanitización de precios).
+- Enriquecer `web_app/data/peisa_catalog.json` y `weber_catalog.json` (descripciones y ventajas claras).
+- Ajustar top_k y modelos de embeddings en `RAG_engine/query/peisa_rag_query.py` y `weber_rag_query.py`.
+- Afinar `peisa_rag_llm.py` y `weber_rag_llm.py` (prompt, temperatura, longitud, sanitización de precios).
 
 ## 6) Estándares de desarrollo
 
@@ -65,7 +65,7 @@ Guía práctica para que un nuevo equipo pueda mantener, extender y escalar el s
 ## 10) Despliegue (ideas)
 
 - Backend FastAPI + Nginx, static para `app/`.
-- Docker con servicios: `web`, `api`, `ollama`, y volumen para `embeddings/`.
+- Docker con servicios: `web`, `api`, `ollama`, y volumen para `RAG_engine/database/`.
 - Habilitar CORS para que la UI acceda a Ollama/Backend según dominio.
 
 ## 11) Roadmap sugerido

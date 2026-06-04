@@ -37,10 +37,10 @@ Este glosario explica los conceptos clave del proyecto y cómo se usan en SoldaS
   - Diseño del “system prompt” para guiar al LLM: tono, formato, y reglas (siempre recomendar un producto por nombre, respuestas breves, manejo de precios).
 
 - Catálogo de productos
-  - Fuente JSON (`data/products_catalog.json`) con descripciones, ventajas y URL. Puede actualizarse por scraping (`app/modules/scraping/product_scraper.py`).
+  - Fuente JSON (`web_app/data/peisa_catalog.json` y `weber_catalog.json`) con descripciones, ventajas y URL. Puede actualizarse por scraping (`scraping/peisa_product_scraper.py` y `scraping/weber_product_scraper.py`).
 
 - Ingesta de embeddings
-  - Pipeline `ingest/ingest.py`: genera `embeddings/products.faiss` y `embeddings/products.db` a partir de un CSV procesado.
+  - Pipeline `RAG_engine/scripts/ingest.py`: genera las bases SQLite e índices FAISS en `RAG_engine/database/` a partir de los catálogos JSON.
 
 - ACS (Agua Caliente Sanitaria)
   - En cálculo de calderas, puede sumar carga térmica adicional o implicar “caldera mixta”.
@@ -48,7 +48,7 @@ Este glosario explica los conceptos clave del proyecto y cómo se usan en SoldaS
 ## Conexión entre componentes (resumen práctico)
 
 1) El usuario inicia el flujo experto (reglas) o hace una pregunta libre (chat).
-2) El catálogo de productos (`data/products_catalog.json`) alimenta tanto el experto (para decidir) como el RAG (para recuperar).
+2) El catálogo de productos (`web_app/data/peisa_catalog.json` y `weber_catalog.json`) alimenta tanto el experto (para decidir) como el RAG (para recuperar).
 3) El RAG usa embeddings + FAISS para traer productos relevantes y el LLM construye una respuesta breve.
 
 ## Unidades y conversiones útiles

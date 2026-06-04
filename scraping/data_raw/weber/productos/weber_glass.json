@@ -1,0 +1,46 @@
+{
+  "nombre": "weber glass",
+  "url": "https://www.ar.weber/revocar-paredes/mezclas-de-asiento/weber-glass",
+  "descripcion": "Inicio Revocar paredes Mezclas de asiento",
+  "datos_tecnicos": "Inicio\nRevocar paredes\nMezclas de asiento\nweber glass\nShow gallery\nweber glass\nMezcla para colocar ladrillos de vidrio\nFácil aplicacion\nFácil manipulación\nExcelente trabajabilidad\nManual\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nHumedecer el soporte para una mejor adherencia del producto\nRestricciones\nNo mojar los bloques de vidrio\nNo agregar ningún componente adicional, axcepto agua limpia en el empaste.\nDocumentación del producto\nFicha de producto\nFP weber glass.pdf\n(PDF - 873,13 KB)\nDescargar\nEnviar\nHoja Técnica\nHT weber glass.pdf\n(PDF - 136,72 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS weber tec glass.pdf\n(PDF - 193,72 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Fácil manipulación",
+        "slug": "facil-manipulacion-238"
+      },
+      {
+        "nombre": "Excelente trabajabilidad",
+        "slug": "excelente-trabajabilidad-250"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {},
+  "documentos": [
+    {
+      "nombre": "FP weber glass.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/FP_weber_glass.pdf"
+    },
+    {
+      "nombre": "HT weber glass.pdf",
+      "url": "https://www.ar.weber/files/ar/2019-11/HT_weber_glass.pdf"
+    },
+    {
+      "nombre": "HS weber tec glass.pdf",
+      "url": "https://www.ar.weber/files/ar/2023-11/HS_weber_glass.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:38:49.820985",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2025-07/pack-weber-glass-5kg_0922C98F68EA4895BAE3BFF44A476610.jpg?itok=lDiSqhX8",
+  "imagen_local": "data_raw\\weber\\img\\weber_glass.jpg"
+}

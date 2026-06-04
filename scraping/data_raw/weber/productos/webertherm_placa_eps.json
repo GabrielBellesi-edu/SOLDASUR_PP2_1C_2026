@@ -1,0 +1,35 @@
+{
+  "nombre": "webertherm placa EPS",
+  "url": "https://www.ar.weber/aislacion-termica/sistema-eifs/webertherm-placa-eps",
+  "descripcion": "Inicio Aislación térmica Sistema EIFS",
+  "datos_tecnicos": "Inicio\nAislación térmica\nSistema EIFS\nwebertherm placa EPS\nShow gallery\nwebertherm placa EPS\nPlacas de poliestireno expandido para sistema webertherm EIFS.\nAislación térmica\nFácil aplicacion\nFácil manipulación\nManual\nSoporte\nFachada,\nPared Exterior\nEncontrá un distribuidor\nAcerca de este producto\nAsegurarse que el soporte esté perfectamente plano.\nCaracterísticas y beneficios\nGran estabilidad estructural\nRestricciones\nNo dejar descalces, ni espacios vacíos.\nProductos relacionados con webertherm placa EPS\nwebertherm cabezal SBH-T\nCabezal de PVC para placa de EPS.\nwebertherm base coat\nCapa base niveladora ideal para sistema EIFS.\nwebertherm espiga H3\nAnclaje de PVC para fijación de materiales aislantes\nwebertherm malla 160\nMalla de fibra de vidrio",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Aislación térmica",
+        "slug": "aislacion-termica-276"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Fácil manipulación",
+        "slug": "facil-manipulacion-238"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Fachada,\n    Pared Exterior"
+  },
+  "documentos": [],
+  "scrapeado_en": "2026-06-04T03:37:52.213786",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2019-12/webertherm_placa_EPS_1842E657AA18407A95474502438F25D9.jpg?itok=WKndKrG4",
+  "imagen_local": "data_raw\\weber\\img\\webertherm_placa_eps.jpg"
+}

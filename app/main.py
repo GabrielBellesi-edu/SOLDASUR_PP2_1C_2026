@@ -10,18 +10,28 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 import json
-from app.modules.chatbot.weber_rag_engine import search_and_answer as weber_search_and_answer
+from RAG_engine.query.weber_rag_llm import search_and_answer as weber_search_and_answer
 from app.modules.expertSystem.weber_expert_engine import WeberExpertEngine #Agregamos esto
 import math
 from math import ceil
 from bisect import bisect_left
 from app.models import RADIATOR_MODELS
-from query.query import search_filtered
-from app.modules.chatbot.llm_wrapper import answer
+from RAG_engine.query.peisa_rag_query import search_filtered
+from RAG_engine.query.peisa_rag_llm import answer
 from app.app import replace_variables, filter_radiators, perform_calculation, format_radiator_recommendations, exec_expression
 from app.app import init_knowledge_base, get_node_by_id
+from app.orchestrator import IntentClassifier, IntentType
+from pathlib import Path
+import requests
 
 app = FastAPI(title="SOLDASUR S.A - Asistente Técnico", description="Asistente técnico para calefacción (PEISA) y construcción (Weber)")
+
+@app.middleware("http")
+async def disable_cache_for_dev(request, call_next):
+    response = await call_next(request)
+    if request.url.path.endswith((".js", ".css", ".json")):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    return response
 
 weber_expert = WeberExpertEngine() #Agregamos esto
 weber_sessions = {} #Agregamos esto
@@ -62,14 +72,15 @@ except FileNotFoundError:
 conversations = {}
 
 # Servir archivos estáticos (CSS, JS, imágenes)
-app.mount("/app", StaticFiles(directory=os.path.join(BASE_DIR, "app")), name="app")
-app.mount("/images", StaticFiles(directory=os.path.join(BASE_DIR, "images")), name="images")
-app.mount("/data", StaticFiles(directory=os.path.join(BASE_DIR, "data")), name="data")
+app.mount("/js_modules", StaticFiles(directory=os.path.join(BASE_DIR, "web_app", "js_modules")), name="js_modules")
+app.mount("/img", StaticFiles(directory=os.path.join(BASE_DIR, "web_app", "img")), name="img")
+app.mount("/data", StaticFiles(directory=os.path.join(BASE_DIR, "web_app", "data")), name="data")
+app.mount("/scraping", StaticFiles(directory=os.path.join(BASE_DIR, "scraping")), name="scraping")
 
 @app.get("/soldasur.css", response_class=HTMLResponse)
 async def get_css():
     try:
-        with open(os.path.join(BASE_DIR, "soldasur.css"), "r", encoding="utf-8") as f:
+        with open(os.path.join(BASE_DIR, "web_app", "soldasur.css"), "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read(), media_type="text/css")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Archivo soldasur.css no encontrado")
@@ -77,7 +88,7 @@ async def get_css():
 @app.get("/soldasur.js", response_class=HTMLResponse)
 async def get_js():
     try:
-        with open(os.path.join(BASE_DIR, "soldasur.js"), "r", encoding="utf-8") as f:
+        with open(os.path.join(BASE_DIR, "web_app", "soldasur.js"), "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read(), media_type="application/javascript")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Archivo soldasur.js no encontrado")
@@ -86,7 +97,7 @@ async def get_js():
 async def home():
     """Sirve la página principal del chat"""
     try:
-        with open(os.path.join(BASE_DIR, "index.html"), "r", encoding="utf-8") as f:
+        with open(os.path.join(BASE_DIR, "web_app", "index.html"), "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Archivo index.html no encontrado")
@@ -229,7 +240,8 @@ def ask_weber(
     Endpoint para consultas sobre productos Weber.
     Opcionalmente acepta superficie para calcular cantidades.
     """
-    from app.modules.chatbot.weber_rag_engine import search_and_answer, calcular_cantidad
+    from RAG_engine.query.weber_rag_llm import search_and_answer
+    from RAG_engine.query.weber_rag_query import calcular_cantidad
 
     result = search_and_answer(question)
 
@@ -267,6 +279,63 @@ def _is_weber_query(message: str) -> bool:
 class ChatRequest(BaseModel):
     message: str
     conversation_id: Optional[str] = None
+    last_active_brand: Optional[str] = None
+    last_active_product: Optional[str] = None
+
+
+intent_classifier = IntentClassifier()
+
+
+def _get_neutral_response(message: str) -> str:
+    """Genera una respuesta neutral de bienvenida usando Ollama."""
+    config_path = Path(BASE_DIR) / "configs" / "prompts.json"
+    
+    default_prompt = (
+        "Sos Soldy, el asistente inteligente unificado de SOLDASUR. Tu única función es saludar "
+        "y dar la bienvenida al cliente de manera muy cordial, breve y neutral. Explícale de forma "
+        "amigable (máximo 2 oraciones) que podés ayudarlo a calcular materiales de construcción y revestimientos (Weber) "
+        "o a dimensionar su sistema de calefacción (PEISA), e invitalo a realizar su consulta sobre cualquiera de estas marcas. "
+        "Hablá siempre en español rioplatense (vos, tenés, podés). NUNCA recomiendes ni nombres ningún producto específico."
+    )
+    temp = 0.5
+    max_tokens = 100
+    
+    if config_path.exists():
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                neutral_config = data.get("neutral", {})
+                system_prompt = neutral_config.get("system_prompt", default_prompt)
+                temp = neutral_config.get("temperature", temp)
+                max_tokens = neutral_config.get("max_tokens", max_tokens)
+        except Exception as e:
+            print(f"[NeutralChat] Error cargando prompts.json ({e}). Usando fallback.")
+            system_prompt = default_prompt
+    else:
+        system_prompt = default_prompt
+
+    ollama_url = "http://127.0.0.1:11434/api/generate"
+    try:
+        response = requests.post(
+            ollama_url,
+            json={
+                "model": "llama3.2:3b",
+                "prompt": message,
+                "system": system_prompt,
+                "stream": False,
+                "options": {
+                    "num_predict": max_tokens,
+                    "temperature": temp
+                }
+            },
+            timeout=10
+        )
+        if response.status_code == 200:
+            return response.json().get("response", "").strip()
+    except Exception as e:
+        print(f"[NeutralChat] Error llamando a Ollama: {e}")
+        
+    return "¡Hola! Soy **Soldy**, el asistente inteligente de **SOLDASUR**. Puedo ayudarte con productos de calefacción **PEISA** o de construcción **Weber**. ¿Sobre qué te gustaría consultar hoy?"
 
 
 @app.post("/api/chat")
@@ -274,13 +343,21 @@ async def api_chat(request: ChatRequest):
     """
     Endpoint unificado de chat para el frontend.
     Detecta si la consulta es sobre Weber (construcción) o PEISA (calefacción)
-    y rutea al motor RAG correspondiente.
+    usando enrutamiento semántico y rutea al motor RAG correspondiente.
     """
     message = request.message.strip()
 
-    if _is_weber_query(message):
+    context = {
+        "last_active_brand": request.last_active_brand,
+        "last_active_product": request.last_active_product
+    }
+
+    # Clasificar intención usando enrutamiento híbrido/semántico con contexto activo
+    intent = intent_classifier.classify(message, context)
+
+    if intent.type == IntentType.WEBER_QUERY:
         # ── Ruta Weber ──────────────────────────────────────────────────────
-        result = weber_search_and_answer(message)
+        result = weber_search_and_answer(message, last_active_product=request.last_active_product)
         response_text = result.get("respuesta", "")
         productos_weber = result.get("productos", [])
         calculo = result.get("calculo")
@@ -293,6 +370,9 @@ async def api_chat(request: ChatRequest):
                 "category": p.get("category", ""),
                 "description": p.get("description", ""),
                 "url": p.get("url", ""),
+                "brand": p.get("brand", "Weber"),
+                "imagen_local": p.get("imagen_local", ""),
+                "imagen_url": p.get("imagen_url", ""),
             }
             for p in productos_weber
         ]
@@ -311,14 +391,34 @@ async def api_chat(request: ChatRequest):
             }
         return resp
 
-    # ── Ruta PEISA ──────────────────────────────────────────────────────────
-    top_items = search_filtered(message, top_k=3)
-    respuesta = answer(message, top_items)
-    return {
-        "mode": "peisa",
-        "text": respuesta,
-        "products": top_items,
-    }
+    elif intent.type == IntentType.FREE_QUERY:
+        # ── Ruta PEISA ──────────────────────────────────────────────────────────
+        top_items = search_filtered(message, top_k=3)
+
+        # Inyectar el producto activo al inicio si existe
+        if request.last_active_product:
+            from RAG_engine.query.peisa_rag_query import get_peisa_product_by_model
+            p_activo = get_peisa_product_by_model(request.last_active_product)
+            if p_activo:
+                # Remover duplicados si ya estaba en la lista
+                top_items = [p for p in top_items if p.get("model", "").lower().strip() != request.last_active_product.lower().strip()]
+                top_items.insert(0, p_activo)
+
+        respuesta = answer(message, top_items, last_active_product=request.last_active_product)
+        return {
+            "mode": "peisa",
+            "text": respuesta,
+            "products": top_items[:3] if top_items else [],
+        }
+
+    else:
+        # ── Ruta Neutra (Saludos y consultas generales/híbridas) ─────────────────
+        respuesta_neutra = _get_neutral_response(message)
+        return {
+            "mode": "neutral",
+            "text": respuesta_neutra,
+            "products": []
+        }
 
 
 # ... (Todo el código intermedio de tus endpoints actuales de PEISA y ask_weber)
@@ -398,7 +498,7 @@ async def reply_weber_expert(request: ReplyRequest):
 
 
 # Montar la raíz del proyecto para servir todos los archivos estáticos del frontend (HTML, JS, CSS, JSON, imágenes, etc.)
-app.mount("/", StaticFiles(directory=BASE_DIR, html=True), name="frontend")
+app.mount("/", StaticFiles(directory=os.path.join(BASE_DIR, "web_app"), html=True), name="frontend")
 
 
 # ── Bloque de cierre que ya tenías (Dejalo tal cual abajo de todo) ──

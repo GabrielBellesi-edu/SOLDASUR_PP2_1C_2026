@@ -1,0 +1,56 @@
+{
+  "nombre": "weber RAS",
+  "url": "https://www.ar.weber/soluciones-para-pisos/carpetas-y-nivelacion/weber-ras",
+  "descripcion": "Inicio Soluciones para pisos Carpetas y Nivelación",
+  "datos_tecnicos": "Inicio\nSoluciones para pisos\nCarpetas y Nivelación\nweber RAS\nShow gallery\nweber RAS\nPremezcla cementicia fluida para la construcción de carpetas niveladoras bajo solado.\nAlta resistencia\nFacil Nivelacion\nFácil aplicacion\nRevestible\nManual\nProyectable\nSoporte\nPiso\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nEl soporte debe estar libre de suciedades, partes flojas, restos de grasas, yesos o pinturas.\nReparar roturas o grietas previamente a la aplicación del producto.\nLa extrema fluidez del producto exige la limitación de las zonas a aplicar, para evitar fugas.\nCaracterísticas y beneficios\nfluidez / fácil nivelación / no requiere fratasado posterior / elevada dureza y resistencia\nRestricciones\nNo es un producto para dejar visto o como piso final. No aplicar sobre membrana con foil de aluminio\nDocumentación del producto\nFicha de producto\nFP_weber_ras.pdf\n(PDF - 997,97 KB)\nDescargar\nEnviar\nHoja Técnica\nFT - weber RAS.pdf\n(PDF - 317,94 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS weber ras\n(PDF - 259,79 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Alta resistencia",
+        "slug": "alta-resistencia-235"
+      },
+      {
+        "nombre": "Facil Nivelacion",
+        "slug": "facil-nivelacion-229"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Revestible",
+        "slug": "revestible-260"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      },
+      {
+        "nombre": "Proyectable",
+        "slug": "proyectable-96"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Piso"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weber_ras.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-07/FP_weber_ras.pdf"
+    },
+    {
+      "nombre": "FT - weber RAS.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/HT_weber_RAS.pdf"
+    },
+    {
+      "nombre": "HS weber ras",
+      "url": "https://www.ar.weber/files/ar/2026-03/HS_-_weber_ras.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:34:04.073607",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-05/pack-weber-ras-30kg_154026F9D77D40F182007DFB630FCD79.jpg?itok=hVLoVnzv",
+  "imagen_local": "data_raw\\weber\\img\\weber_ras.jpg"
+}

@@ -1,0 +1,56 @@
+{
+  "nombre": "weber hormiestetic",
+  "url": "https://www.ar.weber/soluciones-para-fijaciones-anclajes-y-sellados/reparacion-de-hormigon/weber-hormiestetic",
+  "descripcion": "Inicio Soluciones para fijaciones, anclajes y sellados Reparación de hormigón",
+  "datos_tecnicos": "Inicio\nSoluciones para fijaciones, anclajes y sellados\nReparación de hormigón\nweber hormiestetic\nShow gallery\nweber hormiestetic\nMortero para reparaciones hormigones manchados y mal encofrados\nFácil aplicacion\nFragüe rápido\nMayor resistencia\nMuy plástico\nPintable\nRevestible\nManual\nSoporte\nFachada,\nPared Exterior,\nPared Interna\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nLimpiar el soporte de polvo y material flojo\nHumedecer el soporte para una mejor adherencia del producto\nCaracterísticas y beneficios\nGran adherencia\nGran resistencia\nMuy plástico\nRevestible\nRestricciones\nNo aplicar weber.tec hormiestetic sobre yeso o sobre superficies pintadas.\nDocumentación del producto\nHoja Técnica\nHT weber hormiestetic.pdf\n(PDF - 129,68 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS - weber hormiestetic\n(PDF - 263,52 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Fragüe rápido",
+        "slug": "frague-rapido-232"
+      },
+      {
+        "nombre": "Mayor resistencia",
+        "slug": "mayor-resistencia-243"
+      },
+      {
+        "nombre": "Muy plástico",
+        "slug": "muy-plastico-270"
+      },
+      {
+        "nombre": "Pintable",
+        "slug": "pintable-275"
+      },
+      {
+        "nombre": "Revestible",
+        "slug": "revestible-260"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Fachada,\n    Pared Exterior,\n    Pared Interna"
+  },
+  "documentos": [
+    {
+      "nombre": "HT weber hormiestetic.pdf",
+      "url": "https://www.ar.weber/files/ar/2019-05/HT_weber_hormiestetic.pdf"
+    },
+    {
+      "nombre": "HS - weber hormiestetic",
+      "url": "https://www.ar.weber/files/ar/2025-11/HS_-_weber_hormiestetic.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:39:18.305966",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-06/pack-weber-hormiestetic-25kg_15556AB9A95D48949605561C6E80417C.jpg?itok=Tw_2Scas",
+  "imagen_local": "data_raw\\weber\\img\\weber_hormiestetic.jpg"
+}

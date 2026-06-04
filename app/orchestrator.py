@@ -19,7 +19,7 @@ class IntentType(Enum):
     HYBRID = "hybrid"                          # Combinación de ambos
     SWITCH_MODE = "switch_mode"                # Cambio de modo
     CLARIFICATION = "clarification"            # Pregunta tangencial durante flujo
-    WEBER_QUERY        = "weber_query"         # AGREGAMOS ESTA OPCION PARA DETECTAR CONSULTAS SOBRE PRODUCTOS WEBER
+    WEBER_QUERY        = "weber_query"         # Consultas sobre productos Weber
 
 
 class ConversationMode(Enum):
@@ -41,7 +41,7 @@ class Intent:
 class IntentClassifier:
     """
     Clasifica la intención del usuario para enrutar correctamente
-    entre el sistema experto y el RAG.
+    entre el sistema experto y el RAG de PEISA o Weber.
     """
     
     # Patrones para clasificación basada en reglas
@@ -86,7 +86,7 @@ class IntentClassifier:
             r"explícame",
             r"qué quiere decir",
         ],
-        IntentType.WEBER_QUERY: [           # AGREGAMOS TODO ESTE BLOQUE
+        IntentType.WEBER_QUERY: [
             r"weber",
             r"mortero",
             r"revoque",
@@ -109,9 +109,38 @@ class IntentClassifier:
         ]
     }
     
+    # Expresiones directas e inequívocas para descarte rápido en cascada (0ms de latencia)
+    DIRECT_WEBER_KEYWORDS = [r"weber", r"pastina", r"mortero", r"revoque", r"ceresita", r"weberplast", r"microcemento", r"microcolor", r"microbase", r"autonivela"]
+    DIRECT_PEISA_KEYWORDS = [r"peisa", r"caldera", r"radiador", r"toallero", r"calefon", r"termo", r"climatiz"]
+
+    def __init__(self):
+        self.weber_anchor_vec = None
+        self.peisa_anchor_vec = None
+
+    def _lazy_init_anchors(self):
+        """Inicializa de forma diferida (lazy loading) los embeddings de los textos ancla."""
+        if self.weber_anchor_vec is None:
+            try:
+                import numpy as np
+                import RAG_engine.query.weber_rag_query as weber_query
+                weber_query._load_resources()
+                model = weber_query._model
+                if model is not None:
+                    ANCLA_WEBER = "colocación de revestimientos cerámicas porcelanatos baldosas impermeabilización de losas piscinas pastina revoque fino mezcla adhesivo cemento"
+                    ANCLA_PEISA = "calefacción caldera radiador toallero calefón termotanque agua caliente sanitaria climatización"
+                    
+                    # Generar embeddings de las anclas
+                    vecs = model.encode([ANCLA_WEBER, ANCLA_PEISA], convert_to_numpy=True)
+                    # Normalizar L2
+                    self.weber_anchor_vec = vecs[0] / np.linalg.norm(vecs[0])
+                    self.peisa_anchor_vec = vecs[1] / np.linalg.norm(vecs[1])
+                    print("[IntentClassifier] Similitud vectorial inicializada con éxito para PEISA y Weber.")
+            except Exception as e:
+                print(f"[IntentClassifier] AVISO: No se pudo cargar el modelo para similitud semántica ({e}). Se usará enrutamiento heurístico por Regex.")
+
     def classify(self, message: str, context: Dict[str, Any]) -> Intent:
         """
-        Clasifica la intención del usuario basándose en el mensaje y el contexto.
+        Clasifica la intención del usuario basándose en el mensaje, contexto y similitud vectorial.
         
         Args:
             message: Mensaje del usuario
@@ -122,41 +151,83 @@ class IntentClassifier:
         """
         message_lower = message.lower().strip()
         
-        # Si está en medio de un flujo guiado y hace una pregunta tangencial
+        # 1. Si está en medio de un flujo guiado y hace una pregunta tangencial
         if context.get('mode') == ConversationMode.EXPERT.value:
             if self._matches_patterns(message_lower, IntentType.CLARIFICATION):
                 return Intent(IntentType.CLARIFICATION, confidence=0.9)
-            # Si responde con un número o selección, continuar flujo experto
             if message_lower.isdigit() or self._is_numeric_input(message):
                 return Intent(IntentType.GUIDED_CALCULATION, confidence=1.0)
         
-        # Detectar cambio de modo explícito
+        # 2. Detectar cambio de modo explícito
         if self._matches_patterns(message_lower, IntentType.SWITCH_MODE):
             target_mode = self._extract_target_mode(message_lower)
             return Intent(IntentType.SWITCH_MODE, confidence=0.95, 
-                         metadata={'target_mode': target_mode})
+                          metadata={'target_mode': target_mode})
+
+        # Enrutamiento Contextual por Marca Activa (si la pregunta es de seguimiento y no cambia de marca explícitamente)
+        last_brand = (context.get("last_active_brand") or "").upper()
+        has_peisa_kw = any(re.search(pat, message_lower) for pat in self.DIRECT_PEISA_KEYWORDS)
+        has_weber_kw = any(re.search(pat, message_lower) for pat in self.DIRECT_WEBER_KEYWORDS)
         
-        # Detectar consultas sobre productos Weber                          # AGREGAMOS TODO ESTE BLOQUE
+        saludos = [r"^\s*hola\s*$", r"^\s*buenas\s*$", r"^\s*buen\s+d[ií]a\s*$", r"^\s*buen\s*tarde\s*$", r"^\s*gracias\s*$", r"^\s*chau\s*$", r"^\s*adi[oó]s\s*$"]
+        is_simple_greeting = any(re.search(pat, message_lower) for pat in saludos)
+
+        if last_brand and not is_simple_greeting:
+            if last_brand == "WEBER" and not has_peisa_kw:
+                return Intent(IntentType.WEBER_QUERY, confidence=0.95)
+            elif last_brand == "PEISA" and not has_weber_kw:
+                return Intent(IntentType.FREE_QUERY, confidence=0.95)
+
+        # 3. Enrutamiento Rápido en Cascada (Heurística directa - 0ms)
+        if any(re.search(pat, message_lower) for pat in self.DIRECT_WEBER_KEYWORDS):
+            return Intent(IntentType.WEBER_QUERY, confidence=1.0)
+        if any(re.search(pat, message_lower) for pat in self.DIRECT_PEISA_KEYWORDS):
+            return Intent(IntentType.FREE_QUERY, confidence=1.0)
+
+        # 4. Enrutamiento Semántico Vectorial (SentenceTransformers - fallback robusto)
+        self._lazy_init_anchors()
+        if self.weber_anchor_vec is not None:
+            try:
+                import numpy as np
+                import RAG_engine.query.weber_rag_query as weber_query
+                model = weber_query._model
+                if model is not None:
+                    query_vec = model.encode([message_lower], convert_to_numpy=True)[0]
+                    query_norm = np.linalg.norm(query_vec)
+                    if query_norm > 0:
+                        query_vec = query_vec / query_norm
+                        
+                        # Similitud de coseno (producto punto de vectores normalizados)
+                        sim_weber = float(np.dot(query_vec, self.weber_anchor_vec))
+                        sim_peisa = float(np.dot(query_vec, self.peisa_anchor_vec))
+                        
+                        UMBRAL_SIMILITUD = 0.35
+                        print(f"[IntentClassifier] Similitudes semánticas -> Weber: {sim_weber:.3f}, PEISA: {sim_peisa:.3f}")
+                        
+                        if sim_weber > sim_peisa and sim_weber >= UMBRAL_SIMILITUD:
+                            return Intent(IntentType.WEBER_QUERY, confidence=sim_weber)
+                        elif sim_peisa > sim_weber and sim_peisa >= UMBRAL_SIMILITUD:
+                            return Intent(IntentType.FREE_QUERY, confidence=sim_peisa)
+            except Exception as e:
+                print(f"[IntentClassifier] Error durante la clasificación semántica: {e}")
+
+        # 5. Caída en Regex tradicional (para Weber si falló la carga del modelo)
         if self._matches_patterns(message_lower, IntentType.WEBER_QUERY):   
-            return Intent(IntentType.WEBER_QUERY, confidence=0.9)           
+            return Intent(IntentType.WEBER_QUERY, confidence=0.8)           
         
-        # Detectar búsqueda de productos
+        # 6. Resto de intenciones
         if self._matches_patterns(message_lower, IntentType.PRODUCT_SEARCH):
             return Intent(IntentType.PRODUCT_SEARCH, confidence=0.85)
         
-        # Detectar solicitud de cálculo guiado
         if self._matches_patterns(message_lower, IntentType.GUIDED_CALCULATION):
             return Intent(IntentType.GUIDED_CALCULATION, confidence=0.9)
         
-        # Detectar pregunta abierta
         if self._matches_patterns(message_lower, IntentType.FREE_QUERY):
             return Intent(IntentType.FREE_QUERY, confidence=0.85)
         
-        # Detectar modo híbrido (tiene datos específicos pero es abierto)
         if self._has_specific_data(message_lower):
             return Intent(IntentType.HYBRID, confidence=0.75)
         
-        # Por defecto, usar modo híbrido
         return Intent(IntentType.HYBRID, confidence=0.5)
     
     def _matches_patterns(self, message: str, intent_type: IntentType) -> bool:
@@ -305,7 +376,7 @@ class ConversationOrchestrator:
             result = await self._handle_product_search(conversation_id, message)
             return result
         
-        elif intent.type == IntentType.WEBER_QUERY:                   # AGREGAMOS TODO ESTE BLOQUE
+        elif intent.type == IntentType.WEBER_QUERY:
             result = await self._handle_weber_query(conversation_id, message)
             return result
         
@@ -481,13 +552,13 @@ class ConversationOrchestrator:
         calculation_keywords = ['calcular', 'dimensionar', 'cuántos', 'necesito']
         return any(keyword in message.lower() for keyword in calculation_keywords)
 
-    async def _handle_weber_query(self, conversation_id: str, message: str) -> dict:     # AGREGAMOS ESTE MÉTODO COMPLETO
+    async def _handle_weber_query(self, conversation_id: str, message: str) -> dict:
         """
         Maneja consultas sobre productos Weber.
         Usa el WeberRAGEngine en lugar del RAG de PEISA.
         """
         try:
-            from app.modules.chatbot.weber_rag_engine import search_and_answer
+            from RAG_engine.query.weber_rag_llm import search_and_answer
             result = search_and_answer(message)
             return {
                 "type": "response",

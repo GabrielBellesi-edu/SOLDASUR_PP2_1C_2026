@@ -258,16 +258,17 @@ Al abrir el sistema verás tres opciones principales:
 
 ### Actualización del Catálogo
 
-**Frecuencia recomendada**: Semanal
+**Frecuencia recomendada**: Semanal / Mensual
 
 ```bash
-python app/modules/scraping/product_scraper.py
+python scraping/peisa_product_scraper.py
+python scraping/weber_product_scraper.py
 ```
 
 Este comando:
-- Conecta con peisa.com.ar
+- Conecta con el sitio web oficial de la marca
 - Extrae información actualizada de productos
-- Genera nuevo `data/products_catalog.json`
+- Genera o actualiza el catálogo en `web_app/data/peisa_catalog.json` o `weber_catalog.json`
 
 ### Verificar Estado del Sistema
 
@@ -276,25 +277,22 @@ Este comando:
 curl http://127.0.0.1:11434/api/health
 
 # Probar consulta RAG
-python query/query.py "¿Tienen calderas de más de 17000 W?"
+python RAG_engine/query/peisa_rag_query.py "¿Tienen calderas de más de 17000 W?"
 
-# Verificar embeddings
-python scripts/test_embeddings.py
+# Ejecutar ingesta manual
+python RAG_engine/scripts/ingest.py --all
 ```
 
 ### Monitoreo de Logs
 
-Los logs del sistema aparecen en la consola cuando ejecutas:
-- Consultas RAG procesadas
-- Productos encontrados
-- Errores de conexión con Ollama
+Los logs del sistema aparecen en la consola cuando ejecutas FastAPI con Uvicorn.
 
 ### Backup de Datos
 
 **Archivos importantes a respaldar:**
-- `data/products_catalog.json` - Catálogo de productos
-- `app/peisa_advisor_knowledge_base.json` - Reglas del sistema experto
-- `embeddings/products.faiss` - Índice de búsqueda (si se usa)
+- `web_app/data/peisa_catalog.json` y `weber_catalog.json` - Catálogos de productos
+- `app/peisa_advisor_knowledge_base.json` y `app/weber_advisor_knowledge_base.json` - Reglas de los sistemas expertos
+- `RAG_engine/database/` - Carpeta de bases SQLite e índices FAISS (búsqueda semántica)
 
 ---
 
@@ -337,13 +335,13 @@ Los logs del sistema aparecen en la consola cuando ejecutas:
 **Soluciones:**
 1. Actualizar catálogo:
    ```bash
-   python app/modules/scraping/product_scraper.py
+   python scraping/peisa_product_scraper.py
    ```
 
 2. Verificar archivo:
    ```bash
-   # Verificar que existe data/products_catalog.json
-   ls -la data/products_catalog.json
+   # Verificar que existe web_app/data/peisa_catalog.json
+   ls -la web_app/data/peisa_catalog.json
    ```
 
 #### Error al calcular en Sistema Experto
@@ -473,178 +471,140 @@ pp2-soldasur-2c-2025/
 ├── 📄 .env                               # Variables de entorno
 │
 ├── 📁 app/                               # ⭐ APLICACIÓN PRINCIPAL
-│   │
-│   ├── 🌐 index.html                   # Página web principal
-│   ├── 🎨 soldasur.css                  # Estilos CSS
-│   ├── ⚙️ soldasur.js                   # Lógica frontend principal
-│   │
 │   ├── 🔧 main.py                       # API FastAPI (endpoints)
-│   ├── 🔧 app.py                        # Configuración de la app
+│   ├── 🔧 app.py                        # Funciones auxiliares y motor experto PEISA
 │   ├── 🔧 orchestrator.py               # Orquestador híbrido (EXPERTO/RAG)
-│   ├── 🔧 models.py                     # Modelos de datos
+│   ├── 🔧 models.py                     # Modelos de radiadores PEISA
 │   │
-│   ├── 📋 peisa_advisor_knowledge_base.json  # ⭐ BASE DE CONOCIMIENTO (KB)
+│   ├── 📋 peisa_advisor_knowledge_base.json  # ⭐ Base de conocimiento (KB PEISA)
+│   └── 📋 weber_advisor_knowledge_base.json  # ⭐ Base de conocimiento (KB Weber)
+│
+├── 📁 web_app/                          # 🌐 FRONTEND Y ESTÁTICOS
+│   ├── index.html                       # Página HTML unificada
+│   ├── soldasur.css                     # Estilos visuales unificados
+│   ├── soldasur.js                      # Orquestador JS del navegador
 │   │
-│   ├── 📁 modules/                      # ⭐ MÓDULOS DEL SISTEMA
-│   │   │
-│   │   ├── 📁 chatbot/                  # 🤖 CHATBOT (RAG + LLM)
-│   │   │   ├── chatbot.js              # Frontend del chatbot
-│   │   │   ├── llm_wrapper.py          # Wrapper de Ollama
-│   │   │   └── rag_engine_v2.py        # Motor RAG (FAISS + Embeddings)
-│   │   │
-│   │   ├── 📁 expertSystem/             # 🧠 SISTEMA EXPERTO
-│   │   │   ├── expertSystem.js         # Frontend del experto
-│   │   │   ├── expert_engine.py        # Motor de inferencia
-│   │   │   ├── product_loader.py       # Cargador de productos
-│   │   │   └── models.py               # Modelos de radiadores
-│   │   │
-│   │   └── 📁 scraping/                 # 🕷️ WEB SCRAPING
-│   │       ├── product_scraper.py      # Scraper de PEISA
-│   │       └── inspect_peisa.py        # Inspector de HTML
+│   ├── 📁 img/                          # 🖼️ Recursos visuales
+│   │   ├── peisa-logo.png
+│   │   ├── weber-logo.png
+│   │   └── soldy_head.png
 │   │
-│   └── 📁 img/                          # Imágenes de la app
-│       └── soldy_head.png              # Favicon (Soldy)
+│   ├── 📁 data/                         # 💾 CATÁLOGOS COMERCIALES
+│   │   ├── peisa_catalog.json           # Catálogo PEISA
+│   │   └── weber_catalog.json           # Catálogo Weber
+│   │
+│   └── 📁 js_modules/                   # 🧩 COMPONENTES JAVASCRIPT
+│       ├── core.js                      # Estado global y visualizador de catálogos
+│       ├── chatbot.js                   # Módulo del chatbot libre
+│       ├── peisa_expert.js              # Experto offline de calefacción PEISA
+│       └── weber_expert.js              # Experto offline de construcción Weber
 │
-├── 📁 data/                              # 💾 DATOS
-│   └── products_catalog.json           # ⭐ CATÁLOGO DE PRODUCTOS
+├── 📁 scraping/                         # 🕷️ MÓDULO DE SCRAPERS
+│   ├── peisa_product_scraper.py         # Scraper de PEISA
+│   └── weber_product_scraper.py         # Scraper de Weber (Drupal paginado)
 │
-├── 📁 embeddings/                        # 🔢 VECTORES
-│   └── products.faiss                   # Índice FAISS (búsqueda semántica)
+├── 📁 RAG_engine/                       # 🤖 MOTOR RAG Y EMBEDDINGS
+│   ├── 📁 database/                     # SQLite y FAISS
+│   │   ├── peisa_products.db
+│   │   ├── peisa_products.faiss
+│   │   ├── weber_products.faiss
+│   │   └── weber_metadata.json
+│   │
+│   ├── 📁 scripts/                      # ORQUESTADOR E INGESTAS
+│   │   ├── ingest.py                    # Orquestador central (--peisa, --weber, --all)
+│   │   ├── peisa_ingest.py              # Ingesta PEISA
+│   │   ├── weber_build_catalog.py       # Paso 1 Weber: Catálogo consolidado
+│   │   └── weber_build_embeddings.py    # Paso 2 Weber: FAISS y metadatos
+│   │
+│   └── 📁 query/                        # INFERENCIA Y LLM
+│       ├── peisa_rag_query.py           # Retriever PEISA
+│       ├── peisa_rag_llm.py             # Generador / LLM PEISA (Soldy)
+│       ├── weber_rag_query.py           # Retriever Weber
+│       └── weber_rag_llm.py             # Generador / LLM Weber (Soldy)
 │
-├── 📁 ingest/                            # 📥 INGESTA DE DATOS
-│   └── ingest.py                        # Script de ingesta (CSV → FAISS)
+├── 📁 configs/                          # ⚙️ CONFIGURACIONES
 │
-├── 📁 query/                             # 🔍 CONSULTAS
-│   └── query.py                         # Script de consulta RAG
-│
-├── 📁 scripts/                           # 🛠️ SCRIPTS AUXILIARES
-│   └── test_embeddings.py               # Test de embeddings
-│
-├── 📁 docs/                              # 📚 DOCUMENTACIÓN TÉCNICA
-│   ├── GLOSARIO.md                      # Términos técnicos
-│   ├── CHATBOT.md                       # Guía del chatbot
-│   ├── SISTEMA_EXPERTO.md               # Guía del sistema experto
-│   ├── SCRAPING.md                      # Guía de scraping
-│   └── MANUAL_ESCALAMIENTO.md           # Manual para escalar
-│
-├── 📁 images/                            # 🖼️ IMÁGENES GENERALES
-│   ├── logo_white.png                   # Logo SOLDASUR
-│   ├── welcome.webp                     # Imagen de bienvenida
-│   └── soldy_head.png                   # Avatar de Soldy
-│
-├── 📁 configs/                           # ⚙️ CONFIGURACIONES
-│   └── params.yaml                      # Parámetros del sistema
-│
-└── 📁 tests/                             # 🧪 TESTS
+└── 📁 docs/                             # 📚 DOCUMENTACIÓN TÉCNICA
+    ├── GLOSARIO.md
+    ├── CHATBOT.md
+    ├── SISTEMA_EXPERTO.md
+    ├── SCRAPING.md
+    └── MANUAL_ESCALAMIENTO.md
 ```
 
 #### 🔍 Explicación por Componentes
 
 **🌐 Frontend (Interfaz de Usuario)**
 ```
-app/
-├── index.html    → Página web principal
-├── soldasur.css         → Estilos visuales
-└── soldasur.js          → Lógica de navegación y UI
+web_app/
+├── index.html            → Página HTML unificada
+├── soldasur.css          → Estilos de la aplicación
+├── soldasur.js           → Orquestador de navegación
+└── js_modules/           → Módulos especializados
 ```
-Interfaz web que el usuario ve. Tiene 3 puntos de entrada: Guíame (experto), Pregunta (chat), Buscar productos.
+Interfaz web que el usuario ve. Tiene 3 puntos de entrada: Calculadora PEISA, Calculadora Weber, Chat libre, Catálogo de productos.
 
 **🤖 Chatbot (RAG + LLM)**
 ```
-app/modules/chatbot/
-├── chatbot.js           → Frontend del chat (memoria, filtrado)
-├── llm_wrapper.py       → Conexión con Ollama (LLM local)
-└── rag_engine_v2.py     → Búsqueda semántica (FAISS + embeddings)
+RAG_engine/query/
+├── peisa_rag_query.py   → Recuperación PEISA (FAISS/SQLite)
+├── peisa_rag_llm.py     → Generador PEISA (Ollama)
+├── weber_rag_query.py   → Recuperación Weber (FAISS/metadatos)
+└── weber_rag_llm.py     → Generador Weber (Ollama)
 ```
-Conversación libre en lenguaje natural. Busca productos similares y genera respuestas con Ollama.
+Conversación libre en lenguaje natural para ambas marcas.
 
 **🧠 Sistema Experto (IA Simbólica)**
 ```
-app/modules/expertSystem/
-├── expertSystem.js          → Frontend del flujo guiado
-├── expert_engine.py         → Motor de inferencia (ejecuta reglas)
-├── product_loader.py        → Carga catálogo y funciones auxiliares
-└── models.py                → Datos técnicos de radiadores
+web_app/js_modules/
+├── peisa_expert.js      → Lógica offline PEISA
+└── weber_expert.js      → Lógica offline Weber
 
-app/peisa_advisor_knowledge_base.json  → BASE DE CONOCIMIENTO (reglas)
+app/
+├── app.py               → Lógica backend PEISA
+└── modules/expertSystem/weber_expert_engine.py  → Lógica backend Weber
 ```
-Flujo guiado paso a paso con preguntas y cálculos. Dimensiona calefacción según reglas técnicas.
-
-**🔗 Orquestador Híbrido**
-```
-app/orchestrator.py      → Clasifica intención y enruta (EXPERTO/RAG/HÍBRIDO)
-```
-Decide qué sistema usar según la consulta del usuario. Unifica ambos enfoques.
+Flujo guiado paso a paso para dimensionamiento.
 
 **🕷️ Scraping**
 ```
-app/modules/scraping/
-├── product_scraper.py   → Extrae productos de peisa.com.ar
-└── inspect_peisa.py     → Inspecciona estructura HTML
+scraping/
+├── peisa_product_scraper.py   → Scraper PEISA (BeautifulSoup)
+└── weber_product_scraper.py   → Scraper Weber (Playwright Drupal)
 ```
-Actualiza automáticamente el catálogo desde la web de PEISA.
+Actualiza los catálogos JSON.
 
 **💾 Datos**
 ```
-data/
-└── products_catalog.json    → CATÁLOGO UNIFICADO (usado por experto y chatbot)
+web_app/data/
+├── peisa_catalog.json   → Catálogo PEISA
+└── weber_catalog.json   → Catálogo Weber
 
-embeddings/
-└── products.faiss           → Índice vectorial para búsqueda semántica
+RAG_engine/database/
+├── *.faiss              → Índices vectoriales FAISS
+└── peisa_products.db    → Base SQLite PEISA
 ```
 Fuente única de verdad para productos. Ambos sistemas lo consumen.
 
-#### 🔄 Flujo de Datos Simplificado
-
-```
-┌─────────────┐
-│   USUARIO   │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────────────────────┐
-│  FRONTEND (index.html)          │
-│  • Guíame (Experto)             │
-│  • Pregunta (Chat)              │
-│  • Buscar productos             │
-└──────┬──────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────┐
-│  ORQUESTADOR (orchestrator.py)  │
-│  Clasifica intención            │
-└──────┬──────────────────────────┘
-       │
-       ├─────────────┬─────────────┐
-       ▼             ▼             ▼
-┌─────────────┐ ┌─────────┐ ┌──────────┐
-│   EXPERTO   │ │   RAG   │ │ HÍBRIDO  │
-│   (Reglas)  │ │  (LLM)  │ │  (Ambos) │
-└──────┬──────┘ └────┬────┘ └─────┬────┘
-       │             │            │
-       └─────────────┴────────────┘
-                     │
-                     ▼
-       ┌─────────────────────────┐
-       │  CATÁLOGO DE PRODUCTOS  │
-       │  (products_catalog.json)│
-       └─────────────────────────┘
-```
-
 #### 📊 Archivos Clave
 
-| Archivo | Función | Tipo |
+| Archivo / Carpeta | Función | Tipo |
 |---------|---------|------|
-| `peisa_advisor_knowledge_base.json` | Base de conocimiento (reglas) | KB |
-| `expert_engine.py` | Motor de inferencia | Backend |
-| `llm_wrapper.py` | Conexión con Ollama | Backend |
-| `rag_engine_v2.py` | Búsqueda semántica | Backend |
-| `orchestrator.py` | Clasificador de intención | Backend |
-| `product_scraper.py` | Scraping de PEISA | Script |
-| `products_catalog.json` | Catálogo unificado | Datos |
+| `peisa_advisor_knowledge_base.json` | Reglas de PEISA | KB |
+| `weber_advisor_knowledge_base.json` | Reglas de Weber | KB |
+| `app.py` | Motor de inferencia backend PEISA | Backend |
+| `weber_expert_engine.py` | Motor de inferencia backend Weber | Backend |
+| `peisa_rag_llm.py` | Inferencia LLM PEISA (Ollama) | RAG |
+| `weber_rag_llm.py` | Inferencia LLM Weber (Ollama) | RAG |
+| `peisa_rag_query.py` | Retriever FAISS/SQLite PEISA | RAG |
+| `weber_rag_query.py` | Retriever FAISS/Metadatos Weber | RAG |
+| `ingest.py` | Orquestador central de ingesta | Script |
+| `peisa_catalog.json` | Catálogo comercial PEISA | Datos |
+| `weber_catalog.json` | Catálogo comercial Weber | Datos |
 | `index.html` | Interfaz web | Frontend |
-| `chatbot.js` | Lógica del chat | Frontend |
-| `expertSystem.js` | Lógica del experto | Frontend |
+| `chatbot.js` | Módulo de chat libre | Frontend |
+| `peisa_expert.js` | Lógica experto PEISA offline | Frontend |
+| `weber_expert.js` | Lógica experto Weber offline | Frontend |
 
 ### Versiones y Actualizaciones
 

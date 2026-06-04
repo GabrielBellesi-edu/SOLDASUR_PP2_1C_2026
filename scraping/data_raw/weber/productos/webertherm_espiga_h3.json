@@ -1,0 +1,48 @@
+{
+  "nombre": "webertherm espiga H3",
+  "url": "https://www.ar.weber/aislacion-termica/sistema-eifs/webertherm-espiga-h3",
+  "descripcion": "Inicio Aislación térmica Sistema EIFS",
+  "datos_tecnicos": "Inicio\nAislación térmica\nSistema EIFS\nwebertherm espiga H3\nShow gallery\nwebertherm espiga H3\nAnclaje de golpeo de núcleo de plástico reforzado, para soportes tradicionales. Con cabezal flexible para la fijación de materiales aislantes en los sistemas webertherm. Longitud: 95 y 115 mm (según el espesor de la placa).\nAislación térmica\nFácil aplicacion\nFacil Nivelacion\nNo produce corrosión\nRevestible\nManual\nSoporte\nFachada,\nPared Exterior\nEncontrá un distribuidor\nCaracterísticas y beneficios\n-Evita puentes térmicos\n-No afecta al revoque\nRestricciones\nDocumentación del producto\nHoja Técnica\nHT_webertherm_espiga_H3.pdf\n(PDF - 326,98 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nProductos relacionados con webertherm espiga H3\nwebertherm placa EPS\nPlacas de poliestireno expandido para sistema webertherm EIFS.\nwebertherm base coat\nCapa base niveladora ideal para sistema EIFS.\nwebertherm malla 160\nMalla de fibra de vidrio",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Aislación térmica",
+        "slug": "aislacion-termica-276"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Facil Nivelacion",
+        "slug": "facil-nivelacion-229"
+      },
+      {
+        "nombre": "No produce corrosión",
+        "slug": "no-produce-corrosion-258"
+      },
+      {
+        "nombre": "Revestible",
+        "slug": "revestible-260"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Fachada,\n    Pared Exterior"
+  },
+  "documentos": [
+    {
+      "nombre": "HT_webertherm_espiga_H3.pdf",
+      "url": "https://www.ar.weber/files/ar/2020-04/HT_webertherm_espiga_H3.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:37:48.831946",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-06/espiga_H3_A2225F05D6E741D5AF4F139557899D69.jpg?itok=ij4mPiSm",
+  "imagen_local": "data_raw\\weber\\img\\webertherm_espiga_h3.jpg"
+}

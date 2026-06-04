@@ -1,0 +1,56 @@
+{
+  "nombre": "webertherm promex S",
+  "url": "https://www.ar.weber/aislacion-termica/revoques-estructurales/webertherm-promex-s",
+  "descripcion": "Inicio Aislación térmica Revoques estructurales",
+  "datos_tecnicos": "Inicio\nAislación térmica\nRevoques estructurales\nwebertherm promex S\nShow gallery\nwebertherm promex S\nMortero estructural con ceresita, de alta resistencia, diseñado especialmente para aplicar sobre paneles de poliestireno expandido (EPS) con malla de acero.\nAditivado con Ceresita\nFácil aplicacion\nGran rendimiento\nImpermeable\nMayor resistencia\nManual\nProyectable\nSoporte\nPared Exterior,\nPared Interna\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\n• Los paneles deberán estar colocados siguiendo estrictamente las especificaciones del fabricante. (encastre entre paneles, mallas de refuerzo, apuntalamientos, etc.).\n• Antes, durante y después de la proyección del revoque será necesario verificar la rigidización de los paneles, evitando el movimiento de los mismos.\n• La superficie debe ser estable,  limpia, seca, libre de polvo y todo resto de material.\nCaracterísticas y beneficios\nCon ceresita.\nGran resistencia a la compresión.\nIdeal para paneles de EPS.\nRestricciones\nNo aplicar con temperaturas inferiores a 10°C ni superiores a 30°C.\nNo aplicar con lluvias o heladas.\nNo agregar cemento ni ningún tipo de aditivo.\nDocumentación del producto\nFicha de producto\nFP_weber_promex_S.pdf\n(PDF - 608,94 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS webertherm promex S\n(PDF - 379,44 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Aditivado con Ceresita",
+        "slug": "aditivado-con-ceresita-255"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Gran rendimiento",
+        "slug": "gran-rendimiento-239"
+      },
+      {
+        "nombre": "Impermeable",
+        "slug": "impermeable-234"
+      },
+      {
+        "nombre": "Mayor resistencia",
+        "slug": "mayor-resistencia-243"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      },
+      {
+        "nombre": "Proyectable",
+        "slug": "proyectable-96"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Pared Exterior,\n    Pared Interna"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weber_promex_S.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/FP_weber_promex_S.pdf"
+    },
+    {
+      "nombre": "HS webertherm promex S",
+      "url": "https://www.ar.weber/files/ar/2019-03/HS_webertherm_promex_S.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:37:55.888527",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-05/pack-weber-promexS-30kg_67156A66E04B421A965BDD230483595F.jpg?itok=i-R9zEDM",
+  "imagen_local": "data_raw\\weber\\img\\webertherm_promex_s.jpg"
+}

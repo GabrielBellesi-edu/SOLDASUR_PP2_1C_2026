@@ -1,0 +1,49 @@
+{
+  "nombre": "webertherm base coat",
+  "url": "https://www.ar.weber/revocar-paredes/nivelacion-y-renovacion/webertherm-base-coat",
+  "descripcion": "Inicio Revocar paredes Nivelación y renovación",
+  "datos_tecnicos": "Inicio\nRevocar paredes\nNivelación y renovación\nwebertherm base coat\nShow gallery\nwebertherm base coat\nRevoque base y mortero adhesivo ideal para sistema EIFS.\nFácil aplicacion\nAditivado con Ceresita\nImpermeable\nRepelencia al agua\nManual\nPresentación\n25 kg\nSoporte\nFachada,\nPared Exterior,\nPared pintada,\nRevestimiento Antiguo\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nNo aplicar con temperaturas inferiores a 10°C ni superiores a 30°C.\nNo aplicar con lluvias, heladas o tiempos muy húmedos.\nNo agregar cemento ni ningún tipo de aditivo.\nCaracterísticas y beneficios\nImpermeable\nExcelente adherencia\nIdeal para sistema EIFS.\nRestricciones\nMezcla en polvo a base de cemento gris, polímeros,\ncargas de granulometría clasificada y aditivos\nquímicos.\nDocumentación del producto\nFicha de producto\nFP_webertherm_base_coat\n(PDF - 812,04 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS webertherm base coat\n(PDF - 202,78 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video\nProductos relacionados con webertherm base coat\nwebertherm placa EPS\nPlacas de poliestireno expandido para sistema webertherm EIFS.\nweberplast rulato travertino medio\nRevestimiento acrílico texturable\nwebertherm malla 160\nMalla de fibra de vidrio",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Aditivado con Ceresita",
+        "slug": "aditivado-con-ceresita-255"
+      },
+      {
+        "nombre": "Impermeable",
+        "slug": "impermeable-234"
+      },
+      {
+        "nombre": "Repelencia al agua",
+        "slug": "repelencia-al-agua-256"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Presentación": "Fachada,\n    Pared Exterior,\n    Pared pintada,\n    Revestimiento Antiguo",
+    "Soporte": "Fachada,\n    Pared Exterior,\n    Pared pintada,\n    Revestimiento Antiguo"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_webertherm_base_coat",
+      "url": "https://www.ar.weber/files/ar/2024-08/FP_-_webertherm_base_coat_.pdf"
+    },
+    {
+      "nombre": "HS webertherm base coat",
+      "url": "https://www.ar.weber/files/ar/2023-11/HS__webertherm_base_coat_.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:38:05.927656",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2024-08/pack-weber-thermbasecoat-30kg_6AA575084ABB4DA08EC7745A8AFF0EFC.jpg?itok=mnGF5hji",
+  "imagen_local": "data_raw\\weber\\img\\webertherm_base_coat.jpg"
+}

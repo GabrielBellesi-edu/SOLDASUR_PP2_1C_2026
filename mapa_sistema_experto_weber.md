@@ -85,4 +85,4 @@ Una vez provista la superficie en $m^2$, el sistema busca la configuraci처n seg�
    $$\text{Bolsas necesarias} = \text{ceil}\left(\frac{\text{Kg Totales}}{25}\right)$$
 
 ---
-*Este documento fue generado en base a la especificaci처n l처gica del archivo [weber_expert.js](file:///d:/ESTUDIO/CPMA/DEV/22 - PRACTICA PROFESIONALIZANTE II/Repo/v4/SOLDASUR_PP2_1C_2026/app/modules/weber/weber_expert.js).*
+*Este documento fue generado en base a la especificaci처n l처gica del archivo [weber_expert.js](app/modules/weber/weber_expert.js).*

@@ -17,7 +17,7 @@ Es el archivo JSON que contiene **todo el conocimiento del sistema experto**: re
 3. **Fórmulas y cálculos**: Expresiones matemáticas para dimensionar calefacción
 4. **Lógica de negocio**: Criterios para recomendar productos
 
-La KB es el "cerebro" del sistema experto. El motor (`expert_engine.py`) lee e interpreta esta KB para guiar al usuario paso a paso.
+La KB es el "cerebro" del sistema experto. El motor backend (`app/app.py`) o el módulo frontend (`web_app/js_modules/peisa_expert.js`) leen e interpretar esta KB para guiar al usuario paso a paso.
 
 ## Archivos clave del Sistema Experto
 
@@ -28,53 +28,35 @@ La KB es el "cerebro" del sistema experto. El motor (`expert_engine.py`) lee e i
 - **Contenido**: Nodos con `id`, `tipo`, `pregunta`, `opciones`, `acciones`, `siguiente`
 - **Rol**: Es la fuente de conocimiento que el motor interpreta
 
-### 2. Motor de Inferencia
-**Archivo:** `app/modules/expertSystem/expert_engine.py`
+### 2. Motor de Inferencia (Backend)
+**Archivo:** `app/app.py`
 
-- **Función**: Ejecuta las reglas de la KB
-- **Clase principal**: `ExpertEngine`
-- **Métodos clave**:
-  - `process()`: Interpreta el nodo actual y avanza
-  - `_perform_calculation()`: Ejecuta cálculos con eval seguro
-  - `_replace_variables()`: Reemplaza variables en textos
-- **Rol**: Es el "motor" que lee la KB y la ejecuta
+- **Función**: Ejecuta las reglas de la KB de PEISA en el servidor.
+- **Funciones clave**:
+  - `perform_calculation()`: Ejecuta cálculos matemáticos con un parser evaluador.
+  - `replace_variables()`: Reemplaza variables en los textos e interpola con Jinja2.
+  - `filter_radiators()`: Filtra radiadores según los requerimientos de potencia, colores y estilo.
+  - `format_radiator_recommendations()`: Genera el string legible de radiadores recomendados.
 
-### 3. Integración con Catálogo de Productos
-**Archivo:** `app/modules/expertSystem/product_loader.py`
+### 3. Integración con Catálogo de Productos y Modelos
+**Archivo:** `app/models.py` y `web_app/data/peisa_catalog.json`
 
-- **Función**: Carga productos y expone funciones de recomendación
-- **Fuente de datos**: `data/products_catalog.json` (o fallback a Excel/CSV)
-- **Funciones auxiliares disponibles en la KB**:
-  - `filter_radiators()`: Filtra radiadores por criterios
-  - `recommend_boiler()`: Recomienda calderas
-  - `recommend_floor_heating_kit()`: Recomienda kits de piso radiante
-  - `recommend_radiator_from_catalog()`: Busca radiadores específicos
-  - `recommend_towel_rack_from_catalog()`: Busca toalleros
-  - `format_radiator_recommendations()`: Formatea recomendaciones
-  - `load_product_catalog()`: Carga el catálogo completo
-- **Rol**: Conecta el sistema experto con el catálogo de productos PEISA
+- **Función**: Expone `RADIATOR_MODELS` con datos técnicos de los radiadores PEISA para cálculos precisos (coeficientes, potencias y colores).
+- **Rol**: Conecta el sistema experto con los catálogos y especificaciones.
 
-### 4. Modelos de Productos (Auxiliar)
-**Archivo:** `app/modules/expertSystem/models.py`
+### 4. Front-end del Experto (Offline)
+**Archivos:** `web_app/js_modules/peisa_expert.js` y `web_app/js_modules/weber_expert.js`
 
-- **Función**: Expone `RADIATOR_MODELS` con datos técnicos
-- **Contenido**: Coeficientes, instalación, estilos, colores de radiadores
-- **Rol**: Proporciona datos técnicos para cálculos
+- **Función**: Definen la UX paso a paso del flujo guiado (PEISA y Weber) de forma local/offline corriendo 100% en el navegador.
+- **Rol**: Interfaz de usuario interactiva.
 
-### 5. Front-end del Experto
-**Archivo:** `app/modules/expertSystem/expertSystem.js`
-
-- **Función**: Define la UX paso a paso del flujo guiado
-- **Contenido**: Mensajes, inputs numéricos, opciones, panel de contexto
-- **Rol**: Interfaz de usuario para el sistema experto
-
-### 6. Endpoints Backend
+### 5. Endpoints Backend
 **Archivo:** `app/main.py`
 
 - **Endpoints**:
-  - `POST /start`: Inicia conversación con `current_node = 'inicio'`
-  - `POST /reply`: Procesa `option_index` o `input_values` y devuelve el siguiente mensaje
-- **Rol**: API para versión server-side del sistema experto
+  - `POST /start` y `POST /reply` (PEISA): Inicia y avanza en la conversación usando `app/app.py`.
+  - `POST /expert/weber/start` y `POST /expert/weber/reply` (Weber): Inicia y avanza en el asesoramiento usando `app/modules/expertSystem/weber_expert_engine.py`.
+- **Rol**: API de backend.
 
 ## Flujo de Componentes
 
@@ -86,20 +68,14 @@ La KB es el "cerebro" del sistema experto. El motor (`expert_engine.py`) lee e i
                │
                ▼
 ┌─────────────────────────────────────────┐
-│  expert_engine.py                        │  ← MOTOR DE INFERENCIA
+│  app.py / main.py                        │  ← MOTOR DE INFERENCIA BACKEND
 │  (Interpreta y ejecuta la KB)           │     ¿Cómo ejecutar las reglas?
 └──────────────┬──────────────────────────┘
                │
                ▼
 ┌─────────────────────────────────────────┐
-│  product_loader.py                       │  ← INTEGRACIÓN CON CATÁLOGO
-│  (Carga productos y funciones auxiliares)│     ¿Qué productos recomendar?
-└──────────────┬──────────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────────┐
-│  data/products_catalog.json              │  ← CATÁLOGO DE PRODUCTOS
-│  (Productos PEISA actualizados)         │     Datos de productos
+│  models.py / peisa_catalog.json         │  ← ESPECIFICACIONES DE PRODUCTOS
+│  (Datos técnicos de radiadores PEISA)   │     ¿Qué recomendar y cómo calcular?
 └─────────────────────────────────────────┘
 ```
 
@@ -138,20 +114,11 @@ Ejemplo (radiadores):
   - Reemplaza `{{variable}}` y permite expresiones Jinja2.
 - Enriquecimiento RAG (opcional): `_enrich_with_rag` si `rag_engine` fue inyectado y el nodo lo habilita.
 
-## Catálogo dinámico (`product_loader.py`)
+## Catálogos y Front-end
 
-- Carga `data/raw/Products_db.xlsx` (o fallback `data/processed/products_mock.csv`).
-- Construye diccionarios de radiadores/calderas/piso radiante.
-- Calcula `coeficiente` por modelo (350, 500, 600, 700, 800, 1000) y determina instalación/estilo/colores.
-- Expone funciones de conveniencia: `get_all_products()`, `get_radiators_dict()`, `find_boiler_by_power()`.
-
-## Front-end del experto (`expertSystem.js`)
-
-- Define la UX paso a paso (mensajes, inputs numéricos, opciones, panel de contexto).
-- Implementa cálculos rápidos en cliente como refuerzo visual.
-- Llama funciones de recomendación basadas en `data/products_catalog.json`.
-
-## Endpoints de FastAPI (modo server-side)
+- Los catálogos unificados (`web_app/data/peisa_catalog.json` y `weber_catalog.json`) se leen en el navegador.
+- `peisa_expert.js` y `weber_expert.js` manejan el estado del sistema experto de forma offline.
+- Los endpoints de FastAPI (`/start`, `/reply`) sirven para cuando se requiera ejecutar el sistema experto en el backend.
 
 - `POST /start`: inicia conversación con `current_node = 'inicio'`.
 - `POST /reply`: procesa `option_index` o `input_values` y devuelve el siguiente mensaje (pregunta/respuesta/cálculo).

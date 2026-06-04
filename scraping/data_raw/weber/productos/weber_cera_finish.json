@@ -1,0 +1,60 @@
+{
+  "nombre": "weber cera finish",
+  "url": "https://www.ar.weber/soluciones-para-pisos/productos-complementarios/weber-cera-finish",
+  "descripcion": "Inicio Soluciones para pisos Productos complementarios",
+  "datos_tecnicos": "Inicio\nSoluciones para pisos\nProductos complementarios\nweber cera finish\nShow gallery\nweber cera finish\nCera autobrillo con alto contenido de sólidos para pisos cementicios. Protege y da brillo intenso sin necesidad de lustre. Terminación uniforme sin vetas.\nAlta resistencia\nCurado rápido\nFácil aplicacion\nGran rendimiento\nRápida puesta en servicio\nResistencia al alto tránsito\nManual\nSoporte\nPiso\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nPara superficies de alto tránsito, aplicar sin diluir.\nPara superficies de transito bajo a medio, diluir con 30% de agua.\nDocumentación del producto\nFicha de producto\nFP_weber_cera_finish.pdf\n(PDF - 269,11 KB)\nDescargar\nEnviar\nHoja Técnica\nHT_weber_cera_finish.pdf\n(PDF - 327,32 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS weber cera finish\n(PDF - 466,11 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Alta resistencia",
+        "slug": "alta-resistencia-235"
+      },
+      {
+        "nombre": "Curado rápido",
+        "slug": "curado-rapido-278"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Gran rendimiento",
+        "slug": "gran-rendimiento-239"
+      },
+      {
+        "nombre": "Rápida puesta en servicio",
+        "slug": "rapida-puesta-en-servicio-245"
+      },
+      {
+        "nombre": "Resistencia al alto tránsito",
+        "slug": "resistencia-al-alto-transito-281"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Piso"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weber_cera_finish.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/FP_weber_cera_finish.pdf"
+    },
+    {
+      "nombre": "HT_weber_cera_finish.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/HT_weber_cera_finish.pdf"
+    },
+    {
+      "nombre": "HS weber cera finish",
+      "url": "https://www.ar.weber/files/ar/2021-10/HS_weber_cera_finish_Espaol-AR.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:34:44.711623",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-05/pack-weber-cerafinish-5L_4555DE2D07634F33967470642D578DB7.jpg?itok=hg9mEt-N",
+  "imagen_local": "data_raw\\weber\\img\\weber_cera_finish.jpg"
+}

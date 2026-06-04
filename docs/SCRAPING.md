@@ -4,16 +4,13 @@ Este módulo obtiene/actualiza el catálogo de productos PEISA.
 
 ## Archivos
 
-- `app/modules/scraping/product_scraper.py`
+- `scraping/peisa_product_scraper.py`
   - Scraping real de `https://peisa.com.ar/productos`.
   - Extracción de tarjetas de productos (modelo, descripción, tipo), categoría/subcategoría (h1 y texto rojo), URL.
   - Detalle de producto: descripción completa, ventajas, características técnicas y especificaciones; normaliza potencia a Watts si es posible.
   - Mapeos: `map_category_to_family`, `determine_family`, `determine_type`.
-  - Persistencia: `save_catalog()` fusiona con `data/products_catalog.json` (actualiza por URL; agrega nuevos).
+  - Persistencia: `save_catalog()` fusiona con `web_app/data/peisa_catalog.json` (actualiza por URL; agrega nuevos).
   - `get_products_catalog(use_scraping=True)` permite forzar lectura desde archivo sin web.
-
-- `app/modules/scraping/inspect_peisa.py`
-  - Inspección/diagnóstico: guarda HTML y lista clases/enlaces de la página de productos para ajustar selectores.
 
 ## Flujo principal
 
@@ -27,21 +24,17 @@ Este módulo obtiene/actualiza el catálogo de productos PEISA.
 2) `save_catalog(filename, use_scraping)`
    - Carga catálogo existente (si hay) y lo indexa por URL.
    - Ejecuta `get_products_catalog()`; actualiza/merge por URL.
-   - Guarda `data/products_catalog.json` con indentación y UTF-8.
+   - Guarda `web_app/data/peisa_catalog.json` con indentación y UTF-8.
 
 ## Ejecución
 
 - Scraping real y guardado:
   ```bash
-  python app/modules/scraping/product_scraper.py
+  python scraping/peisa_product_scraper.py
   ```
 - Sin scraping (solo re-escribir desde archivo existente):
   ```bash
-  python app/modules/scraping/product_scraper.py --no-scraping
-  ```
-- Inspección de estructura HTML:
-  ```bash
-  python app/modules/scraping/inspect_peisa.py
+  python scraping/peisa_product_scraper.py --no-scraping
   ```
 
 ## Consideraciones y límites
@@ -58,7 +51,7 @@ Este módulo obtiene/actualiza el catálogo de productos PEISA.
   - Chatbot (front-end) para armar el context prompt, renderizar tarjetas y enlaces.
   - RAG engine (back-end) para embeddings y ranking semántico.
 
-## Esquema de salida (products_catalog.json)
+## Esquema de salida (peisa_catalog.json)
 
 Cada producto incluye típicamente los siguientes campos:
 
@@ -84,6 +77,6 @@ Notas:
 
 ## Resolución de problemas
 
-- La página cambió estructura: ejecutar `inspect_peisa.py` para ver clases y enlaces; ajustar selectores en `product_scraper.py`.
+- La página cambió estructura: ejecutar inspección para ver clases y enlaces; ajustar selectores en `peisa_product_scraper.py`.
 - Muy pocos productos detectados: revisar el patrón `href` y la detección de `<article>` en tarjetas.
 - Corte de conexión: el scraper usa timeouts y captura excepciones; reintentar o aumentar `timeout`.
