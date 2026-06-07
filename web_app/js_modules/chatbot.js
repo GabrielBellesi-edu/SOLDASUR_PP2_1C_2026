@@ -287,7 +287,7 @@ function filterRelevantProducts(userMessage, catalog) {
 
 /* Llamar a la API del Backend Integrado (FastAPI) */
 async function callOllama(userMessage) {
-    const BACKEND_URL = 'http://127.0.0.1:8000/api/chat';
+    const BACKEND_URL = '/api/chat';
 
     const bodyPayload = {
         message: userMessage,

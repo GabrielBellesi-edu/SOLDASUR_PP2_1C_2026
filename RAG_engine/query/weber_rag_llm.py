@@ -25,21 +25,30 @@ REGLAS OBLIGATORIAS:
 8. EVITÁ ALUCINAR COLORES: Si no se especifican explícitamente los colores en el contexto de productos del catálogo (el array de colores está vacío), NUNCA inventes nombres de colores (como tonos pastel, beige, verde, etc.). En su lugar, respondé que el producto viene en colores estándar listos (como blanco o gris, si corresponde) y una amplia gama de tonos a elección preparados por sistema tintométrico, sugiriendo consultar la carta física de colores de SOLDASUR en el local.
 9. ORTOGRAFÍA Y TERMINOLOGÍA: Escribí siempre con ortografía perfecta en español. Usá el término técnico de construcción argentino 'revoque' (o 'revestimiento') en lugar del término español/portugués 'revoco'. Asegurá la correcta acentuación y escritura de palabras clave como 'manual' (NUNCA digas 'manuel').
 
+CUÁNTOS PRODUCTOS RECOMENDAR:
+- Por defecto: 1 solo producto (el más adecuado para la consulta).
+- Máximo 2 productos: SOLO si el usuario pide explícitamente 'opciones', 'alternativas' o 'qué más hay'.
+- NUNCA recomendés 3 o más productos en una consulta específica. Si el contexto trae varios productos, elegí el MÁS RELEVANTE para la consulta y mencioná solo ese.
+
 EJEMPLOS CORRECTOS (CÓMO DEBÉS RESPONDER):
-Usuario: "¿qué productos tiene weber?"
-Soldy: "Ofrecemos una amplia variedad de soluciones Weber. Disponemos de Weber Anclaje Químico para fijaciones de alta exigencia, Weber Espuma PU para sellar, y pastinas clásicas para cerámicos. Si necesitás stock o asesoramiento técnico en obra, te sugiero consultar en el local."
+Usuario: "¿qué productos tiene weber para impermeabilizar?"
+Soldy: "Para impermeabilizar te recomiendo weber.tec impermeable cerámicos con ceresita, ideal para losas, baños y piletas. Si me decís los metros cuadrados, calculo la cantidad de bolsas."
 
 Usuario: "necesito pegar cerámicos en el baño"
-Soldy: "Para el baño te recomiendo usar Weber Impermeable, ya que está formulado para soportar la humedad y evitar filtraciones. Además vas a necesitar pastina para rellenar las juntas. Si me indicás los metros cuadrados, calculo la cantidad de bolsas necesarias."
+Soldy: "Para el baño te recomiendo weber impermeable cerámicos con ceresita, ya que está formulado para soportar la humedad y evitar filtraciones. Si me indicás los metros cuadrados, calculo la cantidad de bolsas necesarias."
 
 Usuario: "¿en qué colores viene el weberplast llaneado?"
 Soldy: "El weberplast llaneado viene en colores estándar listos y en una gran variedad de tonos preparados a elección por sistema tintométrico. Te sugiero pasar por el local de SOLDASUR para ver la carta física de colores."
+
+Usuario: "¿qué opciones tengo para pegar porcellanato?"
+Soldy: "Tenés dos opciones: weber flex porcellanato para juntas anchas y movimiento, o weber gris cerámicos para aplicaciones estándar. Ambas se consiguen en SOLDASUR."
 
 EJEMPLOS INCORRECTOS (NUNCA HAGAS ESTO):
 - "Hola! Soy Soldy. Contamos con..." (Prohibido volver a saludar o presentarse).
 - "Che! Si tenés consultando qué productos tenemos..." (Prohibido empezar con 'Che' y mala conjugación).
 - "Mirá, te comento que tenemos..." (Prohibido usar 'mirá').
-- "Tenés acá para ayudarte..." (Mala gramática, usar 'estoy acá para ayudarte')."""
+- "Tenés acá para ayudarte..." (Mala gramática, usar 'estoy acá para ayudarte').
+- Listar 3 productos cuando la consulta es específica (NUNCA hagas esto)."""
 
 
 def _load_prompt_config() -> Dict[str, Any]:
@@ -75,9 +84,10 @@ def answer_weber(
     if not context_products:
         return "No encontré productos Weber para tu consulta. Podés consultar el catálogo completo en ar.weber.com."
 
-    # Construir contexto de productos
+    # Construir contexto de productos: usar solo los 2 más relevantes para
+    # evitar que el LLM mencione un tercero poco relacionado con la consulta.
     context_lines = []
-    for p in context_products[:3]:  # Top 3 productos
+    for p in context_products[:2]:  # Top 2 productos
         linea = f"- {p.get('model','')}: {p.get('description','')}"
         if p.get("rendimiento"):
             linea += f" | Rendimiento: {p['rendimiento']}"
@@ -157,10 +167,33 @@ def get_weber_product_by_model(model_name: str) -> Optional[Dict[str, Any]]:
     return None
 
 
+# Umbral mínimo de similitud semántica para considerar un producto relevante.
+# Los productos con score menor a este valor se descartan para no contaminar
+# la respuesta del LLM con productos poco relacionados a la consulta.
+SIMILARITY_THRESHOLD = 0.25
+
+
+def _filter_by_relevance(
+    productos: List[Dict[str, Any]],
+    min_score: float = SIMILARITY_THRESHOLD,
+    keep_at_least: int = 1
+) -> List[Dict[str, Any]]:
+    """
+    Filtra productos por similarity_score.
+    Siempre retorna al menos `keep_at_least` producto (el más relevante),
+    aunque ninguno supere el umbral.
+    """
+    filtered = [p for p in productos if p.get("similarity_score", 0) >= min_score]
+    if not filtered and productos:
+        # Garantía mínima: devolver el más relevante aunque no pase el umbral
+        filtered = productos[:keep_at_least]
+    return filtered
+
+
 def search_and_answer(
     query: str,
     last_active_product: Optional[str] = None,
-    top_k: int = 5
+    top_k: int = 3
 ) -> Dict[str, Any]:
     """
     Función de alto nivel: busca productos y genera respuesta.
@@ -171,23 +204,30 @@ def search_and_answer(
     # Detectar superficie en la consulta
     superficie_m2 = _extract_superficie(query)
 
-    # Buscar productos relevantes
+    # Buscar productos relevantes (top_k reducido a 3 para mayor precisión)
     productos = search_weber(query, top_k)
 
-    # Si se especificó un producto activo y no está en los resultados de búsqueda, lo inyectamos al principio
+    # Filtrar por relevancia semántica antes de enviar al LLM
+    productos = _filter_by_relevance(productos)
+
+    # Si se especificó un producto activo y no está en los resultados, lo inyectamos al principio
     if last_active_product:
         p_activo = get_weber_product_by_model(last_active_product)
         if p_activo:
-            # Remover duplicados si ya estaba en la lista de búsqueda
+            # Remover duplicados si ya estaba en la lista
             productos = [p for p in productos if p.get("model", "").lower().strip() != last_active_product.lower().strip()]
             productos.insert(0, p_activo)
 
     # Generar respuesta
     respuesta = answer_weber(query, productos, superficie_m2, last_active_product)
 
+    # Devolver al frontend máximo 2 productos (los más relevantes):
+    # evita mostrar una tarjeta de producto que el LLM no llegó a mencionar.
+    productos_frontend = productos[:2] if productos else []
+
     return {
         "respuesta": respuesta,
-        "productos": productos[:3] if productos else [],
+        "productos": productos_frontend,
         "superficie_detectada": superficie_m2,
         "calculo": calcular_cantidad(productos[0], superficie_m2) if productos and superficie_m2 else None,
         "marca": "Weber"

@@ -108,7 +108,11 @@ body {
             text-decoration: none;
         }
         
-        .option-btn { transition: all 0.2s; }
+        .option-btn {
+            transition: all 0.2s;
+            padding: 0.45rem 0.9rem !important; /* -10% respecto a py-2 px-4 (0.5rem / 1rem) */
+            font-size: 0.9rem !important;       /* -10% respecto al tamaño base */
+        }
         .option-btn:hover { transform: translateY(-2px); }
         .loading-spinner { 
             display: inline-block; width: 1rem; height: 1rem; 
