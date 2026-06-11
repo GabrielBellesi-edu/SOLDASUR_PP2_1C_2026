@@ -1,6 +1,7 @@
 # app/main.py
 import sys
 import os
+import importlib
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, BASE_DIR)
 
@@ -23,6 +24,16 @@ from app.app import init_knowledge_base, get_node_by_id
 from app.orchestrator import IntentClassifier, IntentType
 from pathlib import Path
 import requests
+
+# Cargar registro de marcas
+brands_registry = {}
+try:
+    with open(os.path.join(BASE_DIR, "configs", "brands_registry.json"), "r", encoding="utf-8") as f:
+        brands_registry = json.load(f).get("brands", {})
+        print(f"[Main] Registro de marcas cargado: {list(brands_registry.keys())}")
+except FileNotFoundError:
+    print("Advertencia: No se encontró configs/brands_registry.json")
+
 
 app = FastAPI(title="SOLDASUR S.A - Asistente Técnico", description="Asistente técnico para calefacción (PEISA) y construcción (Weber)")
 
@@ -343,7 +354,7 @@ async def api_chat(request: ChatRequest):
     """
     Endpoint unificado de chat para el frontend.
     Detecta si la consulta es sobre Weber (construcción) o PEISA (calefacción)
-    usando enrutamiento semántico y rutea al motor RAG correspondiente.
+    usando enrutamiento semántico y rutea al motor RAG correspondiente de forma dinámica.
     """
     message = request.message.strip()
 
@@ -355,70 +366,124 @@ async def api_chat(request: ChatRequest):
     # Clasificar intención usando enrutamiento híbrido/semántico con contexto activo
     intent = intent_classifier.classify(message, context)
 
-    if intent.type == IntentType.WEBER_QUERY:
-        # ── Ruta Weber ──────────────────────────────────────────────────────
-        result = weber_search_and_answer(message, last_active_product=request.last_active_product)
-        response_text = result.get("respuesta", "")
-        productos_weber = result.get("productos", [])
-        calculo = result.get("calculo")
+    # Determinar la marca correspondiente
+    brand_key = intent.metadata.get("brand_key")
+    if not brand_key:
+        # Buscar por tipo de intención en el registro si no vino directa en la metadata
+        for bk, b_config in brands_registry.items():
+            if b_config.get("intent_type") == intent.type.value:
+                brand_key = bk
+                break
 
-        # Formatear productos para que el frontend los pueda usar
-        products_formatted = [
-            {
-                "model": p.get("model", ""),
-                "family": p.get("category", "Weber"),
-                "category": p.get("category", ""),
-                "description": p.get("description", ""),
-                "url": p.get("url", ""),
-                "brand": p.get("brand", "Weber"),
-                "imagen_local": p.get("imagen_local", ""),
-                "imagen_url": p.get("imagen_url", ""),
-            }
-            for p in productos_weber
-        ]
+    if brand_key and brand_key in brands_registry:
+        b_config = brands_registry[brand_key]
+        module_name = b_config["rag_module"]
+        func_name = b_config["rag_function"]
+        
+        try:
+            # Importar dinámicamente el módulo y obtener la función RAG
+            module = importlib.import_module(module_name)
+            rag_func = getattr(module, func_name)
+            
+            # Formateador específico según la marca
+            formatter = b_config.get("response_formatter", "generic")
+            
+            if formatter == "weber":
+                # Ruta RAG autogestionada (ej: Weber, que maneja búsqueda y respuesta juntas)
+                result = rag_func(message, last_active_product=request.last_active_product)
+                response_text = result.get("respuesta", "")
+                productos_weber = result.get("productos", [])
+                calculo = result.get("calculo")
 
-        resp = {
-            "mode": "weber",
-            "text": response_text,
-            "products": products_formatted,
-        }
-        if calculo:
-            resp["calculo"] = {
-                "superficie_m2": calculo.get("superficie_m2"),
-                "producto": calculo.get("producto"),
-                "bolsas_necesarias": calculo.get("bolsas_necesarias"),
-                "rendimiento_kg_m2": calculo.get("rendimiento_por_bolsa"),
-            }
-        return resp
+                # Formatear productos para la UI
+                products_formatted = [
+                    {
+                        "model": p.get("model", ""),
+                        "family": p.get("category", "Weber"),
+                        "category": p.get("category", ""),
+                        "description": p.get("description", ""),
+                        "url": p.get("url", ""),
+                        "brand": p.get("brand", b_config.get("display_name", "Weber")),
+                        "imagen_local": p.get("imagen_local", ""),
+                        "imagen_url": p.get("imagen_url", ""),
+                    }
+                    for p in productos_weber
+                ]
 
-    elif intent.type == IntentType.FREE_QUERY:
-        # ── Ruta PEISA ──────────────────────────────────────────────────────────
-        top_items = search_filtered(message, top_k=3)
+                resp = {
+                    "mode": brand_key.lower(),
+                    "text": response_text,
+                    "products": products_formatted,
+                }
+                if calculo:
+                    resp["calculo"] = {
+                        "superficie_m2": calculo.get("superficie_m2"),
+                        "producto": calculo.get("producto"),
+                        "bolsas_necesarias": calculo.get("bolsas_necesarias"),
+                        "rendimiento_kg_m2": calculo.get("rendimiento_por_bolsa"),
+                    }
+                return resp
 
-        # Inyectar el producto activo al inicio si existe
-        if request.last_active_product:
-            from RAG_engine.query.peisa_rag_query import get_peisa_product_by_model
-            p_activo = get_peisa_product_by_model(request.last_active_product)
-            if p_activo:
-                # Remover duplicados si ya estaba en la lista
-                top_items = [p for p in top_items if p.get("model", "").lower().strip() != request.last_active_product.lower().strip()]
-                top_items.insert(0, p_activo)
+            elif formatter == "peisa":
+                # Ruta RAG separada (ej: PEISA, requiere búsqueda previa + generación de respuesta)
+                top_items = search_filtered(message, top_k=3)
 
-        respuesta = answer(message, top_items, last_active_product=request.last_active_product)
-        return {
-            "mode": "peisa",
-            "text": respuesta,
-            "products": top_items[:3] if top_items else [],
-        }
+                # Inyectar el producto activo al inicio si existe
+                if request.last_active_product:
+                    from RAG_engine.query.peisa_rag_query import get_peisa_product_by_model
+                    p_activo = get_peisa_product_by_model(request.last_active_product)
+                    if p_activo:
+                        # Remover duplicados si ya estaba en la lista
+                        top_items = [p for p in top_items if p.get("model", "").lower().strip() != request.last_active_product.lower().strip()]
+                        top_items.insert(0, p_activo)
 
-    else:
-        # ── Ruta Neutra (Saludos y consultas generales/híbridas) ─────────────────
-        respuesta_neutra = _get_neutral_response(message)
-        return {
-            "mode": "neutral",
-            "text": respuesta_neutra,
-            "products": []
-        }
+                respuesta = rag_func(message, top_items, last_active_product=request.last_active_product)
+                
+                # Asegurar que los productos tengan la marca asociada
+                products_formatted = []
+                for p in top_items[:3]:
+                    p_copy = p.copy()
+                    if "brand" not in p_copy:
+                        p_copy["brand"] = b_config.get("display_name", "PEISA")
+                    products_formatted.append(p_copy)
+
+                return {
+                    "mode": brand_key.lower(),
+                    "text": respuesta,
+                    "products": products_formatted,
+                }
+            
+            else:
+                # Formateador genérico fallback para nuevas marcas
+                try:
+                    result = rag_func(message, last_active_product=request.last_active_product)
+                except TypeError:
+                    result = rag_func(message)
+                
+                if isinstance(result, dict):
+                    text = result.get("respuesta") or result.get("answer") or result.get("text") or ""
+                    products = result.get("productos") or result.get("products") or []
+                else:
+                    text = str(result)
+                    products = []
+                    
+                return {
+                    "mode": brand_key.lower(),
+                    "text": text,
+                    "products": products
+                }
+                
+        except Exception as e:
+            print(f"[api_chat] Error ejecutando RAG dinámico para {brand_key}: {e}")
+            # Si hay un error, cae en el fallback neutral de abajo
+
+    # ── Ruta Neutra (Saludos y consultas generales/híbridas) ─────────────────
+    respuesta_neutra = _get_neutral_response(message)
+    return {
+        "mode": "neutral",
+        "text": respuesta_neutra,
+        "products": []
+    }
 
 
 # ... (Todo el código intermedio de tus endpoints actuales de PEISA y ask_weber)

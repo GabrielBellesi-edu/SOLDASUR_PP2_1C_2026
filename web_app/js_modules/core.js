@@ -287,16 +287,6 @@ function renderProducts(products) {
     scrollToBottom();
 }
 
-function updateModeIndicator(mode, label) {
-    const indicator = document.getElementById('mode-indicator');
-    if (!indicator) return;
-    indicator.textContent = label;
-    indicator.className = 'mode-indicator';
-    if (mode === 'expert')       indicator.classList.add('mode-expert');
-    else if (mode === 'rag')     indicator.classList.add('mode-rag');
-    else                         indicator.classList.add('mode-hybrid');
-}
-
 /* ── Carga del catálogo ────────────────────────────────────────────────── */
 
 async function loadProductCatalog() {
@@ -601,20 +591,5 @@ function consultFromProduct(productModel) {
 
 /* ── Panel de contexto (PEISA expert) ─────────────────────────────────── */
 function updateContextPanel() {
-    const panel          = document.getElementById('context-panel');
-    const itemsContainer = document.getElementById('context-items');
-    if (!panel || !itemsContainer) return;
-    
-    // Ocultado en v4.1.0 para maximizar el espacio útil del chat
-    panel.classList.add('hidden');
-    return;
-    itemsContainer.innerHTML = '';
-    for (const [key, value] of Object.entries(contextData)) {
-        if (!key.includes('_texto') && typeof value !== 'object') {
-            const item = document.createElement('div');
-            item.className = 'context-item';
-            item.innerHTML = `<span class="font-medium">${key}:</span><span>${value}</span>`;
-            itemsContainer.appendChild(item);
-        }
-    }
+    // Deprecated/Legacy: panel de contexto removido del HTML/CSS
 }

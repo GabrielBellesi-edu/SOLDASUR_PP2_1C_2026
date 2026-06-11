@@ -1,11 +1,7 @@
-"""
-orchestrator.py - Orquestador Inteligente para Sistema Híbrido
+import json
+from pathlib import Path
 
-Este módulo coordina la interacción entre el sistema experto (basado en reglas)
-y el sistema RAG (búsqueda semántica + LLM generativo), proporcionando una
-experiencia unificada al usuario.
-"""
-
+# ... (keep existing imports or redefine here)
 from typing import Dict, Any, Optional, List
 from enum import Enum
 import re
@@ -41,7 +37,7 @@ class Intent:
 class IntentClassifier:
     """
     Clasifica la intención del usuario para enrutar correctamente
-    entre el sistema experto y el RAG de PEISA o Weber.
+    entre el sistema experto y las distintas marcas configuradas dinámicamente.
     """
     
     # Patrones para clasificación basada en reglas
@@ -109,38 +105,49 @@ class IntentClassifier:
         ]
     }
     
-    # Expresiones directas e inequívocas para descarte rápido en cascada (0ms de latencia)
-    DIRECT_WEBER_KEYWORDS = [r"weber", r"pastina", r"mortero", r"revoque", r"ceresita", r"weberplast", r"microcemento", r"microcolor", r"microbase", r"autonivela"]
-    DIRECT_PEISA_KEYWORDS = [r"peisa", r"caldera", r"radiador", r"toallero", r"calefon", r"termo", r"climatiz"]
-
     def __init__(self):
-        self.weber_anchor_vec = None
-        self.peisa_anchor_vec = None
+        self.brands_registry = {}
+        self.anchor_vectors = {}  # { brand_key: vector }
+        self._load_brands_registry()
+
+    def _load_brands_registry(self):
+        """Carga el registro centralizado de marcas desde configs/brands_registry.json."""
+        try:
+            config_path = Path(__file__).resolve().parent.parent / "configs" / "brands_registry.json"
+            if config_path.exists():
+                with open(config_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    self.brands_registry = data.get("brands", {})
+                    print(f"[IntentClassifier] Registro de marcas cargado. Marcas detectadas: {list(self.brands_registry.keys())}")
+            else:
+                print(f"[IntentClassifier] AVISO: No se encontró el registro de marcas en {config_path}")
+        except Exception as e:
+            print(f"[IntentClassifier] Error cargando registro de marcas: {e}")
 
     def _lazy_init_anchors(self):
-        """Inicializa de forma diferida (lazy loading) los embeddings de los textos ancla."""
-        if self.weber_anchor_vec is None:
+        """Inicializa de forma diferida (lazy loading) los embeddings de los textos ancla del registro."""
+        if not self.anchor_vectors and self.brands_registry:
             try:
                 import numpy as np
                 import RAG_engine.query.weber_rag_query as weber_query
                 weber_query._load_resources()
                 model = weber_query._model
                 if model is not None:
-                    ANCLA_WEBER = "colocación de revestimientos cerámicas porcelanatos baldosas impermeabilización de losas piscinas pastina revoque fino mezcla adhesivo cemento"
-                    ANCLA_PEISA = "calefacción caldera radiador toallero calefón termotanque agua caliente sanitaria climatización"
+                    brand_keys = list(self.brands_registry.keys())
+                    anchor_texts = [self.brands_registry[bk]["anchor_text"] for bk in brand_keys]
                     
                     # Generar embeddings de las anclas
-                    vecs = model.encode([ANCLA_WEBER, ANCLA_PEISA], convert_to_numpy=True)
-                    # Normalizar L2
-                    self.weber_anchor_vec = vecs[0] / np.linalg.norm(vecs[0])
-                    self.peisa_anchor_vec = vecs[1] / np.linalg.norm(vecs[1])
-                    print("[IntentClassifier] Similitud vectorial inicializada con éxito para PEISA y Weber.")
+                    vecs = model.encode(anchor_texts, convert_to_numpy=True)
+                    for i, bk in enumerate(brand_keys):
+                        norm = np.linalg.norm(vecs[i])
+                        self.anchor_vectors[bk] = vecs[i] / norm if norm > 0 else vecs[i]
+                    print(f"[IntentClassifier] Similitud vectorial inicializada con éxito para: {', '.join(brand_keys)}")
             except Exception as e:
                 print(f"[IntentClassifier] AVISO: No se pudo cargar el modelo para similitud semántica ({e}). Se usará enrutamiento heurístico por Regex.")
 
     def classify(self, message: str, context: Dict[str, Any]) -> Intent:
         """
-        Clasifica la intención del usuario basándose en el mensaje, contexto y similitud vectorial.
+        Clasifica la intención del usuario basándose en el mensaje, contexto y similitud vectorial dinámica.
         
         Args:
             message: Mensaje del usuario
@@ -164,29 +171,45 @@ class IntentClassifier:
             return Intent(IntentType.SWITCH_MODE, confidence=0.95, 
                           metadata={'target_mode': target_mode})
 
+        # Evaluar palabras clave directas por marca registrada
+        brand_kw_matches = {}
+        for bk, brand_info in self.brands_registry.items():
+            kws = brand_info.get("direct_keywords", [])
+            brand_kw_matches[bk] = any(re.search(pat, message_lower) for pat in kws)
+
         # Enrutamiento Contextual por Marca Activa (si la pregunta es de seguimiento y no cambia de marca explícitamente)
         last_brand = (context.get("last_active_brand") or "").upper()
-        has_peisa_kw = any(re.search(pat, message_lower) for pat in self.DIRECT_PEISA_KEYWORDS)
-        has_weber_kw = any(re.search(pat, message_lower) for pat in self.DIRECT_WEBER_KEYWORDS)
         
         saludos = [r"^\s*hola\s*$", r"^\s*buenas\s*$", r"^\s*buen\s+d[ií]a\s*$", r"^\s*buen\s*tarde\s*$", r"^\s*gracias\s*$", r"^\s*chau\s*$", r"^\s*adi[oó]s\s*$"]
         is_simple_greeting = any(re.search(pat, message_lower) for pat in saludos)
 
-        if last_brand and not is_simple_greeting:
-            if last_brand == "WEBER" and not has_peisa_kw:
-                return Intent(IntentType.WEBER_QUERY, confidence=0.95)
-            elif last_brand == "PEISA" and not has_weber_kw:
-                return Intent(IntentType.FREE_QUERY, confidence=0.95)
+        if last_brand and not is_simple_greeting and last_brand in self.brands_registry:
+            # Si estábamos hablando de esta marca, y no hay palabras clave de NINGUNA OTRA marca registrada
+            has_other_brand_kw = any(match for bk, match in brand_kw_matches.items() if bk != last_brand)
+            if not has_other_brand_kw:
+                brand_info = self.brands_registry[last_brand]
+                intent_type_str = brand_info.get("intent_type", "hybrid")
+                resolved_type = IntentType.HYBRID
+                for item in IntentType:
+                    if item.value == intent_type_str:
+                        resolved_type = item
+                        break
+                return Intent(resolved_type, confidence=0.95, metadata={"brand_key": last_brand})
 
         # 3. Enrutamiento Rápido en Cascada (Heurística directa - 0ms)
-        if any(re.search(pat, message_lower) for pat in self.DIRECT_WEBER_KEYWORDS):
-            return Intent(IntentType.WEBER_QUERY, confidence=1.0)
-        if any(re.search(pat, message_lower) for pat in self.DIRECT_PEISA_KEYWORDS):
-            return Intent(IntentType.FREE_QUERY, confidence=1.0)
+        for bk, brand_info in self.brands_registry.items():
+            if brand_kw_matches[bk]:
+                intent_type_str = brand_info.get("intent_type", "hybrid")
+                resolved_type = IntentType.HYBRID
+                for item in IntentType:
+                    if item.value == intent_type_str:
+                        resolved_type = item
+                        break
+                return Intent(resolved_type, confidence=1.0, metadata={"brand_key": bk})
 
         # 4. Enrutamiento Semántico Vectorial (SentenceTransformers - fallback robusto)
         self._lazy_init_anchors()
-        if self.weber_anchor_vec is not None:
+        if self.anchor_vectors:
             try:
                 import numpy as np
                 import RAG_engine.query.weber_rag_query as weber_query
@@ -197,23 +220,35 @@ class IntentClassifier:
                     if query_norm > 0:
                         query_vec = query_vec / query_norm
                         
-                        # Similitud de coseno (producto punto de vectores normalizados)
-                        sim_weber = float(np.dot(query_vec, self.weber_anchor_vec))
-                        sim_peisa = float(np.dot(query_vec, self.peisa_anchor_vec))
+                        # Calcular similitudes para cada marca
+                        sims = {}
+                        for bk, anchor_vec in self.anchor_vectors.items():
+                            sims[bk] = float(np.dot(query_vec, anchor_vec))
+                        
+                        # Imprimir similitudes
+                        sims_str = ", ".join([f"{bk}: {val:.3f}" for bk, val in sims.items()])
+                        print(f"[IntentClassifier] Similitudes semánticas -> {sims_str}")
+                        
+                        # Encontrar la marca con mayor similitud
+                        best_brand = max(sims, key=sims.get)
+                        best_sim = sims[best_brand]
                         
                         UMBRAL_SIMILITUD = 0.35
-                        print(f"[IntentClassifier] Similitudes semánticas -> Weber: {sim_weber:.3f}, PEISA: {sim_peisa:.3f}")
-                        
-                        if sim_weber > sim_peisa and sim_weber >= UMBRAL_SIMILITUD:
-                            return Intent(IntentType.WEBER_QUERY, confidence=sim_weber)
-                        elif sim_peisa > sim_weber and sim_peisa >= UMBRAL_SIMILITUD:
-                            return Intent(IntentType.FREE_QUERY, confidence=sim_peisa)
+                        if best_sim >= UMBRAL_SIMILITUD:
+                            brand_info = self.brands_registry[best_brand]
+                            intent_type_str = brand_info.get("intent_type", "hybrid")
+                            resolved_type = IntentType.HYBRID
+                            for item in IntentType:
+                                if item.value == intent_type_str:
+                                    resolved_type = item
+                                    break
+                            return Intent(resolved_type, confidence=best_sim, metadata={"brand_key": best_brand})
             except Exception as e:
                 print(f"[IntentClassifier] Error durante la clasificación semántica: {e}")
 
         # 5. Caída en Regex tradicional (para Weber si falló la carga del modelo)
         if self._matches_patterns(message_lower, IntentType.WEBER_QUERY):   
-            return Intent(IntentType.WEBER_QUERY, confidence=0.8)           
+            return Intent(IntentType.WEBER_QUERY, confidence=0.8, metadata={"brand_key": "WEBER"})           
         
         # 6. Resto de intenciones
         if self._matches_patterns(message_lower, IntentType.PRODUCT_SEARCH):
