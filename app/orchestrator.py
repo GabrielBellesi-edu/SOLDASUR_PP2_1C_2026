@@ -129,7 +129,7 @@ class IntentClassifier:
         if not self.anchor_vectors and self.brands_registry:
             try:
                 import numpy as np
-                import RAG_engine.query.weber_rag_query as weber_query
+                import RAG_engine.query.rag_query_weber as weber_query
                 weber_query._load_resources()
                 model = weber_query._model
                 if model is not None:
@@ -212,7 +212,7 @@ class IntentClassifier:
         if self.anchor_vectors:
             try:
                 import numpy as np
-                import RAG_engine.query.weber_rag_query as weber_query
+                import RAG_engine.query.rag_query_weber as weber_query
                 model = weber_query._model
                 if model is not None:
                     query_vec = model.encode([message_lower], convert_to_numpy=True)[0]

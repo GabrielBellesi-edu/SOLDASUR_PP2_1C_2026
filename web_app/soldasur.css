@@ -166,14 +166,55 @@ body {
 
 .option-btn {
     transition: all 0.2s;
-    padding: 0.45rem 0.9rem !important;
-    /* -10% respecto a py-2 px-4 (0.5rem / 1rem) */
-    font-size: 0.9rem !important;
-    /* -10% respecto al tamaño base */
+    padding: 0.4rem 0.8rem !important;
+    /* Reducido 20% respecto a py-2 px-4 (0.5rem / 1rem) */
 }
 
 .option-btn:hover {
     transform: translateY(-2px);
+}
+
+/* Reducción del 10% del espaciado entre botones de opciones */
+#input-area .space-y-2> :not([hidden])~ :not([hidden]) {
+    margin-top: 0.35rem !important;
+    /* Reducido de 0.5rem (8px) a 0.45rem (7.2px) */
+}
+
+/* Estilos de botones unificados y alineados para tarjetas de producto */
+.card-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px !important;
+    font-weight: 500;
+    line-height: 1 !important;
+    white-space: nowrap;
+    cursor: pointer;
+    box-sizing: border-box;
+    height: 32px;
+    border: none;
+    text-decoration: none !important;
+    vertical-align: middle;
+}
+
+.card-btn-primary {
+    background: #3b82f6;
+    color: white !important;
+}
+
+.card-btn-primary:hover {
+    background: #2563eb;
+}
+
+.card-btn-secondary {
+    background: #10b981;
+    color: white !important;
+}
+
+.card-btn-secondary:hover {
+    background: #059669;
 }
 
 .loading-spinner {

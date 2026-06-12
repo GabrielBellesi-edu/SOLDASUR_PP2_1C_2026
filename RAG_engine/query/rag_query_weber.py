@@ -23,8 +23,8 @@ except ImportError:
 
 # ── Rutas ─────────────────────────────────────────────────────────────────────
 SCRIPT_DIR = Path(__file__).resolve().parent
-FAISS_PATH = SCRIPT_DIR.parent / "database" / "weber_products.faiss"
-META_PATH  = SCRIPT_DIR.parent / "database" / "weber_metadata.json"
+FAISS_PATH = SCRIPT_DIR.parent / "database" / "products_weber.faiss"
+META_PATH  = SCRIPT_DIR.parent / "database" / "metadata_weber.json"
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
 # ── Singleton del modelo (carga una sola vez) ─────────────────────────────────

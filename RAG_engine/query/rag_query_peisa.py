@@ -1,5 +1,5 @@
 """
-peisa_rag_query.py – busca en el índice FAISS y aplica filtrado estructurado para PEISA.
+rag_query_peisa.py – busca en el índice FAISS y aplica filtrado estructurado para PEISA.
 """
 
 import sys, argparse, re, sqlite3, faiss, numpy as np
@@ -9,8 +9,8 @@ from rich.table import Table
 from rich import print
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DB_PATH    = SCRIPT_DIR.parent / "database" / "peisa_products.db"
-INDEX_PATH = SCRIPT_DIR.parent / "database" / "peisa_products.faiss"
+DB_PATH    = SCRIPT_DIR.parent / "database" / "products_peisa.db"
+INDEX_PATH = SCRIPT_DIR.parent / "database" / "products_peisa.faiss"
 MODEL_NAME = "sentence-transformers/distiluse-base-multilingual-cased-v2"
 
 TOP_K_DEFAULT = 3
@@ -145,6 +145,6 @@ def _cli():
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Uso: python peisa_rag_query.py \"<pregunta>\"")
+        print("Uso: python rag_query_peisa.py \"<pregunta>\"")
         sys.exit(1)
     _cli()

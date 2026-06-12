@@ -11,14 +11,14 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 import json
-from RAG_engine.query.weber_rag_llm import search_and_answer as weber_search_and_answer
-from app.modules.expertSystem.weber_expert_engine import WeberExpertEngine #Agregamos esto
+from RAG_engine.query.rag_llm_weber import search_and_answer as weber_search_and_answer
+from app.modules.expertSystem.expert_engine_weber import WeberExpertEngine #Agregamos esto
 import math
 from math import ceil
 from bisect import bisect_left
-from app.models import RADIATOR_MODELS
-from RAG_engine.query.peisa_rag_query import search_filtered
-from RAG_engine.query.peisa_rag_llm import answer
+from app.modules.expertSystem.expert_engine_peisa import RADIATOR_MODELS
+from RAG_engine.query.rag_query_peisa import search_filtered
+from RAG_engine.query.rag_llm_peisa import answer
 from app.app import replace_variables, filter_radiators, perform_calculation, format_radiator_recommendations, exec_expression
 from app.app import init_knowledge_base, get_node_by_id
 from app.orchestrator import IntentClassifier, IntentType
@@ -70,11 +70,11 @@ class ConversationResponse(BaseModel):
 
 # Cargar la base de conocimiento
 try:
-    with open(os.path.join(BASE_DIR, "app/peisa_advisor_knowledge_base.json"), "r", encoding="utf-8") as f:
+    with open(os.path.join(BASE_DIR, "app/advisor_knowledge_base_peisa.json"), "r", encoding="utf-8") as f:
         knowledge_base = json.load(f)
         init_knowledge_base(knowledge_base)  # Inicializar la base de conocimiento
 except FileNotFoundError:
-    print("Advertencia: No se encontró el archivo peisa_advisor_knowledge_base.json")
+    print("Advertencia: No se encontró el archivo advisor_knowledge_base_peisa.json")
     knowledge_base = []
     init_knowledge_base(knowledge_base)
 
@@ -251,8 +251,8 @@ def ask_weber(
     Endpoint para consultas sobre productos Weber.
     Opcionalmente acepta superficie para calcular cantidades.
     """
-    from RAG_engine.query.weber_rag_llm import search_and_answer
-    from RAG_engine.query.weber_rag_query import calcular_cantidad
+    from RAG_engine.query.rag_llm_weber import search_and_answer
+    from RAG_engine.query.rag_query_weber import calcular_cantidad
 
     result = search_and_answer(question)
 
@@ -428,16 +428,18 @@ async def api_chat(request: ChatRequest):
                 # Ruta RAG separada (ej: PEISA, requiere búsqueda previa + generación de respuesta)
                 top_items = search_filtered(message, top_k=3)
 
-                # Inyectar el producto activo al inicio si existe
+                # Inyectar el producto activo al inicio si existe y pertenece a PEISA
+                effective_last_active = None
                 if request.last_active_product:
-                    from RAG_engine.query.peisa_rag_query import get_peisa_product_by_model
+                    from RAG_engine.query.rag_query_peisa import get_peisa_product_by_model
                     p_activo = get_peisa_product_by_model(request.last_active_product)
                     if p_activo:
                         # Remover duplicados si ya estaba en la lista
                         top_items = [p for p in top_items if p.get("model", "").lower().strip() != request.last_active_product.lower().strip()]
                         top_items.insert(0, p_activo)
+                        effective_last_active = request.last_active_product
 
-                respuesta = rag_func(message, top_items, last_active_product=request.last_active_product)
+                respuesta = rag_func(message, top_items, last_active_product=effective_last_active)
                 
                 # Asegurar que los productos tengan la marca asociada
                 products_formatted = []
@@ -488,78 +490,192 @@ async def api_chat(request: ChatRequest):
 
 # ... (Todo el código intermedio de tus endpoints actuales de PEISA y ask_weber)
 
-# 👇 PEGÁ ESTOS DOS ENDPOINTS COMPLETOS ACÁ:
+# Endpoints obsoletos de Weber eliminados de forma segura.
 
-@app.post("/expert/weber/start")
-async def start_weber_expert(request: StartConversationRequest):
-    node = weber_expert.get_node_by_id("inicio_weber")
-    weber_sessions[request.conversation_id] = {"context": {}, "current_node": "inicio_weber"}
-    return {
-        "conversation_id": request.conversation_id,
-        "node_id": node["id"],
-        "type": node["tipo"],
-        "text": node["pregunta"],
-        "options": [opt["texto"] for opt in node.get("opciones", [])]
-    }
 
-@app.post("/expert/weber/reply")
-async def reply_weber_expert(request: ReplyRequest):
-    session = weber_sessions.get(request.conversation_id)
-    if not session:
-        raise HTTPException(status_code=400, detail="Sesión no encontrada")
-        
-    current_node = weber_expert.get_node_by_id(session["current_node"])
+# ── Endpoints de la v5.0.1 ──────────────────────────────────────────────────
+
+@app.get("/api/brands")
+async def get_brands():
+    """Retorna el registro central de marcas de forma dinámica."""
+    try:
+        with open(os.path.join(BASE_DIR, "configs", "brands_registry.json"), "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="configs/brands_registry.json no encontrado")
+
+@app.get("/api/brands/{brand_key}/catalog")
+async def get_brand_catalog(brand_key: str):
+    """Carga y retorna el catálogo dinámico de productos para la marca solicitada."""
+    brand_upper = brand_key.upper().strip()
+    brand_lower = brand_key.lower().strip()
     
-    if "variable" in current_node:
-        var_name = current_node["variable"]
-        if current_node["tipo"] == "opciones" and request.option_index is not None:
-            val = current_node["opciones"][request.option_index].get("valor")
-            session["context"][var_name] = val
-            siguiente_nodo_id = current_node["opciones"][request.option_index]["siguiente"]
-        else:
-            val = float(request.input_values.get(var_name, 0))
-            session["context"][var_name] = val
-            siguiente_nodo_id = current_node["siguiente"]
-    else:
-        siguiente_nodo_id = current_node["siguiente"]
+    # Rutas posibles de búsqueda
+    possible_paths = [
+        os.path.join(BASE_DIR, "RAG_engine", "database", f"metadata_{brand_lower}.json"),
+        os.path.join(BASE_DIR, "web_app", "data", f"{brand_lower}_catalog.json"),
+        os.path.join(BASE_DIR, "web_app", "data", f"{brand_lower}_metadata.json"),
+    ]
+    
+    for p in possible_paths:
+        if os.path.exists(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    catalog = json.load(f)
+                    for prod in catalog:
+                        prod["brand"] = brand_upper
+                    return catalog
+            except Exception as e:
+                print(f"[BrandsCatalog] Error leyendo {p}: {e}")
+                
+    # Fallback SQLite para PEISA
+    if brand_upper == "PEISA":
+        try:
+            from RAG_engine.query.rag_query_peisa import DB_PATH
+            import sqlite3
+            conn = sqlite3.connect(str(DB_PATH))
+            rows = conn.execute("SELECT type, family, model, description, dimentions, power_w, liters, max_pressure_bar FROM products").fetchall()
+            catalog = []
+            for r in rows:
+                catalog.append({
+                    "type": r[0],
+                    "family": r[1],
+                    "model": r[2],
+                    "description": r[3],
+                    "dimentions": r[4],
+                    "power_w": r[5],
+                    "liters": r[6],
+                    "max_pressure_bar": r[7],
+                    "brand": "PEISA"
+                })
+            return catalog
+        except Exception as e:
+            print(f"[BrandsCatalog] Error leyendo SQLite para PEISA: {e}")
+            
+    raise HTTPException(status_code=404, detail=f"No se encontró catálogo para la marca: {brand_key}")
 
-    next_node = weber_expert.get_node_by_id(siguiente_nodo_id)
-    session["current_node"] = siguiente_nodo_id
+# Motor experto PEISA instanciado
+from app.modules.expertSystem.expert_engine_peisa import ExpertEngine
+peisa_expert_engine = ExpertEngine(os.path.join(BASE_DIR, "app", "advisor_knowledge_base_peisa.json"))
+peisa_sessions = {}
 
-    if next_node and next_node["tipo"] == "calculo":
-        ctx = session["context"]
-        calculo_res = weber_expert.resolver_calculo(ctx["soporte_obra"], ctx["metros_cuadrados"])
-        session["context"]["resultado"] = calculo_res
-        next_node = weber_expert.get_node_by_id(next_node["siguiente"])
-        session["current_node"] = next_node["id"]
+# Registro centralizado de motores y sesiones de sistemas expertos
+expert_engines = {
+    "PEISA": peisa_expert_engine,
+    "WEBER": weber_expert
+}
+expert_sessions = {
+    "PEISA": peisa_sessions,
+    "WEBER": weber_sessions
+}
 
-    if session["current_node"] == "resultado_final_weber":
-        res = session["context"]["resultado"]
-        texto_salida = (
-            f"### 📊 Resultado del Asesoramiento Weber\n\n"
-            f"Para cubrir **{session['context']['metros_cuadrados']} m²** sobre el soporte seleccionado, "
-            f"te recomendamos utilizar **{res['producto'].upper()}**.\n\n"
-            f"• **Cantidad necesaria:** {res['bolsas_necesarias']} bolsas de 25 kg.\n"
-            f"• **Rendimiento estimado:** {res['rendimiento_kg_m2']} kg/m² (+10% desperdicio técnico).\n"
-            f"• **Masa total del material:** {res['kg_totales']} kg."
-        )
-        return {
-            "conversation_id": request.conversation_id,
-            "node_id": "final",
-            "type": "respuesta",
-            "text": texto_salida,
-            "options": [],
-            "mode": "weber",
-            "calculo": res
-        }
+def get_expert_engine(brand_upper: str):
+    """Retorna o carga dinámicamente el motor experto para la marca."""
+    if brand_upper in expert_engines:
+        return expert_engines[brand_upper]
+        
+    # Verificar si la marca está registrada y tiene calculadora
+    if brand_upper in brands_registry and brands_registry[brand_upper].get("has_calculator"):
+        brand_lower = brand_upper.lower()
+        
+        # 1. Intentar cargar motor personalizado expert_engine_{brand_lower}.py
+        try:
+            module_name = f"app.modules.expertSystem.expert_engine_{brand_lower}"
+            engine_module = importlib.import_module(module_name)
+            
+            # Buscar clase que termine con 'ExpertEngine' en el módulo
+            engine_class = None
+            for name, obj in engine_module.__dict__.items():
+                if isinstance(obj, type) and name.endswith("ExpertEngine"):
+                    engine_class = obj
+                    break
+                    
+            if engine_class:
+                kb_path = os.path.join(BASE_DIR, "app", f"advisor_knowledge_base_{brand_lower}.json")
+                try:
+                    # Instanciar pasando la ruta del JSON si el constructor lo soporta
+                    engine_instance = engine_class(kb_path)
+                except TypeError:
+                    # Constructor sin parámetros
+                    engine_instance = engine_class()
+                expert_engines[brand_upper] = engine_instance
+                print(f"[DynamicExpert] Cargado motor personalizado para: {brand_upper}")
+                return engine_instance
+        except Exception as e:
+            print(f"[DynamicExpert] No se pudo cargar motor personalizado para {brand_upper}: {e}")
+            
+        # 2. Fallback a ExpertEngine genérico usando el JSON de la marca
+        kb_path = os.path.join(BASE_DIR, "app", f"advisor_knowledge_base_{brand_lower}.json")
+        if os.path.exists(kb_path):
+            try:
+                engine_instance = ExpertEngine(kb_path)
+                expert_engines[brand_upper] = engine_instance
+                print(f"[DynamicExpert] Cargado motor genérico con JSON para: {brand_upper}")
+                return engine_instance
+            except Exception as e:
+                print(f"[DynamicExpert] Error instanciando motor genérico para {brand_upper}: {e}")
+                
+    return None
 
-    return {
-        "conversation_id": request.conversation_id,
-        "node_id": next_node["id"],
-        "type": next_node["tipo"],
-        "text": next_node["pregunta"],
-        "options": [opt["texto"] for opt in next_node.get("opciones", [])] if "opciones" in next_node else []
+@app.post("/api/expert/{brand}/start")
+async def generic_expert_start(brand: str, request: StartConversationRequest):
+    """Inicia el flujo experto unificado para cualquier marca."""
+    brand_upper = brand.upper().strip()
+    conversation_id = request.conversation_id
+    
+    engine = get_expert_engine(brand_upper)
+    if not engine:
+        raise HTTPException(status_code=400, detail=f"Calculadora no implementada para: {brand}")
+        
+    if brand_upper not in expert_sessions:
+        expert_sessions[brand_upper] = {}
+        
+    sessions_dict = expert_sessions[brand_upper]
+    
+    # Determinar el nodo inicial dinámicamente basado en la base de conocimiento
+    first_node_id = 'inicio'
+    if hasattr(engine, 'knowledge_base') and engine.knowledge_base and len(engine.knowledge_base) > 0:
+        first_node_id = engine.knowledge_base[0].get('id', 'inicio')
+        
+    sessions_dict[conversation_id] = {
+        'current_node': first_node_id,
+        'variables': {}
     }
+    
+    res = await engine.process(conversation_id, sessions_dict[conversation_id])
+    return res
+
+@app.post("/api/expert/{brand}/reply")
+async def generic_expert_reply(brand: str, request: ReplyRequest):
+    """Procesa la respuesta y variables en el flujo experto unificado."""
+    brand_upper = brand.upper().strip()
+    conversation_id = request.conversation_id
+    
+    engine = get_expert_engine(brand_upper)
+    if not engine:
+        raise HTTPException(status_code=400, detail=f"Calculadora no implementada para: {brand}")
+        
+    if brand_upper not in expert_sessions:
+        expert_sessions[brand_upper] = {}
+        
+    sessions_dict = expert_sessions[brand_upper]
+    session = sessions_dict.get(conversation_id)
+    if not session:
+        # Determinar el nodo inicial dinámicamente si no hay sesión activa
+        first_node_id = 'inicio'
+        if hasattr(engine, 'knowledge_base') and engine.knowledge_base and len(engine.knowledge_base) > 0:
+            first_node_id = engine.knowledge_base[0].get('id', 'inicio')
+        session = { 'current_node': first_node_id, 'variables': {} }
+        sessions_dict[conversation_id] = session
+        
+    res = await engine.process(
+        conversation_id,
+        session,
+        request.option_index,
+        request.input_values
+    )
+    return res
+
 
 
 # Montar la raíz del proyecto para servir todos los archivos estáticos del frontend (HTML, JS, CSS, JSON, imágenes, etc.)

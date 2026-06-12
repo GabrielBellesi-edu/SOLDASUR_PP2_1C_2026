@@ -1,0 +1,176 @@
+[
+  {
+    "id": "inicio_weber",
+    "pregunta": "¿Qué tipo de trabajo vas a realizar en la obra?",
+    "tipo": "opciones",
+    "opciones": [
+      { "texto": "Colocación de Revestimientos (Cerámicos / Porcelanatos)", "siguiente": "tipo_revestimiento_pastina" },
+      { "texto": "Nivelación y Albañilería (Carpetas, revoques)", "siguiente": "tipo_nivelacion" },
+      { "texto": "Impermeabilización de Superficies", "siguiente": "tipo_impermeabilizacion" },
+      { "texto": "Pisos Decorativos (Microcementos)", "siguiente": "tipo_microcemento" },
+      { "texto": "Revestimientos Plásticos Decorativos (weberplast)", "siguiente": "tipo_weberplast" }
+    ]
+  },
+  {
+    "id": "tipo_revestimiento_pastina",
+    "pregunta": "¿Qué material necesitás calcular para el revestimiento?",
+    "tipo": "opciones",
+    "opciones": [
+      { "texto": "Adhesivo (Pegamento)", "siguiente": "soporte_pegamiento" },
+      { "texto": "Pastina (Tomado de juntas)", "siguiente": "tipo_pastina" }
+    ]
+  },
+  {
+    "id": "soporte_pegamiento",
+    "pregunta": "¿Qué tipo de revestimiento y soporte vas a utilizar?",
+    "tipo": "opciones",
+    "variable": "soporte_obra",
+    "opciones": [
+      { "texto": "Cerámica Estándar (Carpeta/Revoque tradicional)", "valor": "peg_classic", "siguiente": "peg_tamano" },
+      { "texto": "Porcellanatos (Baja absorción)", "valor": "peg_flex", "siguiente": "peg_tamano" },
+      { "texto": "Colocación sobre cerámicas existentes", "valor": "peg_psp", "siguiente": "peg_tamano" },
+      { "texto": "Vidrio / Venecitas (Baños y piscinas)", "valor": "peg_glass", "siguiente": "peg_tamano" }
+    ]
+  },
+  {
+    "id": "peg_tamano",
+    "pregunta": "¿Algún lado de la baldosa o pieza de revestimiento mide más de 30 cm?",
+    "tipo": "opciones",
+    "variable": "doble_encolado",
+    "opciones": [
+      { "texto": "Sí (requiere doble encolado)", "valor": "si", "siguiente": "superficie_m2" },
+      { "texto": "No (colocación tradicional)", "valor": "no", "siguiente": "superficie_m2" }
+    ]
+  },
+  {
+    "id": "tipo_pastina",
+    "pregunta": "¿Qué tipo de terminación/resistencia necesitás para la junta?",
+    "tipo": "opciones",
+    "variable": "soporte_obra",
+    "opciones": [
+      { "texto": "Classic (Juntas finas hasta 5mm)", "valor": "pastina_classic", "siguiente": "pastina_largo" },
+      { "texto": "Prestige (Porcellanatos y juntas de 2 a 15mm)", "valor": "pastina_prestige", "siguiente": "pastina_largo" },
+      { "texto": "Lista para Usar (Acrílica de 1 a 4mm)", "valor": "pastina_lista", "siguiente": "pastina_largo" },
+      { "texto": "Epoxi Max (Máxima resistencia e impermeabilidad)", "valor": "pastina_epoxi", "siguiente": "pastina_largo" }
+    ]
+  },
+  {
+    "id": "pastina_largo",
+    "pregunta": "Ingresá el Largo de la cerámica o baldosa en centímetros (cm):",
+    "tipo": "entrada_usuario",
+    "variable": "pastina_largo",
+    "unidad": "cm",
+    "placeholder": "Ej: 36",
+    "siguiente": "pastina_ancho"
+  },
+  {
+    "id": "pastina_ancho",
+    "pregunta": "Ingresá el Ancho de la cerámica o baldosa en centímetros (cm):",
+    "tipo": "entrada_usuario",
+    "variable": "pastina_ancho",
+    "unidad": "cm",
+    "placeholder": "Ej: 36",
+    "siguiente": "pastina_espesor"
+  },
+  {
+    "id": "pastina_espesor",
+    "pregunta": "Ingresá el Espesor de la baldosa o pieza en milímetros (mm):",
+    "tipo": "entrada_usuario",
+    "variable": "pastina_espesor",
+    "unidad": "mm",
+    "placeholder": "Ej: 8",
+    "siguiente": "pastina_junta"
+  },
+  {
+    "id": "pastina_junta",
+    "pregunta": "Ingresá el Ancho de la junta deseado en milímetros (mm):",
+    "tipo": "entrada_usuario",
+    "variable": "pastina_junta",
+    "unidad": "mm",
+    "placeholder": "Ej: 3",
+    "siguiente": "superficie_m2"
+  },
+  {
+    "id": "tipo_nivelacion",
+    "pregunta": "¿Qué tipo de trabajo de albañilería / regularización vas a hacer?",
+    "tipo": "opciones",
+    "variable": "soporte_obra",
+    "opciones": [
+      { "texto": "Autonivelante rápido (Capa fina interior)", "valor": "autonivelante", "siguiente": "espesor_mm" },
+      { "texto": "Carpeta tradicional de nivelación", "valor": "carpeta_tradicional", "siguiente": "espesor_cm" },
+      { "texto": "Revoque Fino exterior/interior", "valor": "revoque_fino", "siguiente": "superficie_m2" },
+      { "texto": "Revoque Monocapa (Grueso+Fino liso)", "valor": "revoque_monocapa", "siguiente": "espesor_cm" }
+    ]
+  },
+  {
+    "id": "espesor_mm",
+    "pregunta": "Ingresá el Espesor promedio de regularización en milímetros (mm):",
+    "tipo": "entrada_usuario",
+    "variable": "espesor_medida",
+    "unidad": "mm",
+    "placeholder": "Ej: 3",
+    "siguiente": "superficie_m2"
+  },
+  {
+    "id": "espesor_cm",
+    "pregunta": "Ingresá el Espesor promedio deseado en centímetros (cm):",
+    "tipo": "entrada_usuario",
+    "variable": "espesor_medida",
+    "unidad": "cm",
+    "placeholder": "Ej: 2",
+    "siguiente": "superficie_m2"
+  },
+  {
+    "id": "tipo_impermeabilizacion",
+    "pregunta": "¿Qué tipo de superficie querés proteger de la humedad?",
+    "tipo": "opciones",
+    "variable": "soporte_obra",
+    "opciones": [
+      { "texto": "Techados / Terrazas / Azoteas expuestas", "valor": "imp_techos", "siguiente": "superficie_m2" },
+      { "texto": "Fachadas / Paredes Exteriores", "valor": "imp_frentes", "siguiente": "superficie_m2" },
+      { "texto": "Cimientos / Barrera aisladora horizontal", "valor": "imp_ceresita", "siguiente": "superficie_m2" },
+      { "texto": "Piscinas / Cisternas / Aljibes", "valor": "imp_piscinas", "siguiente": "superficie_m2" },
+      { "texto": "Baños / Cocinas (Bajo revestimiento)", "valor": "imp_banio", "siguiente": "superficie_m2" }
+    ]
+  },
+  {
+    "id": "tipo_microcemento",
+    "pregunta": "¿Qué capa del sistema de microcemento decorativo vas a colocar?",
+    "tipo": "opciones",
+    "variable": "soporte_obra",
+    "opciones": [
+      { "texto": "Capa Base niveladora (weber microbase)", "valor": "microcemento_base", "siguiente": "superficie_m2" },
+      { "texto": "Capa Color terminación (weber microcolor)", "valor": "microcemento_color", "siguiente": "superficie_m2" }
+    ]
+  },
+  {
+    "id": "tipo_weberplast",
+    "pregunta": "¿Qué tipo de acabado texturado decorativo (weberplast) vas a aplicar?",
+    "tipo": "opciones",
+    "variable": "soporte_obra",
+    "opciones": [
+      { "texto": "Textura Fina (Llaneado / Rodillado fino)", "valor": "weberplast_fino", "siguiente": "superficie_m2" },
+      { "texto": "Textura Media (Rulato / Travertino medio)", "valor": "weberplast_medio", "siguiente": "superficie_m2" },
+      { "texto": "Textura Gruesa (Acabado rústico grueso)", "valor": "weberplast_grueso", "siguiente": "superficie_m2" }
+    ]
+  },
+  {
+    "id": "superficie_m2",
+    "pregunta": "Ingresá los metros cuadrados (m²) totales de la superficie a trabajar:",
+    "tipo": "entrada_usuario",
+    "variable": "metros_cuadrados",
+    "unidad": "m²",
+    "placeholder": "Ej: 25.5",
+    "siguiente": "procesar_calculo_weber"
+  },
+  {
+    "id": "procesar_calculo_weber",
+    "tipo": "calculo",
+    "siguiente": "resultado_final_weber"
+  },
+  {
+    "id": "resultado_final_weber",
+    "tipo": "respuesta",
+    "texto": "Cálculo finalizado."
+  }
+]

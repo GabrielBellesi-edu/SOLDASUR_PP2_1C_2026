@@ -30,7 +30,28 @@ class ProductLoader:
         if self.excel_path.exists():
             self.load_products()
         else:
-            print(f"Advertencia: No se encontró {excel_path}")
+            print(f"Advertencia: No se encontró {excel_path}. Intentando cargar desde SQLite...")
+            self._load_from_sqlite()
+            
+    def _load_from_sqlite(self) -> None:
+        """Carga productos desde la base de datos SQLite products_peisa.db"""
+        try:
+            import sqlite3
+            db_path = Path(__file__).resolve().parent.parent.parent.parent / "RAG_engine" / "database" / "products_peisa.db"
+            if db_path.exists():
+                conn = sqlite3.connect(str(db_path))
+                self.products_df = pd.read_sql_query("SELECT * FROM products", conn)
+                conn.close()
+                print(f"Cargados {len(self.products_df)} productos desde SQLite {db_path}")
+                
+                # Procesar productos por categoría
+                self._process_radiators()
+                self._process_boilers()
+                self._process_floor_heating()
+            else:
+                print(f"Advertencia: No se encontró la base de datos SQLite en {db_path}")
+        except Exception as e:
+            print(f"Error cargando desde SQLite: {e}")
     
     def load_products(self) -> None:
         """Carga los productos desde el archivo Excel"""
@@ -66,7 +87,14 @@ class ProductLoader:
         if self.products_df is None:
             return
         
-        radiators_df = self.products_df[self.products_df['type'] == 'Radiador']
+        is_sqlite = 'category' in self.products_df.columns
+        if is_sqlite:
+            radiators_df = self.products_df[
+                (self.products_df['family'] == 'Radiadores') & 
+                (~self.products_df['type'].str.lower().str.contains('toallero', na=True))
+            ]
+        else:
+            radiators_df = self.products_df[self.products_df['type'] == 'Radiador']
         
         for _, row in radiators_df.iterrows():
             model_name = f"{row['family']} {row['model']}"
@@ -76,21 +104,35 @@ class ProductLoader:
             style = self._determine_style(row)
             colors = self._determine_colors(row)
             
+            # Robustez para power_w y potencia
+            raw_power = row.get('power_w')
+            try:
+                power_w = float(raw_power) if raw_power is not None and not pd.isna(raw_power) else 0.0
+            except ValueError:
+                power_w = 0.0
+                
+            coef = self._calculate_coefficient(row)
+            
+            # Si la potencia es 0.0 (como ocurre en SQLite), asignamos potencia estándar
+            if power_w == 0.0:
+                power_w = 215.15 * coef # 215.15 W * coef = 185 kcal/h * coef (potencia de catálogo estándar de PEISA)
+
             self.radiators[model_name] = {
                 'name': model_name,
                 'family': row['family'],
                 'model': row['model'],
                 'description': row.get('description', ''),
-                'power_w': float(row.get('power_w', 0)),
-                'potencia': self._watts_to_kcal(float(row.get('power_w', 0))),
-                'coeficiente': self._calculate_coefficient(row),
+                'category': row.get('category', 'Radiadores') if not pd.isna(row.get('category')) else 'Radiadores',
+                'power_w': power_w,
+                'potencia': self._watts_to_kcal(power_w),
+                'coeficiente': coef,
                 'dimensions': row.get('dimentions', ''),
                 'installation': installation_type,
                 'style': style,
                 'colors': colors,
                 'type': 'principal',  # Por defecto
-                'liters': float(row.get('liters', 0)),
-                'max_pressure_bar': float(row.get('max_pressure_bar', 0))
+                'liters': float(row.get('liters', 0)) if not pd.isna(row.get('liters')) else 0.0,
+                'max_pressure_bar': float(row.get('max_pressure_bar', 0)) if not pd.isna(row.get('max_pressure_bar')) else 0.0
             }
     
     def _process_boilers(self) -> None:
@@ -98,22 +140,47 @@ class ProductLoader:
         if self.products_df is None:
             return
         
-        boilers_df = self.products_df[self.products_df['type'] == 'Caldera']
+        is_sqlite = 'category' in self.products_df.columns
+        if is_sqlite:
+            boilers_df = self.products_df[self.products_df['family'] == 'Calderas']
+        else:
+            boilers_df = self.products_df[self.products_df['type'] == 'Caldera']
         
         for _, row in boilers_df.iterrows():
             model_name = f"{row['family']} {row['model']}"
+            
+            raw_power = row.get('power_w')
+            try:
+                power_w = float(raw_power) if raw_power is not None and not pd.isna(raw_power) else 0.0
+            except ValueError:
+                power_w = 0.0
+                
+            # Si es 0.0 (como en SQLite), inferir de la descripción o usar default (24 kW)
+            if power_w == 0.0:
+                desc = str(row.get('description', ''))
+                import re
+                kcal_match = re.search(r'(\d+[\.,]?\d*)\s*Kcal', desc, re.IGNORECASE)
+                if kcal_match:
+                    try:
+                        kcal = float(kcal_match.group(1).replace('.', '').replace(',', '.'))
+                        power_w = kcal / 0.859845
+                    except ValueError:
+                        power_w = 27912.0 # ~24000 kcal/h
+                else:
+                    power_w = 27912.0 # default 24 kW
             
             self.boilers[model_name] = {
                 'name': model_name,
                 'family': row['family'],
                 'model': row['model'],
                 'description': row.get('description', ''),
-                'power_w': float(row.get('power_w', 0)),
-                'potencia_kcal': self._watts_to_kcal(float(row.get('power_w', 0))),
+                'category': row.get('category', 'Calderas') if not pd.isna(row.get('category')) else 'Calderas',
+                'power_w': power_w,
+                'potencia_kcal': self._watts_to_kcal(power_w),
                 'dimensions': row.get('dimentions', ''),
-                'liters': float(row.get('liters', 0)),
-                'max_pressure_bar': float(row.get('max_pressure_bar', 0)),
-                'type': 'mural' if 'mural' in str(row.get('description', '')).lower() else 'piso'
+                'liters': float(row.get('liters', 0)) if not pd.isna(row.get('liters')) else 0.0,
+                'max_pressure_bar': float(row.get('max_pressure_bar', 0)) if not pd.isna(row.get('max_pressure_bar')) else 0.0,
+                'type': 'mural' if 'mural' in str(row.get('description', '')).lower() or 'mural' in str(row.get('type', '')).lower() else 'piso'
             }
     
     def _process_floor_heating(self) -> None:
@@ -121,7 +188,14 @@ class ProductLoader:
         if self.products_df is None:
             return
         
-        floor_df = self.products_df[self.products_df['type'] == 'Piso Radiante']
+        is_sqlite = 'category' in self.products_df.columns
+        if is_sqlite:
+            floor_df = self.products_df[
+                (self.products_df['family'] == 'Otros') & 
+                (self.products_df['model'].str.lower().str.contains('piso|radiante', na=True))
+            ]
+        else:
+            floor_df = self.products_df[self.products_df['type'] == 'Piso Radiante']
         
         for _, row in floor_df.iterrows():
             model_name = f"{row['family']} {row['model']}"
@@ -131,6 +205,7 @@ class ProductLoader:
                 'family': row['family'],
                 'model': row['model'],
                 'description': row.get('description', ''),
+                'category': row.get('category', 'Piso Radiante') if not pd.isna(row.get('category')) else 'Piso Radiante',
                 'dimensions': row.get('dimentions', ''),
                 'surface_m2': self._extract_surface(row)
             }

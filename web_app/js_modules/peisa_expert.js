@@ -27,6 +27,7 @@ function resetExpertSystem() {
     userInputs = {};
     contextData = {};
     lastRecommendedProduct = null;
+    activeExpert = null;
     updateContextPanel();
 }
 

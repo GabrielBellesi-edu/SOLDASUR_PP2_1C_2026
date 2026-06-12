@@ -23,6 +23,11 @@ let peisaCatalog = [];
 let weberCatalog = [];
 let browsingBrand = null; // 'PEISA' o 'WEBER'
 
+// Registro dinámico v5.0.1
+let registeredBrands = {};
+let brandCatalogs = {};
+let activeExpert = null;
+
 /* ── Toggle del chat flotante ──────────────────────────────────────────── */
 function toggleMaximize() {
     const chatWidget    = document.getElementById('chat-widget');
@@ -249,6 +254,10 @@ function renderProducts(products) {
             imgUrl = product.imagen_local ? `/scraping/${product.imagen_local.replace(/\\/g, '/')}` : '/img/weber-logo.png';
         } else if (product.imagen_local) {
             imgUrl = `/scraping/${product.imagen_local.replace(/\\/g, '/')}`;
+        } else if (product.imagen_url) {
+            imgUrl = product.imagen_url;
+        } else {
+            imgUrl = `/img/${brandUpper.toLowerCase()}-logo.png`;
         }
 
         card.innerHTML = `
@@ -263,19 +272,18 @@ function renderProducts(products) {
                 </div>
                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
                     ${hasUrl ? `<a href="${product.url}" target="_blank"
-                        style="display:inline-block; background:#3b82f6; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:12px; white-space:nowrap;"
+                        class="card-btn card-btn-primary"
                         onclick="event.stopPropagation();">
                         Ver en ${brandLabel}
                     </a>` : ''}
-                    <button class="consult-btn"
-                        style="background:#10b981; color:white; border:none; padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer; white-space:nowrap;"
+                    <button class="card-btn card-btn-secondary"
                         onclick="(function(e){e.stopPropagation(); consultFromProduct('${product.model.replace(/'/g, "\\'")}');})(event)">
                         Consultar
                     </button>
                 </div>
             </div>
             <div style="width:80px; flex-shrink:0; background:white; border-left:1px solid #f3f4f6; display:flex; align-items:center; justify-content:center; padding:4px;" onclick="event.stopPropagation(); window.open('${product.url}', '_blank');">
-                <img src="${imgUrl}" alt="${product.model}" style="height:86px; width:auto; max-width:72px; object-fit:contain;" onerror="this.src='${brandUpper === 'WEBER' ? '/img/weber-logo.png' : '/img/peisa-logo.png'}'" />
+                <img src="${imgUrl}" alt="${product.model}" style="height:86px; width:auto; max-width:72px; object-fit:contain;" onerror="this.src='/img/logo.webp'" />
             </div>
         `;
         card.onmouseenter = () => { card.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)'; card.style.borderColor = '#2563eb'; };
@@ -291,26 +299,44 @@ function renderProducts(products) {
 
 async function loadProductCatalog() {
     try {
-        const responsePeisa = await fetch('data/peisa_catalog.json');
-        if (responsePeisa.ok) {
-            peisaCatalog = await responsePeisa.json();
-            peisaCatalog.forEach(p => { p.brand = 'PEISA'; });
-            peisaProductsFromJSON = peisaCatalog;   // alias para chatbot.js
+        const responseBrands = await fetch('/api/brands');
+        if (!responseBrands.ok) throw new Error('Error cargando marcas');
+        const brandsData = await responseBrands.json();
+        registeredBrands = brandsData.brands || brandsData;
+
+        productCatalog = [];
+        peisaCatalog = [];
+        weberCatalog = [];
+        brandCatalogs = {};
+
+        for (const brandKey in registeredBrands) {
+            const b = registeredBrands[brandKey];
+            try {
+                const responseCatalog = await fetch(`/api/brands/${b.key}/catalog`);
+                if (responseCatalog.ok) {
+                    const catalog = await responseCatalog.json();
+                    catalog.forEach(p => {
+                        p.brand = b.key;
+                        if (!p.category && p.family) p.category = p.family;
+                        if (!p.family && p.category) p.family = p.category;
+                    });
+                    brandCatalogs[b.key] = catalog;
+                    if (b.key === 'PEISA') {
+                        peisaCatalog = catalog;
+                        peisaProductsFromJSON = catalog;
+                    } else if (b.key === 'WEBER') {
+                        weberCatalog = catalog;
+                    }
+                    productCatalog.push(...catalog);
+                }
+            } catch (err) {
+                console.error(`Error cargando catálogo para ${b.key}:`, err);
+            }
         }
 
-        const responseWeber = await fetch('data/weber_catalog.json');
-        if (responseWeber.ok) {
-            weberCatalog = await responseWeber.json();
-            weberCatalog.forEach(p => { 
-                p.brand = 'WEBER'; 
-                p.family = 'Weber'; 
-            });
-        }
-
-        productCatalog = [...peisaCatalog, ...weberCatalog];
-        console.log(`✅ Catálogos cargados: ${peisaCatalog.length} PEISA, ${weberCatalog.length} WEBER`);
+        console.log(`✅ Catálogos cargados dinámicamente: ${productCatalog.length} productos en total.`);
     } catch (error) {
-        console.error('❌ Error cargando catálogos:', error);
+        console.error('❌ Error cargando catálogos dinámicos:', error);
         productCatalog = [];
         peisaProductsFromJSON = [];
     }
@@ -321,10 +347,11 @@ loadProductCatalog();
 /* ── Catálogo navegable por categorías ────────────────────────────────── */
 function showBrandMenu() {
     appendMessage('system', '<strong>Seleccioná una marca de productos:</strong>');
-    const options = [
-        '<img src="img/peisa-logo.png" class="h-8 mx-auto py-1" alt="PEISA">',
-        '<img src="img/weber-logo.png" class="h-8 mx-auto py-1" alt="WEBER">'
-    ];
+    const options = Object.keys(registeredBrands).map(key => {
+        const brand = registeredBrands[key];
+        const logoName = brand.key.toLowerCase() + '-logo.png';
+        return `<img src="img/${logoName}" class="h-8 mx-auto py-1" alt="${brand.display_name}" onerror="this.outerHTML='${brand.display_name}'">`;
+    });
     renderOptions(options, false);
 }
 
@@ -336,12 +363,8 @@ function showCategoryMenu() {
 
     appendMessage('system', `<strong>${browsingBrand}</strong> — Seleccioná una categoría de productos:`);
     
-    let categories = [];
-    if (browsingBrand === 'PEISA') {
-        categories = [...new Set(peisaCatalog.map(p => p.family))].filter(Boolean);
-    } else if (browsingBrand === 'WEBER') {
-        categories = [...new Set(weberCatalog.map(p => p.category))].filter(Boolean);
-    }
+    const catalog = brandCatalogs[browsingBrand] || [];
+    const categories = [...new Set(catalog.map(p => p.category || p.family))].filter(Boolean);
 
     if (categories.length === 0) {
         appendMessage('system', 'No se pudieron cargar las categorías. Por favor, intentá más tarde.');
@@ -355,12 +378,8 @@ function showCategoryMenu() {
 function showProductsByCategory(category) {
     appendMessage('user', `Ver productos de: ${category}`);
     
-    let products = [];
-    if (browsingBrand === 'PEISA') {
-        products = peisaCatalog.filter(p => p.family === category);
-    } else if (browsingBrand === 'WEBER') {
-        products = weberCatalog.filter(p => p.category === category);
-    }
+    const catalog = brandCatalogs[browsingBrand] || [];
+    const products = catalog.filter(p => p.category === category || p.family === category);
 
     if (products.length === 0) {
         appendMessage('system', `No se encontraron productos en la categoría ${category}.`);
@@ -379,7 +398,7 @@ function showProductsByCategory(category) {
         card.onmouseover = () => { card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'; card.style.borderColor = '#2563eb'; };
         card.onmouseout  = () => { card.style.boxShadow = 'none'; card.style.borderColor = '#e5e7eb'; };
         const hasUrl = product.url && product.url !== '#';
-        const brandLabel = product.brand || 'PEISA';
+        const brandLabel = product.brand || browsingBrand;
 
         // Determinar miniatura
         const brandUpper = brandLabel.toUpperCase();
@@ -388,6 +407,10 @@ function showProductsByCategory(category) {
             imgUrl = product.imagen_local ? `/scraping/${product.imagen_local.replace(/\\/g, '/')}` : '/img/weber-logo.png';
         } else if (product.imagen_local) {
             imgUrl = `/scraping/${product.imagen_local.replace(/\\/g, '/')}`;
+        } else if (product.imagen_url) {
+            imgUrl = product.imagen_url;
+        } else {
+            imgUrl = `/img/${brandUpper.toLowerCase()}-logo.png`;
         }
 
         card.innerHTML = `
@@ -405,18 +428,18 @@ function showProductsByCategory(category) {
                 </div>
                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
                     ${hasUrl ? `<a href="${product.url}" target="_blank"
-                        style="display:inline-block; background:#3b82f6; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:12px;"
+                        class="card-btn card-btn-primary"
                         onclick="event.stopPropagation();">
                         Ver en ${brandLabel}
                     </a>` : ''}
-                    <button onclick="(function(e){e.stopPropagation(); consultFromProduct('${product.model.replace(/'/g, "\\'")}');})(event)"
-                        style="background:#10b981; color:white; padding:6px 12px; border:none; border-radius:6px; cursor:pointer; font-size:12px; white-space:nowrap;">
+                    <button class="card-btn card-btn-secondary"
+                        onclick="(function(e){e.stopPropagation(); consultFromProduct('${product.model.replace(/'/g, "\\'")}');})(event)">
                         Consultar
                     </button>
                 </div>
             </div>
             <div style="width:80px; flex-shrink:0; background:white; border-left:1px solid #f3f4f6; display:flex; align-items:center; justify-content:center; padding:4px;" onclick="event.stopPropagation(); window.open('${product.url}', '_blank');">
-                <img src="${imgUrl}" alt="${product.model}" style="height:86px; width:auto; max-width:72px; object-fit:contain;" onerror="this.src='${brandUpper === 'WEBER' ? '/img/weber-logo.png' : '/img/peisa-logo.png'}'" />
+                <img src="${imgUrl}" alt="${product.model}" style="height:86px; width:auto; max-width:72px; object-fit:contain;" onerror="this.src='/img/logo.webp'" />
             </div>
         `;
         productsGrid.appendChild(card);
@@ -429,24 +452,23 @@ function showProductsByCategory(category) {
 
 function showAllProducts() {
     appendMessage('user', 'Ver todos los productos');
-    if (productCatalog.length === 0) {
-        appendMessage('system', 'No se pudieron cargar los productos. Por favor, intentá más tarde.');
-        return;
-    }
     
     let productsToDisplay = [];
-    if (browsingBrand === 'PEISA') {
-        productsToDisplay = peisaCatalog;
-    } else if (browsingBrand === 'WEBER') {
-        productsToDisplay = weberCatalog;
+    if (browsingBrand) {
+        productsToDisplay = brandCatalogs[browsingBrand] || [];
     } else {
         productsToDisplay = productCatalog;
     }
 
+    if (productsToDisplay.length === 0) {
+        appendMessage('system', 'No se pudieron cargar los productos. Por favor, intentá más tarde.');
+        return;
+    }
+    
     appendMessage('system', `<strong>Catálogo completo (${browsingBrand || 'Todas las marcas'})</strong> — ${productsToDisplay.length} productos disponibles:`);
     const byCategory = {};
     productsToDisplay.forEach(p => {
-        const cat = browsingBrand === 'WEBER' ? (p.category || 'Otros') : (p.family || 'Otros');
+        const cat = p.category || p.family || 'Otros';
         if (!byCategory[cat]) byCategory[cat] = [];
         byCategory[cat].push(p);
     });
@@ -460,7 +482,7 @@ function showAllProducts() {
             const card = document.createElement('div');
             card.style.cssText = 'background:white; border:1px solid #e5e7eb; border-radius:8px; margin:8px 0; transition:all 0.2s; display:flex; justify-content:space-between; align-items:stretch; overflow:hidden; min-height:96px;';
             const hasUrl = product.url && product.url !== '#';
-            const brandLabel = product.brand || 'PEISA';
+            const brandLabel = product.brand || browsingBrand;
 
             // Determinar miniatura
             const brandUpper = brandLabel.toUpperCase();
@@ -469,6 +491,10 @@ function showAllProducts() {
                 imgUrl = product.imagen_local ? `/scraping/${product.imagen_local.replace(/\\/g, '/')}` : '/img/weber-logo.png';
             } else if (product.imagen_local) {
                 imgUrl = `/scraping/${product.imagen_local.replace(/\\/g, '/')}`;
+            } else if (product.imagen_url) {
+                imgUrl = product.imagen_url;
+            } else {
+                imgUrl = `/img/${brandUpper.toLowerCase()}-logo.png`;
             }
 
             card.innerHTML = `
@@ -485,15 +511,15 @@ function showAllProducts() {
                         </div>` : ''}
                     </div>
                     <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                        ${hasUrl ? `<a href="${product.url}" target="_blank" style="display:inline-block; background:#3b82f6; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:12px;" onclick="event.stopPropagation();">Ver en ${brandLabel}</a>` : ''}
-                        <button onclick="(function(e){e.stopPropagation(); consultFromProduct('${product.model.replace(/'/g, "\\'")}');})(event)"
-                            style="background:#10b981; color:white; padding:6px 12px; border:none; border-radius:6px; cursor:pointer; font-size:12px; white-space:nowrap;">
+                        ${hasUrl ? `<a href="${product.url}" target="_blank" class="card-btn card-btn-primary" onclick="event.stopPropagation();">Ver en ${brandLabel}</a>` : ''}
+                        <button class="card-btn card-btn-secondary"
+                            onclick="(function(e){e.stopPropagation(); consultFromProduct('${product.model.replace(/'/g, "\\'")}');})(event)">
                             Consultar
                         </button>
                     </div>
                 </div>
                 <div style="width:80px; flex-shrink:0; background:white; border-left:1px solid #f3f4f6; display:flex; align-items:center; justify-content:center; padding:4px;" onclick="event.stopPropagation(); window.open('${product.url}', '_blank');">
-                    <img src="${imgUrl}" alt="${product.model}" style="height:86px; width:auto; max-width:72px; object-fit:contain;" onerror="this.src='${brandUpper === 'WEBER' ? '/img/weber-logo.png' : '/img/peisa-logo.png'}'" />
+                    <img src="${imgUrl}" alt="${product.model}" style="height:86px; width:auto; max-width:72px; object-fit:contain;" onerror="this.src='/img/logo.webp'" />
                 </div>
             `;
             grid.appendChild(card);
@@ -592,4 +618,244 @@ function consultFromProduct(productModel) {
 /* ── Panel de contexto (PEISA expert) ─────────────────────────────────── */
 function updateContextPanel() {
     // Deprecated/Legacy: panel de contexto removido del HTML/CSS
+}
+
+
+/* ── BUSCADOR GENÉRICO DE PRODUCTOS EN CATÁLOGO ────────────────────────── */
+
+function findProductInCatalog(text) {
+    if (!text || typeof text !== 'string') return null;
+    const cleanText = text.toLowerCase().trim();
+    if (cleanText.length < 3) return null;
+    
+    // 1. Coincidencia exacta
+    let match = productCatalog.find(p => p.model.toLowerCase().trim() === cleanText);
+    if (match) return match;
+    
+    // 2. Coincidencia de subcadena (el modelo del catálogo está contenido en el texto buscado)
+    match = productCatalog.find(p => {
+        const pModel = p.model.toLowerCase().trim();
+        return pModel.length >= 3 && cleanText.includes(pModel);
+    });
+    if (match) return match;
+    
+    // 3. Coincidencia de subcadena inversa (el texto buscado está contenido en el modelo del catálogo)
+    match = productCatalog.find(p => {
+        const pModel = p.model.toLowerCase().trim();
+        return cleanText.length >= 3 && pModel.includes(cleanText);
+    });
+    return match;
+}
+
+
+/* ── CLIENTE DE SISTEMA EXPERTO UNIFICADO (v5.0.1) ─────────────────────── */
+
+class GenericExpertClient {
+    constructor(brand) {
+        this.brand = brand;
+        this.conversationId = 'expert_' + Math.random().toString(36).substr(2, 9);
+        this.currentNode = null;
+    }
+
+    async start() {
+        lastActiveBrand = this.brand;
+        lastActiveProduct = null; // Reiniciar producto activo al comenzar un cálculo nuevo
+        appendMessage('system', `¡Perfecto! Te guiaré paso a paso para hacer el cálculo con <strong>${this.brand}</strong>.`);
+        try {
+            const res = await fetch(`/api/expert/${this.brand}/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ conversation_id: this.conversationId })
+            });
+            if (!res.ok) throw new Error('Error iniciando calculadora');
+            const data = await res.json();
+            this.handleResponse(data);
+        } catch (err) {
+            console.error(err);
+            appendMessage('system', '⚠️ No se pudo iniciar el asistente en este momento.');
+        }
+    }
+
+    async reply(optionIndex = null, inputValues = {}) {
+        try {
+            const res = await fetch(`/api/expert/${this.brand}/reply`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    conversation_id: this.conversationId,
+                    option_index: optionIndex,
+                    input_values: inputValues
+                })
+            });
+            if (!res.ok) throw new Error('Error enviando respuesta');
+            const data = await res.json();
+            this.handleResponse(data);
+        } catch (err) {
+            console.error(err);
+            appendMessage('system', '⚠️ Ocurrió un error al procesar tu respuesta.');
+        }
+    }
+
+    handleResponse(data) {
+        this.currentNode = data;
+        
+        if (data.error) {
+            appendMessage('system', `⚠️ ${data.error}`);
+        }
+
+        if (data.text) {
+            appendMessage('system', formatResponseText(data.text));
+        }
+
+        const type = data.type || data.tipo;
+        const isFinal = data.is_final || 
+                        (data.node_id === 'final') || 
+                        (data.node_id === 'fin') || 
+                        (type === 'respuesta' && (!data.options || data.options.length === 0));
+
+        // Detectar y mostrar productos en cualquier nodo de respuesta
+        if (type === 'respuesta' || type === 'response') {
+            let recommendedProducts = [];
+            if (data.products && data.products.length > 0) {
+                recommendedProducts = data.products;
+            } else {
+                // Escaneo genérico y agnóstico de marca para deducir productos a partir de textos, cálculos o variables
+                const searchSources = [];
+                if (data.text) searchSources.push(data.text);
+                if (data.calculo && data.calculo.producto) searchSources.push(data.calculo.producto);
+                if (data.variables) {
+                    for (const key in data.variables) {
+                        const val = data.variables[key];
+                        if (typeof val === 'string') {
+                            searchSources.push(val);
+                        } else if (val && typeof val === 'object') {
+                            if (val.name) searchSources.push(val.name);
+                            if (val.model) searchSources.push(val.model);
+                        }
+                    }
+                }
+
+                // Resolver coincidencias contra el catálogo
+                searchSources.forEach(sourceText => {
+                    const match = findProductInCatalog(sourceText);
+                    if (match && !recommendedProducts.some(p => p.model === match.model)) {
+                        recommendedProducts.push(match);
+                    }
+                });
+            }
+
+            if (recommendedProducts.length > 0) {
+                renderProducts(recommendedProducts);
+                lastActiveProduct = recommendedProducts[0].model; // Guardar como producto activo para follow-up
+                lastActiveBrand = this.brand; // Asegurar sincronización de marca activa
+            }
+        }
+
+        if (isFinal) {
+            renderOptions(['Nuevo cálculo', 'Volver al inicio'], false);
+            conversationStep = 99; // Estado de finalización
+            return;
+        }
+
+        const inputArea = document.getElementById('input-area');
+        inputArea.innerHTML = '';
+
+        if (data.options && data.options.length > 0) {
+            const container = document.createElement('div');
+            container.className = 'space-y-2 w-full p-1';
+            data.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full text-left bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg';
+                btn.textContent = opt;
+                btn.onclick = () => {
+                    appendMessage('user', opt);
+                    this.reply(idx);
+                };
+                container.appendChild(btn);
+            });
+            inputArea.appendChild(container);
+        } else if (data.input_type === 'number' || type === 'entrada_usuario') {
+            const form = document.createElement('form');
+            form.className = 'flex gap-2 w-full p-1';
+            
+            const varName = data.variable || data.node_id || 'value';
+            
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                const valEl = document.getElementById('generic-txt-input');
+                const val = parseFloat(valEl.value);
+                if (isNaN(val) || val <= 0) {
+                    alert('Por favor, ingresá un número válido mayor a 0.');
+                    return;
+                }
+                const unidad = data.unidad || '';
+                appendMessage('user', `${val} ${unidad}`);
+                
+                const replyPayload = { value: val };
+                replyPayload[varName] = val;
+                this.reply(null, replyPayload);
+            };
+
+            const placeholder = data.placeholder || 'Ej: 10';
+            form.innerHTML = `
+                <input type="number" id="generic-txt-input" required step="0.01" min="0.01"
+                       class="border border-gray-300 rounded-lg px-3 py-2 flex-1 text-sm text-gray-800 focus:outline-none focus:border-blue-500"
+                       placeholder="${placeholder}">
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-all text-sm shadow">
+                    Enviar
+                </button>
+            `;
+            inputArea.appendChild(form);
+            document.getElementById('generic-txt-input').focus();
+        } else if (data.input_type === 'multiple') {
+            const form = document.createElement('form');
+            form.className = 'flex flex-col gap-2 w-full p-1';
+            
+            let inputsHtml = '<div class="grid grid-cols-3 gap-2">';
+            data.inputs.forEach(inp => {
+                inputsHtml += `
+                    <input type="number" id="inp-${inp.name}" required step="0.1" min="0.1"
+                           class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                           placeholder="${inp.label}">
+                `;
+            });
+            inputsHtml += '</div>';
+
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                const vals = {};
+                let displayStr = '';
+                let isValid = true;
+                data.inputs.forEach(inp => {
+                    const el = document.getElementById(`inp-${inp.name}`);
+                    const val = parseFloat(el.value);
+                    if (isNaN(val) || val <= 0) {
+                        isValid = false;
+                    }
+                    vals[inp.name] = val;
+                    displayStr += `${val}m x `;
+                });
+                if (!isValid) {
+                    alert('Por favor ingrese valores mayores a 0.');
+                    return;
+                }
+                displayStr = displayStr.slice(0, -3);
+                appendMessage('user', displayStr);
+                this.reply(null, vals);
+            };
+
+            form.innerHTML = `
+                ${inputsHtml}
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-all text-sm shadow">
+                    Enviar
+                </button>
+            `;
+            inputArea.appendChild(form);
+            if (data.inputs.length > 0) {
+                document.getElementById(`inp-${data.inputs[0].name}`).focus();
+            }
+        }
+    }
 }

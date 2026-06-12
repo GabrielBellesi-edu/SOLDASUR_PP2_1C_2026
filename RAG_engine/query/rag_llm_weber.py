@@ -1,12 +1,12 @@
 """
-weber_rag_llm.py – Generador RAG / LLM para productos Weber.
+rag_llm_weber.py – Generador RAG / LLM para productos Weber.
 """
 
 import requests
 import json
 from pathlib import Path
 from typing import List, Dict, Any, Optional
-from .weber_rag_query import search_weber, calcular_cantidad, _extract_superficie
+from .rag_query_weber import search_weber, calcular_cantidad, _extract_superficie
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 OLLAMA_MODEL = "llama3.2:3b"
@@ -157,7 +157,7 @@ def _format_fallback_response(
 
 def get_weber_product_by_model(model_name: str) -> Optional[Dict[str, Any]]:
     """Busca y retorna un producto del catálogo de Weber por su nombre de modelo (case-insensitive)."""
-    import RAG_engine.query.weber_rag_query as weber_query
+    import RAG_engine.query.rag_query_weber as weber_query
     weber_query._load_resources()
     meta = weber_query._metadata
     if meta:
@@ -212,15 +212,17 @@ def search_and_answer(
     productos = _filter_by_relevance(productos)
 
     # Si se especificó un producto activo y no está en los resultados, lo inyectamos al principio
+    effective_last_active = None
     if last_active_product:
         p_activo = get_weber_product_by_model(last_active_product)
         if p_activo:
             # Remover duplicados si ya estaba en la lista
             productos = [p for p in productos if p.get("model", "").lower().strip() != last_active_product.lower().strip()]
             productos.insert(0, p_activo)
+            effective_last_active = last_active_product
 
     # Generar respuesta
-    respuesta = answer_weber(query, productos, superficie_m2, last_active_product)
+    respuesta = answer_weber(query, productos, superficie_m2, effective_last_active)
 
     # Devolver al frontend máximo 2 productos (los más relevantes):
     # evita mostrar una tarjeta de producto que el LLM no llegó a mencionar.

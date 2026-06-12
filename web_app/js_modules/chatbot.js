@@ -310,6 +310,18 @@ async function callOllama(userMessage) {
 
     const data = await response.json();
 
+    // Sincronizar contexto de marca y producto basado en la respuesta del chatbot
+    if (data.mode && data.mode !== 'neutral') {
+        const resolvedBrand = data.mode.toUpperCase();
+        if (lastActiveBrand !== resolvedBrand) {
+            lastActiveBrand = resolvedBrand;
+            lastActiveProduct = null;
+        }
+        if (data.products && data.products.length > 0) {
+            lastActiveProduct = data.products[0].model;
+        }
+    }
+
     // Si el backend nos responde en modo Weber
     if (data.mode === 'weber') {
         let assistantMessage = data.text;
@@ -324,7 +336,7 @@ async function callOllama(userMessage) {
         };
     }
 
-    // Flujo de respaldo para PEISA
+    // Flujo de respaldo para PEISA u otras marcas
     const assistantMessage = fixBranding(briefenResponse(data.text || data.message || ''));
 
     conversationHistory.push({
@@ -338,7 +350,7 @@ async function callOllama(userMessage) {
 
     return {
         message: assistantMessage,
-        products: mentionedProducts
+        products: data.products || mentionedProducts
     };
 }
 
@@ -662,6 +674,10 @@ function renderProducts(products) {
             imgUrl = product.imagen_local ? `/scraping/${product.imagen_local.replace(/\\/g, '/')}` : '/img/weber-logo.png';
         } else if (product.imagen_local) {
             imgUrl = `/scraping/${product.imagen_local.replace(/\\/g, '/')}`;
+        } else if (product.imagen_url) {
+            imgUrl = product.imagen_url;
+        } else {
+            imgUrl = `/img/${brandUpper.toLowerCase()}-logo.png`;
         }
 
         productCard.innerHTML = `
@@ -678,19 +694,18 @@ function renderProducts(products) {
                 </div>
                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
                     ${hasUrl ? `<a href="${product.url}" target="_blank"
-                        style="display:inline-block; background:#3b82f6; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:12px; white-space:nowrap;"
+                        class="card-btn card-btn-primary"
                         onclick="event.stopPropagation();">
                         Ver en ${brandLabel}
                     </a>` : ''}
-                    <button class="consult-btn"
-                        style="background:#10b981; color:white; border:none; padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer; white-space:nowrap;"
+                    <button class="card-btn card-btn-secondary"
                         onclick="(function(e){e.stopPropagation(); consultFromProduct('${product.model.replace(/'/g, "\\'")}');})(event)">
                         Consultar
                     </button>
                 </div>
             </div>
             <div style="width:80px; flex-shrink:0; background:white; border-left:1px solid #f3f4f6; display:flex; align-items:center; justify-content:center; padding:4px;" onclick="event.stopPropagation(); window.open('${product.url}', '_blank');">
-                <img src="${imgUrl}" alt="${product.model}" style="height:86px; width:auto; max-width:72px; object-fit:contain;" onerror="this.src='${brandUpper === 'WEBER' ? '/img/weber-logo.png' : '/img/peisa-logo.png'}'" />
+                <img src="${imgUrl}" alt="${product.model}" style="height:86px; width:auto; max-width:72px; object-fit:contain;" onerror="this.src='/img/logo.webp'" />
             </div>
         `;
 

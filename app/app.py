@@ -7,7 +7,7 @@ import json
 import math
 from math import ceil
 from bisect import bisect_left
-from app.models import RADIATOR_MODELS
+from app.modules.expertSystem.expert_engine_peisa import RADIATOR_MODELS
 
 knowledge_base = None
 
