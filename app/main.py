@@ -25,6 +25,18 @@ from app.orchestrator import IntentClassifier, IntentType
 from pathlib import Path
 import requests
 
+def get_configured_model() -> str:
+    """Carga el modelo configurado en configs/models.json con fallback a llama3.2:3b"""
+    try:
+        models_path = Path(BASE_DIR) / "configs" / "models.json"
+        if models_path.exists():
+            with open(models_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data.get("ollama_model", "llama3.2:3b")
+    except Exception as e:
+        print(f"[Main] Error cargando configs/models.json ({e}). Usando fallback.")
+    return "llama3.2:3b"
+
 # Cargar registro de marcas
 brands_registry = {}
 try:
@@ -330,7 +342,7 @@ def _get_neutral_response(message: str) -> str:
         response = requests.post(
             ollama_url,
             json={
-                "model": "llama3.2:3b",
+                "model": get_configured_model(),
                 "prompt": message,
                 "system": system_prompt,
                 "stream": False,

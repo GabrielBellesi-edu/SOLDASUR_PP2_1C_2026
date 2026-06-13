@@ -3,12 +3,24 @@ import ollama
 import os
 from typing import List, Dict, Optional
 import json
+from pathlib import Path
+
+def _load_configured_model() -> str:
+    """Carga el modelo configurado en configs/models.json con fallback a llama3.2:3b"""
+    models_path = Path(__file__).resolve().parent.parent.parent / "configs" / "models.json"
+    if models_path.exists():
+        try:
+            with open(models_path, "r", encoding="utf-8") as f:
+                return json.load(f).get("ollama_model", "llama3.2:3b")
+        except Exception:
+            pass
+    return "llama3.2:3b"
 
 class OllamaLLM:
     """Wrapper para interactuar con Ollama usando el modelo Mistral"""
     
-    def __init__(self, model: str = "llama3.2:3b"):
-        self.model = model
+    def __init__(self, model: Optional[str] = None):
+        self.model = model or _load_configured_model()
         # Configurar host de Ollama; respeta OLLAMA_HOST si está definida
         self.ollama_host = os.getenv('OLLAMA_HOST', 'http://127.0.0.1:11434')
         try:

@@ -132,6 +132,20 @@ Puedes escribir libremente cualquier consulta técnica o comercial en la caja de
 
 El orquestador del chatbot detectará automáticamente a qué marca te refieres, buscará en la base de datos vectorial de FAISS los productos correspondientes, y el LLM te responderá con texto amigable en español rioplatense junto a tarjetas visuales con fotos, ventajas técnicas y enlaces al catálogo.
 
+### 3. Configuración del Modelo de Lenguaje (Ollama)
+Si deseas utilizar un modelo de lenguaje local diferente al predeterminado (`llama3.2:3b`) —como por ejemplo `llama3.1:8b` para mayor capacidad—, puedes configurarlo de forma centralizada:
+1. Abre el archivo de configuración [configs/models.json](file:///d:/ESTUDIO/CPMA/DEV/22%20-%20PRACTICA%20PROFESIONALIZANTE%20II/Repo/v5/SOLDASUR_PP2_1C_2026/configs/models.json) (si no existe, se puede crear en esa ubicación).
+2. Modifica la propiedad `"ollama_model"` con el identificador exacto de tu modelo. Por ejemplo:
+   ```json
+   {
+     "ollama_model": "llama3.1:8b"
+   }
+   ```
+3. Antes de iniciar la aplicación, descarga el modelo correspondiente en tu terminal ejecutando:
+   ```bash
+   ollama pull llama3.1:8b
+   ```
+
 ---
 
 ## Mantenimiento y Scraping

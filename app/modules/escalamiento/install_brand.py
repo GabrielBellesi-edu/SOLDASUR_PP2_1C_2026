@@ -461,7 +461,20 @@ from typing import List, Dict, Any, Optional
 from .rag_query_{brand_lower} import search_{brand_lower}, get_{brand_lower}_product_by_model
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
-OLLAMA_MODEL = "llama3.2:3b"
+
+def _load_configured_model() -> str:
+    """Carga el modelo configurado en configs/models.json con fallback a llama3.2:3b"""
+    models_path = Path(__file__).resolve().parent.parent.parent / "configs" / "models.json"
+    if models_path.exists():
+        try:
+            with open(models_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data.get("ollama_model", "llama3.2:3b")
+        except Exception:
+            pass
+    return "llama3.2:3b"
+
+OLLAMA_MODEL = _load_configured_model()
 
 # Estandarizamos el System Prompt por defecto (fallback)
 SYSTEM_PROMPT_{brand_upper}_DEFAULT = """{system_prompt_escaped}"""

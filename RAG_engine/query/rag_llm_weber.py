@@ -9,7 +9,19 @@ from typing import List, Dict, Any, Optional
 from .rag_query_weber import search_weber, calcular_cantidad, _extract_superficie
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
-OLLAMA_MODEL = "llama3.2:3b"
+
+def _load_configured_model() -> str:
+    """Carga el modelo configurado en configs/models.json con fallback a llama3.2:3b"""
+    models_path = Path(__file__).resolve().parent.parent.parent / "configs" / "models.json"
+    if models_path.exists():
+        try:
+            with open(models_path, "r", encoding="utf-8") as f:
+                return json.load(f).get("ollama_model", "llama3.2:3b")
+        except Exception:
+            pass
+    return "llama3.2:3b"
+
+OLLAMA_MODEL = _load_configured_model()
 
 # Estandarizamos el System Prompt por defecto (fallback)
 SYSTEM_PROMPT_WEBER_DEFAULT = """Sos Soldy, asesor técnico de SOLDASUR especializado en productos Weber (Saint-Gobain) para construcción y reforma. Tu función es recomendar productos Weber adecuados para la necesidad del cliente, hablando siempre en representación de SOLDASUR.

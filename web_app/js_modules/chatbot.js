@@ -1,6 +1,3 @@
-/* Configuración Ollama */
-const OLLAMA_URL = 'http://localhost:11434/api/chat';
-const OLLAMA_MODEL = 'llama3.2:3b';
 const conversationHistory = [];
 const MAX_HISTORY_LENGTH = 10; // Mantener últimos 10 mensajes para no saturar el contexto
 let conversationContext = ''; // Resumen del contexto de la conversación
