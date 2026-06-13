@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-install_brand.py - Instalador automático de nuevas marcas para SOLDASUR (v5.0.0)
+install_brand.py - Instalador automático de nuevas marcas para SOLDASUR (v5.0.2)
 =============================================================================
 Ubicación: app/modules/escalamiento/install_brand.py
-Lee la carpeta 'nueva_marca/<carpeta_marca>' en la raíz, compila el índice vectorial FAISS
+Lee la carpeta 'scraping/data_raw/<marca_lower>' en la raíz, compila el índice vectorial FAISS
 y genera el código de consultas RAG + registro de configuraciones de forma 100% automática.
 """
 
@@ -18,15 +18,15 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
-# Obtener nombre de la carpeta de entrada (por defecto 'nueva_marca/brand_key')
+# Obtener nombre de la marca (ej: Durlock o durlock)
 input_folder = sys.argv[1] if len(sys.argv) > 1 else ""
 
 if not input_folder:
-    print("\n[ERROR] Debes proporcionar el nombre de la carpeta de la marca.")
+    print("\n[ERROR] Debes proporcionar el nombre de la marca.")
     print("Ejemplo: python install_brand.py Durlock\n")
     sys.exit(1)
 
-INPUT_DIR = BASE_DIR / "nueva_marca" / input_folder
+INPUT_DIR = BASE_DIR / "scraping" / "data_raw" / input_folder.lower().strip()
 DATABASE_DIR = BASE_DIR / "RAG_engine" / "database"
 QUERY_DIR = BASE_DIR / "RAG_engine" / "query"
 CONFIGS_DIR = BASE_DIR / "configs"
@@ -70,15 +70,16 @@ def check_dependencies():
 
 
 def load_input_files():
-    """Valida y carga los archivos de configuración y catálogo desde nueva_marca/brand/."""
-    print(f"[2/5] Cargando archivos de entrada desde './nueva_marca/{input_folder}'...")
+    """Valida y carga los archivos de configuración y catálogo desde scraping/data_raw/<marca_lower>/."""
+    brand_lower = input_folder.lower().strip()
+    print(f"[2/5] Cargando archivos de entrada desde './scraping/data_raw/{brand_lower}'...")
     
     if not INPUT_DIR.exists():
         print(f"\n[ERROR] No se encontró la carpeta: {INPUT_DIR}")
-        print("Asegúrate de haber creado la carpeta con el nombre de tu marca dentro de 'nueva_marca/'.")
+        print("Asegúrate de haber creado la carpeta con el nombre de tu marca dentro de 'scraping/data_raw/'.")
         print("Estructura requerida:")
-        print(f"  nueva_marca/{input_folder}/config.json")
-        print(f"  nueva_marca/{input_folder}/<brand>_catalog.json (o catalog.json)")
+        print(f"  scraping/data_raw/{brand_lower}/config.json")
+        print(f"  scraping/data_raw/{brand_lower}/<brand>_catalog.json (o catalog.json)")
         sys.exit(1)
 
     config_path = INPUT_DIR / "config.json"
@@ -131,31 +132,58 @@ def load_input_files():
     return config, catalog
 
 
-def build_chunk_text(product: dict) -> str:
+def get_applications_robust(product: dict) -> list:
+    """Extrae de forma robusta las aplicaciones de un producto con fallback a múltiples claves y formatos."""
+    raw_apps = (
+        product.get("aplicar") or 
+        product.get("aplicacion") or 
+        product.get("aplicaciones") or 
+        product.get("applications")
+    )
+    if not raw_apps:
+        return []
+        
+    if isinstance(raw_apps, list):
+        normalized = []
+        for item in raw_apps:
+            if isinstance(item, dict):
+                val = item.get("nombre") or item.get("slug")
+                if val:
+                    normalized.append(str(val))
+            elif item:
+                normalized.append(str(item))
+        return normalized
+    elif isinstance(raw_apps, dict):
+        val = raw_apps.get("nombre") or raw_apps.get("slug")
+        return [str(val)] if val else []
+    elif isinstance(raw_apps, str):
+        return [x.strip() for x in re.split(r'[,;\n]+', raw_apps) if x.strip()]
+        
+    return []
+
+
+def build_chunk_text(product: dict, brand_display: str = "General") -> str:
     """Construye el texto semántico que se utilizará para embedear un producto."""
-    # Obtener categoría de forma robusta
-    category = product.get("category")
+    # Priorizar categories_processed (amigable/estilizada)
+    category = None
+    processed_cats = product.get("categories_processed")
+    if isinstance(processed_cats, list) and processed_cats:
+        category = processed_cats[0]
+    elif isinstance(processed_cats, str) and processed_cats:
+        category = processed_cats
+        
+    if not category:
+        category = product.get("category")
+        
     if not category:
         cats = product.get("categories")
         if isinstance(cats, list) and cats:
-            # Map common slugs if found
-            slug = cats[0]
-            CAT_MAP = {
-                "placas-de-yeso": "Placas de yeso",
-                "placas-de-cemento": "Placas de cemento",
-                "placas-decorativas": "Placas decorativas",
-                "cielorrasos-desmontables": "Cielorrasos desmontables",
-                "siding": "Siding",
-                "masillas-adhesivos-y-enduidos": "Masillas, adhesivos y enduidos",
-                "aislantes": "Aislantes",
-                "accesorios-y-selladores": "Accesorios y Selladores",
-                "yesos": "Yesos",
-                "soluciones-contra-incendios": "Soluciones contra incendios",
-                "perfiles": "Perfiles"
-            }
-            category = CAT_MAP.get(slug, slug.replace("-", " ").title())
-        else:
-            category = product.get("family", "General")
+            category = cats[0].replace("-", " ").title()
+        elif isinstance(cats, str) and cats:
+            category = cats.replace("-", " ").title()
+            
+    if not category:
+        category = product.get("family", "General")
 
     partes = [
         f"Producto: {product.get('model', product.get('name', product.get('model_name', '')))}",
@@ -177,6 +205,11 @@ def build_chunk_text(product: dict) -> str:
         elif isinstance(tf, str):
             partes.append(f"Características: {tf}")
 
+    # Obtener aplicaciones de forma robusta e incluirlas en el chunk semántico
+    apps = get_applications_robust(product)
+    if apps:
+        partes.append("Aplicaciones: " + ", ".join(apps))
+
     # Obtener presentación de forma robusta
     presentacion = product.get("presentacion")
     if not presentacion:
@@ -186,7 +219,7 @@ def build_chunk_text(product: dict) -> str:
                 presentacion = f"{k}: {v}"
                 break
     if not presentacion:
-        presentacion = "Insumo Durlock"
+        presentacion = f"Insumo {brand_display}"
 
     partes.append(f"Presentación: {presentacion}")
 
@@ -211,30 +244,29 @@ def compile_vector_db(config: dict, catalog: list):
     metadata = []
 
     for product in catalog:
-        text = build_chunk_text(product)
+        text = build_chunk_text(product, display_name)
         texts.append(text)
         
-        # Obtener categoría de forma robusta
-        category = product.get("category")
+        # Priorizar categories_processed (amigable/estilizada)
+        category = None
+        processed_cats = product.get("categories_processed")
+        if isinstance(processed_cats, list) and processed_cats:
+            category = processed_cats[0]
+        elif isinstance(processed_cats, str) and processed_cats:
+            category = processed_cats
+            
+        if not category:
+            category = product.get("category")
+            
         if not category:
             cats = product.get("categories")
             if isinstance(cats, list) and cats:
-                CAT_MAP = {
-                    "placas-de-yeso": "Placas de yeso",
-                    "placas-de-cemento": "Placas de cemento",
-                    "placas-decorativas": "Placas decorativas",
-                    "cielorrasos-desmontables": "Cielorrasos desmontables",
-                    "siding": "Siding",
-                    "masillas-adhesivos-y-enduidos": "Masillas, adhesivos y enduidos",
-                    "aislantes": "Aislantes",
-                    "accesorios-y-selladores": "Accesorios y Selladores",
-                    "yesos": "Yesos",
-                    "soluciones-contra-incendios": "Soluciones contra incendios",
-                    "perfiles": "Perfiles"
-                }
-                category = CAT_MAP.get(cats[0], cats[0].replace("-", " ").title())
-            else:
-                category = product.get("family", "General")
+                category = cats[0].replace("-", " ").title()
+            elif isinstance(cats, str) and cats:
+                category = cats.replace("-", " ").title()
+                
+        if not category:
+            category = product.get("family", "General")
 
         # Obtener presentación de forma robusta
         presentacion = product.get("presentacion")
@@ -245,7 +277,7 @@ def compile_vector_db(config: dict, catalog: list):
                     presentacion = f"{k}: {v}"
                     break
         if not presentacion:
-            presentacion = "Insumo Durlock"
+            presentacion = f"Insumo {display_name}"
 
         # Guardar en metadatos limpios para consumo del frontend
         metadata.append({
@@ -257,6 +289,7 @@ def compile_vector_db(config: dict, catalog: list):
             "presentacion":presentacion,
             "imagen_local": product.get("imagen_local", ""),
             "imagen_url":   product.get("imagen_url", ""),
+            "applications": get_applications_robust(product),
         })
 
     print(f"  -> Generando embeddings para {len(texts)} productos con el modelo: {MODEL_NAME}...")
@@ -390,7 +423,8 @@ def _fallback_search(query: str, top_k: int) -> List[Dict[str, Any]]:
     query_lower = query.lower()
     scored = []
     for product in meta:
-        text = f"{{product.get('model','')}} {{product.get('description','')}} {{product.get('category','')}}".lower()
+        apps_str = " ".join(product.get("applications", []))
+        text = f"{{product.get('model','')}} {{product.get('description','')}} {{product.get('category','')}} {{apps_str}}".lower()
         score = sum(1 for word in query_lower.split() if word in text)
         if score > 0:
             p = product.copy()
