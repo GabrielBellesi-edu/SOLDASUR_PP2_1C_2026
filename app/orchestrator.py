@@ -593,7 +593,7 @@ class ConversationOrchestrator:
         Usa el WeberRAGEngine en lugar del RAG de PEISA.
         """
         try:
-            from RAG_engine.query.weber_rag_llm import search_and_answer
+            from RAG_engine.query.rag_llm_weber import search_and_answer
             result = search_and_answer(message)
             return {
                 "type": "response",

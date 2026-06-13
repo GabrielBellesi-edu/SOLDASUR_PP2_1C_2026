@@ -19,18 +19,3 @@ Dockerfile
 
 # Playwright/Chromium user profile
 user_data/
-weber_ingest/user_data/
-weber_data/documentos/
-
-IA-RULES.md
-scratch/
-manualparaescalamiento.md
-flujo_orquestador.md
-paso_a_paso_nueva_marca.md
-
-
-
-
-nueva_marca/Durlock/
-dur/
-temp/

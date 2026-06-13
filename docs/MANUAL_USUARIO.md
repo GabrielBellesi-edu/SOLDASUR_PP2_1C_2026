@@ -228,6 +228,22 @@ SOLDASUR_PP2_1C_2026/
 │   ├── 📄 brands_registry.json           # Registro de marcas y sus palabras clave
 │   └── 📄 prompts.json                   # System prompts y parámetros de Ollama
 │
+├── 📂 docs/                              # DOCUMENTACIÓN TÉCNICA Y DE USUARIO
+│   ├── 📄 MANUAL_ESCALAMIENTO.md         # Guía de escalabilidad para nuevas marcas
+│   ├── 📄 MANUAL_SISTEMA_EXPERTO_RAG.md  # Funcionamiento interno de motores expertos y RAG
+│   ├── 📄 MANUAL_TECNICO_ORQUESTADOR.md  # Flujo del orquestador e intenciones
+│   ├── 📄 MANUAL_TECNICO_SISTEMA_EXPERTO_WEBBER.md # Lógica y rendimiento de Weber
+│   └── 📄 MANUAL_USUARIO.md              # Este manual de usuario
+│
+├── 📂 docs legacy/                       # DOCUMENTACIÓN DE VERSIONES ANTERIORES
+│   ├── 📄 CHATBOT.md
+│   ├── 📄 GLOSARIO.md
+│   ├── 📄 MANUAL_ESCALAMIENTO.md
+│   ├── 📄 Manual_Usuario.md
+│   ├── 📄 README Legacy.md
+│   ├── 📄 SCRAPING.md
+│   └── 📄 SISTEMA_EXPERTO.md
+│
 ├── 📂 RAG_engine/                        # MOTOR RAG (BÚSQUEDA VECTORIAL)
 │   ├── 📂 database/                      # Índices FAISS y metadatos compilados
 │   │   ├── 📄 peisa_products.db          # BD SQLite de metadatos de PEISA
@@ -235,10 +251,10 @@ SOLDASUR_PP2_1C_2026/
 │   │   └── 📄 weber_products.faiss       # Índice vectorial de Weber
 │   │
 │   ├── 📂 query/                         # Código RAG de inferencia de cada marca
-│   │   ├── 📄 peisa_rag_query.py
-│   │   ├── 📄 peisa_rag_llm.py
-│   │   ├── 📄 weber_rag_query.py
-│   │   └── 📄 weber_rag_llm.py
+│   │   ├── 📄 rag_query_peisa.py
+│   │   ├── 📄 rag_llm_peisa.py
+│   │   ├── 📄 rag_query_weber.py
+│   │   └── 📄 rag_llm_weber.py
 │   │
 │   └── 📂 scripts/                       # Ingestas de datos tradicionales
 │       ├── 📄 ingest.py                  # Orquestador central (--peisa, --weber, --all)
