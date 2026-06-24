@@ -119,12 +119,3 @@ El escalamiento de un sistema híbrido de inteligencia artificial conlleva riesg
 | **Inconsistencias en Catálogos JSON** | Media | Alto | Implementar validadores de esquemas JSON estrictos (mediante la librería `Pydantic` en python) antes de correr el indexador `install_brand.py` para rechazar catálogos sin campos obligatorios. |
 | **Latencia de Inferencia en Mostrador** | Media | Alto | En servidores de producción local, instalar placas de video dedicadas compatibles con aceleración CUDA de Nvidia. Limitar el parámetro `"max_tokens"` a `150` en [configs/prompts.json](../SOLDASUR_PP2_1C_2026/configs/prompts.json). |
 | **Conflicto de Enrutamiento Semántico** | Baja | Medio | Ajustar de manera precisa los textos ancla descriptivos de la clave `"anchor_text"` en el registro [configs/brands_registry.json](../SOLDASUR_PP2_1C_2026/configs/brands_registry.json) para delimitar claramente los campos temáticos de las marcas aliadas. |
-
----
-
-## 6. Conclusiones y Retorno de Inversión (ROI)
-
-El plan de escalamiento detallado en este documento garantiza que **Soldy** se mantenga como un activo de software de larga vida útil para Soldasur S.A.
-*   **Soberanía e Independencia:** La empresa no depende de proveedores de software externos para incorporar sus nuevos catálogos de marcas o modificar la personalidad del chatbot.
-*   **Escalabilidad Rentable:** El incremento de la base de conocimientos se realiza sobre infraestructura local y libre de costo de suscripción por uso de API, lo que asegura la viabilidad financiera del proyecto a largo plazo.
-*   **Retorno Comercial:** La correcta implementación de este plan potenciará la venta cruzada en todas las líneas de productos incorporadas, unificará los estándares de cálculo en las sucursales físicas y mejorará significativamente el flujo logístico de mercaderías en la Patagonia.

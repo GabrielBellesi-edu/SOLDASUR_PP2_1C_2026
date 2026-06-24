@@ -222,8 +222,7 @@ A continuación se detalla la ubicación de los componentes del sistema para tar
 SOLDASUR_PP2_1C_2026/
 │
 ├── 📄 requirements.txt                   # Librerías de Python requeridas
-├── 📄 README Legacy.md                   # Documentación de la arquitectura original
-├── 📄 Manual_Usuario.md                  # Manual de usuario versión anterior
+├── 📄 README.md                          # Documentación
 │
 ├── 📂 app/                               # BACKEND DE LA APLICACIÓN
 │   ├── 📄 main.py                        # Servidor FastAPI y endpoints web
@@ -248,15 +247,6 @@ SOLDASUR_PP2_1C_2026/
 │   ├── 📄 MANUAL_TECNICO_ORQUESTADOR.md  # Flujo del orquestador e intenciones
 │   ├── 📄 MANUAL_TECNICO_SISTEMA_EXPERTO_WEBBER.md # Lógica y rendimiento de Weber
 │   └── 📄 MANUAL_USUARIO.md              # Este manual de usuario
-│
-├── 📂 docs legacy/                       # DOCUMENTACIÓN DE VERSIONES ANTERIORES
-│   ├── 📄 CHATBOT.md
-│   ├── 📄 GLOSARIO.md
-│   ├── 📄 MANUAL_ESCALAMIENTO.md
-│   ├── 📄 Manual_Usuario.md
-│   ├── 📄 README Legacy.md
-│   ├── 📄 SCRAPING.md
-│   └── 📄 SISTEMA_EXPERTO.md
 │
 ├── 📂 RAG_engine/                        # MOTOR RAG (BÚSQUEDA VECTORIAL)
 │   ├── 📂 database/                      # Índices FAISS y metadatos compilados
