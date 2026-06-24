@@ -1,0 +1,35 @@
+{
+  "nombre": "weberpint látex exterior-interior",
+  "url": "https://www.ar.weber/preparacion-de-superficies/pinturas/weberpint-latex-exterior-interior",
+  "descripcion": "Inicio Preparación de superficies Pinturas",
+  "datos_tecnicos": "Inicio\nPreparación de superficies\nPinturas\nweberpint látex exterior-interior\nShow gallery\nweberpint látex exterior-interior\nPackaging: 10 Lts\nPackaging: 20 Lts\nLátex acrílico mate blanco, cuidadosamente formulado\npara ser utilizado tanto en exteriores como en interiores,\ncon un excelente poder cubritivo, buena resistencia al\nlavado y a las condiciones climáticas severas. Es un\nrecubrimiento con gran rendimiento y de rápido secado.\nBuen\npoder antihongo residual. Sus compuestos acrílicos le\notorgan una excelente capacidad impermeabilizante,\nque lo hacen durable en el tiempo.\nManual\nProyectable\nPresentación\n4 Lts\n10 Lts\n20 Lts\nSoporte\nPared Interna,\nPared pintada,\nPared Exterior\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nAgite el contenido del envase con una varilla de forma de no\nincorporar aire hasta obtener un producto homogéneo y\nfluido. En caso de ser necesario agregar hasta un 10% de agua\nlimpia para facilitar su aplicación según el método a utilizar. El\nproducto se puede colorear mediante mezclas con entonadores\nuniversales.\nSe recomienda no\npintar en condiciones extremas de temperatura y humedad.\nCaracterísticas y beneficios\nÓptimo cubritivo\nExcelente terminación\nResistente a la intemperie\nAntihongo y antialgas\nApto sistema air-less\nDocumentación del producto\nFicha de producto\nFP_weberpint-latex-exterior-interior.pdf\n(PDF - 633,09 KB)\nDescargar\nEnviar\nHoja de Seguridad\nweberpint exterior-interior - FS\n(PDF - 316,9 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial",
+  "filtros": {
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      },
+      {
+        "nombre": "Proyectable",
+        "slug": "proyectable-96"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Presentación": "Pared Interna,\n    Pared pintada,\n    Pared Exterior",
+    "Soporte": "Pared Interna,\n    Pared pintada,\n    Pared Exterior"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weberpint-latex-exterior-interior.pdf",
+      "url": "https://www.ar.weber/files/ar/2020-10/FP_weberpint-latex-exterior-interior.pdf"
+    },
+    {
+      "nombre": "weberpint exterior-interior - FS",
+      "url": "https://www.ar.weber/files/ar/2025-12/weberpint_interior_-_FS_V01122025.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:36:37.233740",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2020-10/weberpint_ltex_exterior-interior_A0B7B9B787FD4A88A296F1471406E768.jpg?itok=OLWyWOoO",
+  "imagen_local": "data_raw\\weber\\img\\weberpint_látex_exterior_interior.jpg"
+}

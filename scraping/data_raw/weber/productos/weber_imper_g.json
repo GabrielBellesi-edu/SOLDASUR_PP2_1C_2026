@@ -1,0 +1,60 @@
+{
+  "nombre": "weber imper G",
+  "url": "https://www.ar.weber/impermeabilizantes/soluciones-cementicias/weber-imper-g",
+  "descripcion": "Inicio Impermeabilizantes Soluciones cementicias",
+  "datos_tecnicos": "Inicio\nImpermeabilizantes\nSoluciones cementicias\nweber imper G\nShow gallery\nweber imper G\nImpermeabilizante alta prestaciones para ladrillos\nRegulador de absorsión\nPara pisos y paredes\nAlta resistencia\nPintable\nNo fisura\nImpermeable\nManual\nSoporte\nPared Exterior,\nFachada,\nPiso,\nPiscina\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nLimpiar el soporte de polvo y material flojo\nHumedecer el soporte para una mejor adherencia del producto\nRestricciones\nNo aplicar sobre soportes empapados de agua.\nNo utilizar en soportes fisurados o susceptibles de movimiento.\nNo utilizar en medio ácido con pH inferior a 6.\nDocumentación del producto\nFicha de producto\nFP_weber_imper_G.pdf\n(PDF - 924,8 KB)\nDescargar\nEnviar\nHoja Técnica\nHT weberdry imper G.pdf\n(PDF - 139,33 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS - weber tec imper G\n(PDF - 267,98 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Regulador de absorsión",
+        "slug": "regulador-de-absorsion-616"
+      },
+      {
+        "nombre": "Para pisos y paredes",
+        "slug": "para-pisos-y-paredes-911"
+      },
+      {
+        "nombre": "Alta resistencia",
+        "slug": "alta-resistencia-235"
+      },
+      {
+        "nombre": "Pintable",
+        "slug": "pintable-275"
+      },
+      {
+        "nombre": "No fisura",
+        "slug": "no-fisura-274"
+      },
+      {
+        "nombre": "Impermeable",
+        "slug": "impermeable-234"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Pared Exterior,\n    Fachada,\n    Piso,\n    Piscina"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weber_imper_G.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-07/FP_weber_imper_G.pdf"
+    },
+    {
+      "nombre": "HT weberdry imper G.pdf",
+      "url": "https://www.ar.weber/files/ar/2019-12/HT_weberdry_imper_G.pdf"
+    },
+    {
+      "nombre": "HS - weber tec imper G",
+      "url": "https://www.ar.weber/files/ar/2025-12/HS_-_weber_imper_G.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:37:08.284642",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2019-06/pack-weber-imperG-25kg_58EBE6E339E447C29E17C86D2DE522A9.jpg?itok=zr1OUOPP",
+  "imagen_local": "data_raw\\weber\\img\\weber_imper_g.jpg"
+}

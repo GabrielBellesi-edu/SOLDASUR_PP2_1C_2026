@@ -1,0 +1,56 @@
+{
+  "nombre": "weber rapid",
+  "url": "https://www.ar.weber/soluciones-para-fijaciones-anclajes-y-sellados/anclaje-y-fijacion/weber-rapid",
+  "descripcion": "Inicio Soluciones para fijaciones, anclajes y sellados Anclaje y Fijación",
+  "datos_tecnicos": "Inicio\nSoluciones para fijaciones, anclajes y sellados\nAnclaje y Fijación\nweber rapid\nShow gallery\nweber rapid\nMortero rápido para anclajes y reparaciones\nSecado rápido\nGran rendimiento\nGran dureza\nMayor resistencia mecánica\nAlta resistencia inicial y final\nManual\nSoporte\nPiso,\nPared Exterior,\nPared Interna\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nLimpiar el soporte de polvo y material flojo\nDocumentación del producto\nFicha de producto\nFP weber rapid.pdf\n(PDF - 849,02 KB)\nDescargar\nEnviar\nHoja Técnica\nHT weber rapid.pdf\n(PDF - 129,99 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS - weber rapid\n(PDF - 282,66 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Secado rápido",
+        "slug": "secado-rapido-231"
+      },
+      {
+        "nombre": "Gran rendimiento",
+        "slug": "gran-rendimiento-239"
+      },
+      {
+        "nombre": "Gran dureza",
+        "slug": "gran-dureza-254"
+      },
+      {
+        "nombre": "Mayor resistencia mecánica",
+        "slug": "mayor-resistencia-mecanica-267"
+      },
+      {
+        "nombre": "Alta resistencia inicial y final",
+        "slug": "alta-resistencia-inicial-y-final-272"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Piso,\n    Pared Exterior,\n    Pared Interna"
+  },
+  "documentos": [
+    {
+      "nombre": "FP weber rapid.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/FP_weber_rapid.pdf"
+    },
+    {
+      "nombre": "HT weber rapid.pdf",
+      "url": "https://www.ar.weber/files/ar/2021-09/HT_weber_rapid.pdf"
+    },
+    {
+      "nombre": "HS - weber rapid",
+      "url": "https://www.ar.weber/files/ar/2025-12/HS_-_weber_rapid.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:39:07.518605",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-05/pack-weber-rapid-10kg_7135B3BABE104AB2920F2868242079B2.jpg?itok=Le-vO1LG",
+  "imagen_local": "data_raw\\weber\\img\\weber_rapid.jpg"
+}

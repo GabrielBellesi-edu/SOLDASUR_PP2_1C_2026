@@ -1,0 +1,35 @@
+{
+  "nombre": "webertherm junta dilatación",
+  "url": "https://www.ar.weber/aislacion-termica/sistema-eifs/webertherm-junta-dilatacion",
+  "descripcion": "Inicio Aislación térmica Sistema EIFS",
+  "datos_tecnicos": "Inicio\nAislación térmica\nSistema EIFS\nwebertherm junta dilatación\nShow gallery\nwebertherm junta dilatación\nPerfil de PVC con malla de fibra de vidrio alcalino-resistente, para juntas de dilatación verticales y horizontales de la fachada en los sistemas webertherm.\nFácil aplicacion\nGran vida util\nFlexible\nManual\nSoporte\nFachada,\nPared Exterior\nEncontrá un distribuidor\nCaracterísticas y beneficios\n-No afecta al revoque\n-Contiene malla de fibra de vidrio incorporada para solapar fácilmente\nRestricciones\nTutoriales y videos\nComenzar tutorial\nProductos relacionados con webertherm junta dilatación\nwebertherm placa EPS\nPlacas de poliestireno expandido para sistema webertherm EIFS.\nwebertherm base coat\nCapa base niveladora ideal para sistema EIFS.\nwebertherm malla 160\nMalla de fibra de vidrio",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Gran vida util",
+        "slug": "gran-vida-util-257"
+      },
+      {
+        "nombre": "Flexible",
+        "slug": "flexible-233"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Fachada,\n    Pared Exterior"
+  },
+  "documentos": [],
+  "scrapeado_en": "2026-06-04T03:37:44.997620",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-09/webertherm_junta_dilatacion_37267AB00A5B44AC91E551712B3A8CDF.jpg?itok=UQ9EJ3as",
+  "imagen_local": "data_raw\\weber\\img\\webertherm_junta_dilatación.jpg"
+}

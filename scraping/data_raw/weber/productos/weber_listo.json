@@ -1,0 +1,52 @@
+{
+  "nombre": "weber listo",
+  "url": "https://www.ar.weber/revocar-paredes/mezclas-de-asiento/weber-listo",
+  "descripcion": "Inicio Revocar paredes Mezclas de asiento",
+  "datos_tecnicos": "Inicio\nRevocar paredes\nMezclas de asiento\nweber listo\nShow gallery\nweber listo\nMortero de asiento listo para usar. Para ladrillos cerámicos, bloques de hormigón y ladrillos de hormigón celular.\nAhorro logistico\nAlta resistencia\nFácil aplicacion\nFácil manipulación\nManual\nSoporte\nFachada,\nPared Exterior,\nPared Interna\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nVerificar la horizontalidad de la base y fijar guías verticales como referencia para lograr una pared a plomo.\nNo mojar los ladrillos antes de la aplicación del producto.\nCaracterísticas y beneficios\nListo para usar, no necesita ningún agregado\nElevada adherencia\nSachet con indicación de corte para la aplicación\nReemplaza 60 kg de mortero tradicional\n2 m2  de pared aprox.,  por sachet\nDocumentación del producto\nFicha de producto\nFP_weber_listo.pdf\n(PDF - 710,31 KB)\nDescargar\nEnviar\nHoja Técnica\nFT_weber_listo.pdf\n(PDF - 488,73 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS weber listo\n(PDF - 175,35 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video\nProductos relacionados con weber listo\nwebermur multiuso\nMortero de usos múltiples, ideal como mezcla de asiento\nweber mix E\nRevoque 3 en 1 manual\nweber mix I\nRevoque 2 en 1 manual",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Ahorro logistico",
+        "slug": "ahorro-logistico-251"
+      },
+      {
+        "nombre": "Alta resistencia",
+        "slug": "alta-resistencia-235"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Fácil manipulación",
+        "slug": "facil-manipulacion-238"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Fachada,\n    Pared Exterior,\n    Pared Interna"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weber_listo.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-10/FP_weber_listo.pdf"
+    },
+    {
+      "nombre": "FT_weber_listo.pdf",
+      "url": "https://www.ar.weber/files/ar/2021-02/FT_weber_listo.pdf"
+    },
+    {
+      "nombre": "HS weber listo",
+      "url": "https://www.ar.weber/files/ar/2023-09/HS_Weber_listo.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:38:46.336022",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-07/weber_listo_pack_web_3B2A3744DABF456C9AC6C332C0E7C480.jpg?itok=fJ5sIbQk",
+  "imagen_local": "data_raw\\weber\\img\\weber_listo.jpg"
+}

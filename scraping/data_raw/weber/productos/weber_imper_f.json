@@ -1,0 +1,62 @@
+{
+  "nombre": "weber imper F",
+  "url": "https://www.ar.weber/impermeabilizantes/soluciones-cementicias/weber-imper-f",
+  "descripcion": "Inicio Impermeabilizantes Soluciones cementicias",
+  "datos_tecnicos": "Inicio\nImpermeabilizantes\nSoluciones cementicias\nweber imper F\nShow gallery\nweber imper F\nImpermeabilizante alta prestaciones para hormigon\nRegulador de absorsión\nExcelente trabajabilidad\nPara pisos y paredes\nGran rendimiento\nAlta resistencia\nPintable\nProtección hidrófuga superior\nImpermeable\nSoporte\nPiso,\nFachada,\nPared Exterior\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nLimpiar el soporte de polvo y material flojo\nHumedecer el soporte para una mejor adherencia del producto\nRestricciones\nNo utilizar en medio ácido (pH inferior a 6).\nDocumentación del producto\nFicha de producto\nFP_weber_imper_F.pdf\n(PDF - 865,16 KB)\nDescargar\nEnviar\nHoja Técnica\nHT weberdry imper F.pdf\n(PDF - 3,58 MB)\nDescargar\nEnviar\nHoja de Seguridad\nHS - weber tec imper F\n(PDF - 285,36 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Regulador de absorsión",
+        "slug": "regulador-de-absorsion-616"
+      },
+      {
+        "nombre": "Excelente trabajabilidad",
+        "slug": "excelente-trabajabilidad-250"
+      },
+      {
+        "nombre": "Para pisos y paredes",
+        "slug": "para-pisos-y-paredes-911"
+      },
+      {
+        "nombre": "Gran rendimiento",
+        "slug": "gran-rendimiento-239"
+      },
+      {
+        "nombre": "Alta resistencia",
+        "slug": "alta-resistencia-235"
+      },
+      {
+        "nombre": "Pintable",
+        "slug": "pintable-275"
+      },
+      {
+        "nombre": "Protección hidrófuga superior",
+        "slug": "proteccion-hidrofuga-superior-240"
+      },
+      {
+        "nombre": "Impermeable",
+        "slug": "impermeable-234"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Piso,\n    Fachada,\n    Pared Exterior"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weber_imper_F.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-07/FP_weber_imper_F.pdf"
+    },
+    {
+      "nombre": "HT weberdry imper F.pdf",
+      "url": "https://www.ar.weber/files/ar/2021-09/HT_weberdry_imper_F-1-combined.pdf"
+    },
+    {
+      "nombre": "HS - weber tec imper F",
+      "url": "https://www.ar.weber/files/ar/2025-12/HS_-_weber_imper_F.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:37:04.820693",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-05/pack-weber-imperF-25kg_02EFBF79DA2142A69A78AFC91B26CB00.jpg?itok=exSpwyBq",
+  "imagen_local": "data_raw\\weber\\img\\weber_imper_f.jpg"
+}

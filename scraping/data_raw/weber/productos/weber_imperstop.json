@@ -1,0 +1,68 @@
+{
+  "nombre": "weber imperstop",
+  "url": "https://www.ar.weber/impermeabilizantes/tratamiento-de-humedad-y-vias-de-agua/weber-imperstop",
+  "descripcion": "Inicio Impermeabilizantes Tratamiento de humedad y vías de agua",
+  "datos_tecnicos": "Inicio\nImpermeabilizantes\nTratamiento de humedad y vías de agua\nweber imperstop\nShow gallery\nweber imperstop\nImpermeabilizante obturador instantáneo para fugas de agua.\nRegulador de absorsión\nFácil aplicacion\nFácil manipulación\nExcelente trabajabilidad\nSecado rápido\nGran rendimiento\nPintable\nImpermeable\nManual\nSoporte\nPared Exterior,\nFachada\nEncontrá un distribuidor\nCalculadora de consumo\nRestricciones\nNo resiste la fisuración del soporte.\nDebido a su fraguado instantáneo, no está destinado a taponar ni rellenar grandes superficies, tampoco para reparaciones estructurales (utilizar weber.tec dur).\nDocumentación del producto\nFicha de producto\nFP weber imperstop.pdf\n(PDF - 262,7 KB)\nDescargar\nEnviar\nHoja Técnica\nHT weberdry imperstop.pdf\n(PDF - 139,17 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS - weber tec imperstop\n(PDF - 282,36 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Regulador de absorsión",
+        "slug": "regulador-de-absorsion-616"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Fácil manipulación",
+        "slug": "facil-manipulacion-238"
+      },
+      {
+        "nombre": "Excelente trabajabilidad",
+        "slug": "excelente-trabajabilidad-250"
+      },
+      {
+        "nombre": "Secado rápido",
+        "slug": "secado-rapido-231"
+      },
+      {
+        "nombre": "Gran rendimiento",
+        "slug": "gran-rendimiento-239"
+      },
+      {
+        "nombre": "Pintable",
+        "slug": "pintable-275"
+      },
+      {
+        "nombre": "Impermeable",
+        "slug": "impermeable-234"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Pared Exterior,\n    Fachada"
+  },
+  "documentos": [
+    {
+      "nombre": "FP weber imperstop.pdf",
+      "url": "https://www.ar.weber/files/ar/2025-01/FP_-_weber_imperstop.pdf"
+    },
+    {
+      "nombre": "HT weberdry imperstop.pdf",
+      "url": "https://www.ar.weber/files/ar/2021-09/HT_weberdry_imperstop.pdf"
+    },
+    {
+      "nombre": "HS - weber tec imperstop",
+      "url": "https://www.ar.weber/files/ar/2025-12/HS_-_weber_imperstop.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:37:23.196685",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2025-01/pack-weber-imperstop-5kg_B4912DF4974C467E9E49A83646719DAF.jpg?itok=qNQOi2uc",
+  "imagen_local": "data_raw\\weber\\img\\weber_imperstop.jpg"
+}

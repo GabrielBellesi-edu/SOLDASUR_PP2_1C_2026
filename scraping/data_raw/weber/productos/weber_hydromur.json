@@ -1,0 +1,48 @@
+{
+  "nombre": "weber hydromur",
+  "url": "https://www.ar.weber/impermeabilizantes/tratamiento-de-humedad-y-vias-de-agua/weber-hydromur",
+  "descripcion": "Inicio Impermeabilizantes Tratamiento de humedad y vías de agua",
+  "datos_tecnicos": "Inicio\nImpermeabilizantes\nTratamiento de humedad y vías de agua\nweber hydromur\nShow gallery\nweber hydromur\nImpermeabilizante para reparacion de humedades ascendentes\nRegulador de absorsión\nExcelente trabajabilidad\nGran rendimiento\nManual\nSoporte\nFachada,\nPared Exterior,\nPared Interna\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nLimpiar el soporte de polvo y material flojo\nDocumentación del producto\nFicha de producto\nFP weber hydromur.pdf\n(PDF - 623,19 KB)\nDescargar\nEnviar\nHoja Técnica\nHT weber hydromur.pdf\n(PDF - 139,11 KB)\nDescargar\nEnviar\nHoja de Seguridad\nweber hydromur - FS\n(PDF - 281,61 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Regulador de absorsión",
+        "slug": "regulador-de-absorsion-616"
+      },
+      {
+        "nombre": "Excelente trabajabilidad",
+        "slug": "excelente-trabajabilidad-250"
+      },
+      {
+        "nombre": "Gran rendimiento",
+        "slug": "gran-rendimiento-239"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Fachada,\n    Pared Exterior,\n    Pared Interna"
+  },
+  "documentos": [
+    {
+      "nombre": "FP weber hydromur.pdf",
+      "url": "https://www.ar.weber/files/ar/2019-11/FP_weberdry_hydromur.pdf"
+    },
+    {
+      "nombre": "HT weber hydromur.pdf",
+      "url": "https://www.ar.weber/files/ar/2019-10/HT_weberdry_hydromur.pdf"
+    },
+    {
+      "nombre": "weber hydromur - FS",
+      "url": "https://www.ar.weber/files/ar/2025-12/weber_hydromur_-_FS_V02122025.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:37:19.163104",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-05/pack-weber-hydromur-25kg_00800F154636432884E84F311EBE8CD6.jpg?itok=5x0cGQsl",
+  "imagen_local": "data_raw\\weber\\img\\weber_hydromur.jpg"
+}

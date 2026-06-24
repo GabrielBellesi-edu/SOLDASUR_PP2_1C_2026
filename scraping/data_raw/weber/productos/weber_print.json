@@ -1,0 +1,60 @@
+{
+  "nombre": "weber print",
+  "url": "https://www.ar.weber/soluciones-para-pisos/pisos-decorativos/weber-print",
+  "descripcion": "Inicio Soluciones para pisos Pisos decorativos",
+  "datos_tecnicos": "Inicio\nSoluciones para pisos\nPisos decorativos\nweber print\nShow gallery\nweber print\nEndurecedor superficial para pisos decorativos de hormigón\nAlta resistencia\nAporta resistencia al hormigón\nFácil aplicacion\nListo para usar\nMayor resistencia mecánica\nTransitable\nManual\nSoporte\nPiso\nColores\nver toda la paleta\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nSobre el terreno correctamente asentado, colocar un aislante plástico, para evitar que el terreno absorba prematuramente el agua del hormigón.\nUtilizar malla metálica en el interior de la estructura.\nDejar juntas estructurales.\nMantener limpias las reglas perimetrales, ya que al momento de alisar los restos de hormigón o endurecedor presentes pueden manchar la superficie.\nEl vibrado del hormigón colabora con la correcta humectación del mortero.\nCaracterísticas y beneficios\nOtorga elevada resistencia superficial / terminación alisada o estampada / colores duraderos\nRestricciones\nNo usar hormigón de asentamiento mayor a 10 / No agregar agua superficialmente para facilitar el empaste del producto, utilizar solamente el agua proveniente del hormigón  / prestar especial atención a la incorporación del producto al hormigón después del primer espolvoreo\nDocumentación del producto\nFicha de producto\nFP_weber_print.pdf\n(PDF - 1,13 MB)\nDescargar\nEnviar\nHoja Técnica\nFT - weber print.pdf\n(PDF - 344,77 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS weber print\n(PDF - 465,4 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Alta resistencia",
+        "slug": "alta-resistencia-235"
+      },
+      {
+        "nombre": "Aporta resistencia al hormigón",
+        "slug": "aporta-resistencia-al-hormigon-280"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Listo para usar",
+        "slug": "listo-para-usar-249"
+      },
+      {
+        "nombre": "Mayor resistencia mecánica",
+        "slug": "mayor-resistencia-mecanica-267"
+      },
+      {
+        "nombre": "Transitable",
+        "slug": "transitable-268"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Piso"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weber_print.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/FP_weber_print.pdf"
+    },
+    {
+      "nombre": "FT - weber print.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/HT_weber_print.pdf"
+    },
+    {
+      "nombre": "HS weber print",
+      "url": "https://www.ar.weber/files/ar/2021-10/HS_weber_print__Espaol-AR.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:34:24.853754",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-04/pack-weber-print-30kg_05C4B2CA0F824C8F847E55655B20AAC9.jpg?itok=B1K9MLU2",
+  "imagen_local": "data_raw\\weber\\img\\weber_print.jpg"
+}

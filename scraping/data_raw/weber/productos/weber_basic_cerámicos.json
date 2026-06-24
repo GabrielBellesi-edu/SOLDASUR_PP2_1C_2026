@@ -1,0 +1,41 @@
+{
+  "nombre": "weber basic cerámicos",
+  "url": "https://www.ar.weber/colocacion-ceramicas-porcellanatos-y-pastinas/adhesivos-para-ceramicos/weber-basic-ceramicos",
+  "descripcion": "Inicio Colocación cerámicas, porcellanatos y pastinas Adhesivos para cerámicos",
+  "datos_tecnicos": "Inicio\nColocación cerámicas, porcellanatos y pastinas\nAdhesivos para cerámicos\nweber basic cerámicos\nShow gallery\nweber basic cerámicos\nPegamento impermeable para colocar cerámicos en pisos y paredes interiores.\nSin descuelgues\nManual\nPresentación\n25kg\nSoporte\nPared Interna,\nPiso\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nPegamento para colocar piezas cerámicas de alta absorción sobre carpetas o revoques convencionales en interiores.\nCaracterísticas y beneficios\nIdeal para interior en pisos y paredes\nImpermeable\nMuy fino\nAmigable con el medio ambiente\nSin descuelgue\nRestricciones\nComprobar que el soporte esté limpio y seco.\nUtilizar doble encolado con piezas de gran formato o elevado peso.\nNo aplicar a temperaturas inferiores a 10ºC ni superiores a 30ºC.\nPara la correcta colocación, seguir las recomendaciones indicadas en el dorso del producto.\nDocumentación del producto\nFicha de producto\nFP weber basic cerámicos\n(PDF - 666,29 KB)\nDescargar\nEnviar\nHoja Técnica\nHT weber basic cerámicos\n(PDF - 109,27 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS - weber basic cerámicos\n(PDF - 266,99 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video\nProductos relacionados con weber basic cerámicos\nweber pastina prestige\nPastina impermeable de alta prestación para tomar juntas de porcellanatos.\nweber pastina classic\nPastina cementicia impermeable para el tomado de juntas entre cerámicas de terminación. Con gran variedad de colores.",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Sin descuelgues",
+        "slug": "sin-descuelgues-252"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Presentación": "Pared Interna,\n    Piso",
+    "Soporte": "Pared Interna,\n    Piso"
+  },
+  "documentos": [
+    {
+      "nombre": "FP weber basic cerámicos",
+      "url": "https://www.ar.weber/files/ar/2024-07/12_I_F.P_Weber_basic_ceramicos_-_pdf.pdf"
+    },
+    {
+      "nombre": "HT weber basic cerámicos",
+      "url": "https://www.ar.weber/files/ar/2024-02/02-HT_weber_basic_cermica_web.pdf"
+    },
+    {
+      "nombre": "HS - weber basic cerámicos",
+      "url": "https://www.ar.weber/files/ar/2025-12/HS_-_weber_basic_cermicos.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:35:24.864129",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2023-07/pack-weber-basicceramicas-30kg_89D938A89A4E4C799508E2E838204D9D.jpg?itok=66Zjqb_t",
+  "imagen_local": "data_raw\\weber\\img\\weber_basic_cerámicos.jpg"
+}

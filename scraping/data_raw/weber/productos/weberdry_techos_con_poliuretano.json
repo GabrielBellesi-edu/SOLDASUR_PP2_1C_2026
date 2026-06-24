@@ -1,0 +1,77 @@
+{
+  "nombre": "weberdry techos con poliuretano",
+  "url": "https://www.ar.weber/impermeabilizantes/membranas-liquidas/weberdry-techos-con-poliuretano",
+  "descripcion": "Inicio Impermeabilizantes Membranas líquidas",
+  "datos_tecnicos": "Inicio\nImpermeabilizantes\nMembranas líquidas\nweberdry techos con poliuretano\nNombre anterior     weberdry techos PU\nShow gallery\nweberdry techos con poliuretano\nPackaging: 4 kg\nPackaging: 10 kg\nMembrana liquida impermeabilizante con poliuretano, para cubiertas muy deterioradas\nAlta tolerancia térmica\nAlta resistencia\nFácil aplicacion\nFlexible\nListo para usar\nImpermeable\nMuy plástico\nNo fisura\nProtección hidrófuga superior\nResistencia a rayos UV\nManual\nPresentación\n20 kg\n4 kg\n10 kg\nSoporte\nTecho,\nTecho de chapas\nColores\nver toda la paleta\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nLimpiar el soporte de polvo y material flojo\nReparar las fisuras con weber flex PU\nTratar los angulos y desagotes con malla geotextil\nCaracterísticas y beneficios\nimpermeabilizante con poliuretano / ideal para terrazas muy deterioradas / acompaña suaves movimientos estructurales / elevada resistencia a los rayos UV\nRestricciones\nNo aplicar sobre membranas que presenten como terminación polietileno. No apto para ser inmersa permanente en agua.\nDocumentación del producto\nFicha de producto\nFP weberdry techos PU.pdf\n(PDF - 293,54 KB)\nDescargar\nEnviar\nHoja Técnica\nHT weberdry techos PU.pdf\n(PDF - 120,75 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS - weberdry techos PU\n(PDF - 394,74 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Alta tolerancia térmica",
+        "slug": "alta-tolerancia-termica-244"
+      },
+      {
+        "nombre": "Alta resistencia",
+        "slug": "alta-resistencia-235"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Flexible",
+        "slug": "flexible-233"
+      },
+      {
+        "nombre": "Listo para usar",
+        "slug": "listo-para-usar-249"
+      },
+      {
+        "nombre": "Impermeable",
+        "slug": "impermeable-234"
+      },
+      {
+        "nombre": "Muy plástico",
+        "slug": "muy-plastico-270"
+      },
+      {
+        "nombre": "No fisura",
+        "slug": "no-fisura-274"
+      },
+      {
+        "nombre": "Protección hidrófuga superior",
+        "slug": "proteccion-hidrofuga-superior-240"
+      },
+      {
+        "nombre": "Resistencia a rayos UV",
+        "slug": "resistencia-rayos-uv-266"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Presentación": "Techo,\n    Techo de chapas",
+    "Soporte": "Techo,\n    Techo de chapas"
+  },
+  "documentos": [
+    {
+      "nombre": "FP weberdry techos PU.pdf",
+      "url": "https://www.ar.weber/files/ar/2021-07/FP_weberdry_techos_PU-1.pdf"
+    },
+    {
+      "nombre": "HT weberdry techos PU.pdf",
+      "url": "https://www.ar.weber/files/ar/2019-08/HT_weberdry_techos_PU.pdf"
+    },
+    {
+      "nombre": "HS - weberdry techos PU",
+      "url": "https://www.ar.weber/files/ar/2025-12/HS_-_weberdry_techos_y_frentes_PU_V122025.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:36:51.370632",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2024-07/pack-weber-ceresitatechosPU-20kg_199ACAF746614DDCA911A63A0545191B.jpg?itok=aIjBK2Bu",
+  "imagen_local": "data_raw\\weber\\img\\weberdry_techos_con_poliuretano.jpg"
+}

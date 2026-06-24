@@ -1,0 +1,48 @@
+{
+  "nombre": "weber veneciano",
+  "url": "https://www.ar.weber/colocacion-ceramicas-porcellanatos-y-pastinas/adhesivos-especificos/weber-veneciano",
+  "descripcion": "Inicio Colocación cerámicas, porcellanatos y pastinas Adhesivos específicos",
+  "datos_tecnicos": "Inicio\nColocación cerámicas, porcellanatos y pastinas\nAdhesivos específicos\nweber veneciano\nShow gallery\nweber veneciano\nPegamento para colocación y tomado de juntas, ideal para venecitas y piezas traslucidas.\nSuperficies sumergidas\nFlexible\nAntihongo\nManual\nSoporte\nPiscina,\nPiso,\nPared Exterior,\nPared Interna\nColores\nver toda la paleta\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nMezcla adhesiva apta para la colocación y el tomado de juntas de mosaicos venecianos y piezas con transparencia.\nIdeal para piscinas, fachadas, pisos y paredes en interior y exterior.\nCaracterísticas y beneficios\nAditivado con ceresita\nFlexible\nPara colocación y tomado de juntas\nAntihongo\nIdeal uso decorativo e inmersión\nRestricciones\nComprobar que el soporte esté limpio y seco.\nNo aplicar a temperaturas inferiores a 10ºC ni superiores a 30ºC.\nPara la correcta colocación, seguir las recomendaciones indicadas en el dorso del producto.\nDocumentación del producto\nFicha de producto\nFP_weber_veneciano.pdf\n(PDF - 796,81 KB)\nDescargar\nEnviar\nHoja Técnica\nHT weber veneciano.pdf\n(PDF - 287,31 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS weber veneciano.pdf\n(PDF - 274,48 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video\nProductos relacionados con weber veneciano\nweber pastina prestige\nPastina impermeable de alta prestación para tomar juntas de porcellanatos.\nweber piscinas\nPegamento impermeable blanco ideal para piscinas.",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Superficies sumergidas",
+        "slug": "superficies-sumergidas-246"
+      },
+      {
+        "nombre": "Flexible",
+        "slug": "flexible-233"
+      },
+      {
+        "nombre": "Antihongo",
+        "slug": "antihongo-236"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Piscina,\n    Piso,\n    Pared Exterior,\n    Pared Interna"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weber_veneciano.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/FP_weber_veneciano.pdf"
+    },
+    {
+      "nombre": "HT weber veneciano.pdf",
+      "url": "https://www.ar.weber/files/ar/2020-03/2020_-_HT_weber_veneciano.pdf"
+    },
+    {
+      "nombre": "HS weber veneciano.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-05/HS_weber.col_veneciano.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:35:52.725625",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2019-03/pack-weber-veneciano-30kg_18317DDD7A5F4DB489C24893DBC479AB.jpg?itok=ail9_N_e",
+  "imagen_local": "data_raw\\weber\\img\\weber_veneciano.jpg"
+}

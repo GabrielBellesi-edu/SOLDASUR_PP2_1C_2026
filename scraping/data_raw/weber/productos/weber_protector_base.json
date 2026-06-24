@@ -1,0 +1,52 @@
+{
+  "nombre": "weber protector base",
+  "url": "https://www.ar.weber/soluciones-para-pisos/productos-complementarios/weber-protector-base",
+  "descripcion": "Inicio Soluciones para pisos Productos complementarios",
+  "datos_tecnicos": "Inicio\nSoluciones para pisos\nProductos complementarios\nweber protector base\nShow gallery\nweber protector base\nSellador de superficie de base acuosa con alto contenido de sólidos, pisos cementicios u otras superficies porosas. Sella, cerrando el poro de la superficie, haciéndola menos permeable a las manchas y facilitando la aplicación de ceras de terminación, brindando así mayor protección y brillo.\nCurado rápido\nFácil aplicacion\nGran rendimiento\nListo para usar\nManual\nSoporte\nPared Interna,\nPiso\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\nTrapear previo a la aplicación, para eliminar el polvo.\nDocumentación del producto\nFicha de producto\nFP_weber_protector_base.pdf\n(PDF - 227,01 KB)\nDescargar\nEnviar\nHoja Técnica\nHT_weber_protector_base.pdf\n(PDF - 337,78 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS weber protector base\n(PDF - 491,47 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Curado rápido",
+        "slug": "curado-rapido-278"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Gran rendimiento",
+        "slug": "gran-rendimiento-239"
+      },
+      {
+        "nombre": "Listo para usar",
+        "slug": "listo-para-usar-249"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Pared Interna,\n    Piso"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weber_protector_base.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/FP_weber_protector_base.pdf"
+    },
+    {
+      "nombre": "HT_weber_protector_base.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-09/HT_weber_protector_base.pdf"
+    },
+    {
+      "nombre": "HS weber protector base",
+      "url": "https://www.ar.weber/files/ar/2021-10/HS_weber_protector_base_Espaol-AR.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:34:41.376760",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2022-02/pack-weber-protectorbase-5L_292243F18BF044329D1ED6717B3C9592.jpg?itok=pZVv_D19",
+  "imagen_local": "data_raw\\weber\\img\\weber_protector_base.jpg"
+}

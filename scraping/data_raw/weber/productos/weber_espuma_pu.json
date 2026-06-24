@@ -1,0 +1,60 @@
+{
+  "nombre": "weber espuma PU",
+  "url": "https://www.ar.weber/soluciones-para-fijaciones-anclajes-y-sellados/selladores-y-espumas/weber-espuma-pu",
+  "descripcion": "Inicio Soluciones para fijaciones, anclajes y sellados Selladores y Espumas",
+  "datos_tecnicos": "Inicio\nSoluciones para fijaciones, anclajes y sellados\nSelladores y Espumas\nweber espuma PU\nShow gallery\nweber espuma PU\nEspuma de poliuretano\nFácil aplicacion\nFácil manipulación\nGran rendimiento\nGran vida util\nAislación térmica y acústica\nAislación térmica\nManual\nSoporte\nPared Exterior,\nFachada,\nPared Interna,\nPared pintada,\nTecho,\nTecho de chapas\nEncontrá un distribuidor\nAcerca de este producto\nLimpiar el soporte de polvo y material flojo\nHumedecer el soporte para una mejor adherencia del producto\nDocumentación del producto\nFicha de producto\nFP - weber espuma PU.pdf\n(PDF - 327,65 KB)\nDescargar\nEnviar\nHoja Técnica\nHT weber espuma PU.pdf\n(PDF - 131,04 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS weber espuma PU\n(PDF - 285,56 KB)\nDescargar\nEnviar\nTutoriales y videos\nVer video",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Fácil manipulación",
+        "slug": "facil-manipulacion-238"
+      },
+      {
+        "nombre": "Gran rendimiento",
+        "slug": "gran-rendimiento-239"
+      },
+      {
+        "nombre": "Gran vida util",
+        "slug": "gran-vida-util-257"
+      },
+      {
+        "nombre": "Aislación térmica y acústica",
+        "slug": "aislacion-termica-y-acustica-277"
+      },
+      {
+        "nombre": "Aislación térmica",
+        "slug": "aislacion-termica-276"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Pared Exterior,\n    Fachada,\n    Pared Interna,\n    Pared pintada,\n    Techo,\n    Techo de chapas"
+  },
+  "documentos": [
+    {
+      "nombre": "FP - weber espuma PU.pdf",
+      "url": "https://www.ar.weber/files/ar/2025-08/FP_-_weber_espuma_PU.pdf"
+    },
+    {
+      "nombre": "HT weber espuma PU.pdf",
+      "url": "https://www.ar.weber/files/ar/2019-05/HT_weber_espuma_PU.pdf"
+    },
+    {
+      "nombre": "HS weber espuma PU",
+      "url": "https://www.ar.weber/files/ar/2020-01/HS_weber_espuma_PU.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:39:35.802461",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-06/pack-weber-espumaPU-300ml_480DE38520634B54892C39DE292B0D55.jpg?itok=UNOGTStE",
+  "imagen_local": "data_raw\\weber\\img\\weber_espuma_pu.jpg"
+}

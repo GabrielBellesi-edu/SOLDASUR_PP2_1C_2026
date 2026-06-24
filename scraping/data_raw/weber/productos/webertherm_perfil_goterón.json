@@ -1,0 +1,44 @@
+{
+  "nombre": "webertherm perfil goterón",
+  "url": "https://www.ar.weber/aislacion-termica/sistema-eifs/webertherm-perfil-goteron",
+  "descripcion": "Inicio Aislación térmica Sistema EIFS",
+  "datos_tecnicos": "Inicio\nAislación térmica\nSistema EIFS\nwebertherm perfil goterón\nShow gallery\nwebertherm perfil goterón\nPerfil goterón de PVC con malla de fibra de vidrio, para dinteles en sistemas webertherm.\nFácil aplicacion\nFacil Nivelacion\nGran vida util\nNo produce corrosión\nManual\nSoporte\nFachada,\nPared Exterior\nEncontrá un distribuidor\nCaracterísticas y beneficios\n-Actua como corta gota en dinteles de puertas y ventanas\n-No afecta al revoque\nRestricciones\nDocumentación del producto\nHoja Técnica\nHT_webertherm pefil goterón.pdf\n(PDF - 309,13 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nProductos relacionados con webertherm perfil goterón\nwebertherm placa EPS\nPlacas de poliestireno expandido para sistema webertherm EIFS.\nwebertherm base coat\nCapa base niveladora ideal para sistema EIFS.\nwebertherm malla 160\nMalla de fibra de vidrio",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Facil Nivelacion",
+        "slug": "facil-nivelacion-229"
+      },
+      {
+        "nombre": "Gran vida util",
+        "slug": "gran-vida-util-257"
+      },
+      {
+        "nombre": "No produce corrosión",
+        "slug": "no-produce-corrosion-258"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Fachada,\n    Pared Exterior"
+  },
+  "documentos": [
+    {
+      "nombre": "HT_webertherm pefil goterón.pdf",
+      "url": "https://www.ar.weber/files/ar/2020-04/HT_webertherm_pefil_gotern.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:37:41.139216",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-06/perfil_gotern_C84B77DD724941C69F8B208BE196EC7F.jpg?itok=ypsRfoBl",
+  "imagen_local": "data_raw\\weber\\img\\webertherm_perfil_goterón.jpg"
+}

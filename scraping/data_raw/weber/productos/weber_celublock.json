@@ -1,0 +1,48 @@
+{
+  "nombre": "weber celublock",
+  "url": "https://www.ar.weber/revocar-paredes/mezclas-de-asiento/weber-celublock",
+  "descripcion": "Inicio Revocar paredes Mezclas de asiento",
+  "datos_tecnicos": "Inicio\nRevocar paredes\nMezclas de asiento\nweber celublock\nShow gallery\nweber celublock\nMezcla de asiento hidrófuga, especialmente diseñada para bloques de hormigón celular.\nAditivado con Ceresita\nFácil aplicacion\nPuente de adherencia\nManual\nSoporte\nPared Exterior,\nPared Interna\nEncontrá un distribuidor\nCalculadora de consumo\nAcerca de este producto\n• Verificar la horizontalidad de la base y fijar guías verticales como referencia para lograr una pared a plomo.\nCaracterísticas y beneficios\nCon ceresita.\nIdeal como promotor de adherencia.\nDocumentación del producto\nFicha de producto\nFP_weber_celublock.pdf\n(PDF - 944,96 KB)\nDescargar\nEnviar\nHoja Técnica\nFT weber celublock.pdf\n(PDF - 283,94 KB)\nDescargar\nEnviar\nHoja de Seguridad\nHS weber celublock\n(PDF - 102,46 KB)\nDescargar\nEnviar\nTutoriales y videos\nComenzar tutorial\nVer video\nProductos relacionados con weber celublock\nweber mix E\nRevoque 3 en 1 manual\nweber mix I\nRevoque 2 en 1 manual\nwebertherm malla 160\nMalla de fibra de vidrio",
+  "filtros": {
+    "beneficios": [
+      {
+        "nombre": "Aditivado con Ceresita",
+        "slug": "aditivado-con-ceresita-255"
+      },
+      {
+        "nombre": "Fácil aplicacion",
+        "slug": "facil-aplicacion-228"
+      },
+      {
+        "nombre": "Puente de adherencia",
+        "slug": "puente-de-adherencia-611"
+      }
+    ],
+    "aplicacion": [
+      {
+        "nombre": "Manual",
+        "slug": "manual-95"
+      }
+    ]
+  },
+  "atributos_tecnicos": {
+    "Soporte": "Pared Exterior,\n    Pared Interna"
+  },
+  "documentos": [
+    {
+      "nombre": "FP_weber_celublock.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-07/FP_weber_celublock.pdf"
+    },
+    {
+      "nombre": "FT weber celublock.pdf",
+      "url": "https://www.ar.weber/files/ar/2018-05/FT_weber_celublock.pdf"
+    },
+    {
+      "nombre": "HS weber celublock",
+      "url": "https://www.ar.weber/files/ar/2018-09/HS_weber_celublock.pdf"
+    }
+  ],
+  "scrapeado_en": "2026-06-04T03:38:42.327247",
+  "imagen_url": "https://www.ar.weber/files/ar/styles/640x480_resize/public/pictures/2018-11/pack-weber-celublock-30kg_21B860BE326F49988FF90FA8F010948E.jpg?itok=FlQFTHxG",
+  "imagen_local": "data_raw\\weber\\img\\weber_celublock.jpg"
+}

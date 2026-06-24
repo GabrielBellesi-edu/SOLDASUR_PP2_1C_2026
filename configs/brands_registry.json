@@ -1,0 +1,47 @@
+{
+  "brands": {
+    "WEBER": {
+      "key": "WEBER",
+      "display_name": "Weber",
+      "intent_type": "weber_query",
+      "direct_keywords": [
+        "weber",
+        "pastina",
+        "mortero",
+        "revoque",
+        "ceresita",
+        "weberplast",
+        "microcemento",
+        "microcolor",
+        "microbase",
+        "autonivela"
+      ],
+      "anchor_text": "colocación de revestimientos cerámicas porcelanatos baldosas impermeabilización de losas piscinas pastina revoque fino mezcla adhesivo cemento",
+      "rag_module": "RAG_engine.query.rag_llm_weber",
+      "rag_function": "search_and_answer",
+      "response_formatter": "weber",
+      "has_calculator": true,
+      "calculator_display": "Calculadora Weber (Construcción)"
+    },
+    "PEISA": {
+      "key": "PEISA",
+      "display_name": "PEISA",
+      "intent_type": "free_query",
+      "direct_keywords": [
+        "peisa",
+        "caldera",
+        "radiador",
+        "toallero",
+        "calefon",
+        "termo",
+        "climatiz"
+      ],
+      "anchor_text": "calefacción caldera radiador toallero calefón termotanque agua caliente sanitaria climatización",
+      "rag_module": "RAG_engine.query.rag_llm_peisa",
+      "rag_function": "answer",
+      "response_formatter": "peisa",
+      "has_calculator": true,
+      "calculator_display": "Calculadora PEISA (Calefacción)"
+    }
+  }
+}
