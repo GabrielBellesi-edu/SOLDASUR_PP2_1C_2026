@@ -18,20 +18,18 @@ El sistema fusiona dos enfoques complementarios de Inteligencia Artificial para 
 1. **Sistemas Expertos (IA Simbólica):** Motores basados en reglas explícitas para realizar cómputo de materiales y dimensionamientos complejos en obra (por ejemplo, cálculo de metros de caño para piso radiante PEISA o cantidad de adhesivos Weber según metros cuadrados).
 2. **Motores RAG (Generación Aumentada por Recuperación):** Búsqueda semántica sobre los catálogos técnicos de las marcas integradas y generación de respuestas contextualizadas en español rioplatense a través de un modelo de lenguaje local y privado.
 
-Una característica clave de la versión **v5.0.2** es su **arquitectura escalable**, que permite registrar e incorporar de manera dinámica nuevas marcas y catálogos (por ejemplo, Durlock) sin necesidad de modificar el código fuente central del backend.
+Una característica clave de la ultima versión es su **arquitectura escalable**, que permite registrar e incorporar de manera dinámica nuevas marcas y catálogos (por ejemplo, Durlock) sin necesidad de modificar el código fuente central del backend.
 
 ---
 
 ## 👥 Integrantes del Grupo
 
-A continuación, se detallan los integrantes del proyecto y sus respectivos perfiles de GitHub y LinkedIn:
-
+* **Elias Albornoz**  
+  [![GitHub](https://img.shields.io/badge/GitHub-AlbornozElias-181717?style=flat&logo=github)](https://github.com/AlbornozElias) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Elias%20Albornoz-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/elias-albornoz)
 * **Gabriel Bellesi**  
   [![GitHub](https://img.shields.io/badge/GitHub-GabrielBellesi--edu-181717?style=flat&logo=github)](https://github.com/GabrielBellesi-edu) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Gabriel%20Bellesi-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/gabriel-undefined-edu)
 * **Miriam Velazque**  
   [![GitHub](https://img.shields.io/badge/GitHub-miriamvelazque-181717?style=flat&logo=github)](https://github.com/miriamvelazque) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Miriam%20Velazque-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/miriam-alicia-velazque)
-* **Albornoz Elias**  
-  [![GitHub](https://img.shields.io/badge/GitHub-AlbornozElias-181717?style=flat&logo=github)](https://github.com/AlbornozElias) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Elias%20Albornoz-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/elias-albornoz)
 
 ---
 

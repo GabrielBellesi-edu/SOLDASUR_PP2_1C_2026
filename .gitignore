@@ -19,4 +19,4 @@ Dockerfile
 
 # Playwright/Chromium user profile
 user_data/
-proceso_documentado/
+proceso_documentado
