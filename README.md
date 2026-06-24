@@ -4,8 +4,8 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-black?style=for-the-badge)](https://ollama.com/)
-[![FAISS](https://img.shields.io/badge/FAISS-Vector%20DB-blue?style=for-the-badge)](https://github.com/facebookresearch/faiss)
+[![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-black?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com/)
+[![FAISS](https://img.shields.io/badge/FAISS-Vector%20DB-blue?style=for-the-badge&logo=meta&logoColor=white)](https://github.com/facebookresearch/faiss)
 [![Playwright](https://img.shields.io/badge/Playwright-Web%20Scraping-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/)
 
 ---
@@ -42,8 +42,8 @@ Una característica clave de la ultima versión es su **arquitectura escalable**
 * [![Pydantic](https://img.shields.io/badge/Pydantic-v2-E92063?style=flat&logo=pydantic&logoColor=white)](https://docs.pydantic.dev/) — Validación de datos y esquemas de configuración.
 
 ### Inteligencia Artificial y Motores de Búsqueda
-* [![Ollama](https://img.shields.io/badge/Ollama-Llama%203.2%20(3b)-black?style=flat)](https://ollama.com/) — Orquestación local y offline de modelos de lenguaje (LLM).
-* [![FAISS](https://img.shields.io/badge/FAISS-Vector%20DB-blue?style=flat)](https://github.com/facebookresearch/faiss) — Base de datos vectorial optimizada para búsqueda semántica.
+* [![Ollama](https://img.shields.io/badge/Ollama-Llama%203.2%20(3b)-black?style=flat&logo=ollama&logoColor=white)](https://ollama.com/) — Orquestación local y offline de modelos de lenguaje (LLM).
+* [![FAISS](https://img.shields.io/badge/FAISS-Vector%20DB-blue?style=flat&logo=meta&logoColor=white)](https://github.com/facebookresearch/faiss) — Base de datos vectorial optimizada para búsqueda semántica.
 * [![PyTorch](https://img.shields.io/badge/PyTorch-2.7+-EE4C2C?style=flat&logo=pytorch&logoColor=white)](https://pytorch.org/) — Plataforma base para modelos de embeddings.
 * [![HuggingFace](https://img.shields.io/badge/Sentence--Transformers-3.0+-yellow?style=flat&logo=huggingface&logoColor=black)](https://sbert.net/) — Generación de embeddings densos de texto.
 

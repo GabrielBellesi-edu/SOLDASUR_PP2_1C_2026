@@ -20,3 +20,4 @@ Dockerfile
 # Playwright/Chromium user profile
 user_data/
 proceso_documentado
+.gradio/
