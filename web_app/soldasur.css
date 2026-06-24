@@ -121,7 +121,7 @@ body {
 }
 
 .demo-banner {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #004080 0%, #289ccd 100%);
     color: white;
     padding: 0.75rem;
     text-align: center;
@@ -646,9 +646,9 @@ body {
         padding: 0 1rem;
     }
 
-    .hero-section img {
-        height: 5rem !important;
-        /* h-20 - logo más pequeño */
+    .hero-logo {
+        height: 8rem !important;
+        /* logo más grande en móviles */
         margin-bottom: 1.5rem !important;
     }
 
