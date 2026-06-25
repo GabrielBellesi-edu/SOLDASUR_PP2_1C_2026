@@ -134,6 +134,22 @@ IMPORTANTE:
                 safe = self._price_refusal_response(context)
                 return self._ensure_final_period(safe)
 
+            # Filtrar context por similitud si tiene scores
+            if context:
+                has_scores = any("score" in p for p in context)
+                if has_scores:
+                    scores_list = [p.get("score", 0.0) for p in context if "score" in p]
+                    
+                    # Umbral dinámico según la longitud de la consulta
+                    import re
+                    words = [w for w in re.findall(r'\w+', question.lower()) if len(w) > 2]
+                    is_short = len(words) <= 2
+                    hard_min_score = 0.25 if is_short else 0.32
+                    
+                    if scores_list and max(scores_list) < hard_min_score:
+                        print(f"[PeisaLLM] El mejor score de producto ({max(scores_list):.3f}) es menor a {hard_min_score} (consulta {'corta' if is_short else 'larga'}). Descartando contexto de productos.")
+                        context = []
+
             # Construir el prompt con contexto
             prompt = self._build_prompt(question, context, last_active_product)
             
@@ -141,13 +157,24 @@ IMPORTANTE:
             temp = temperature if temperature is not None else self.default_temperature
             tokens = max_tokens if max_tokens is not None else self.default_max_tokens
 
+            # Ajustar system prompt dinámicamente si no hay contexto
+            system_instruction = self.system_prompt
+            if not context:
+                system_instruction += (
+                    "\n\nATENCIÓN: Para esta respuesta, no hay productos en el contexto. "
+                    "Queda SUSPENDIDA la regla obligatoria de recomendar un producto por su nombre completo. "
+                    "Debés limitarte a pedir aclaraciones amigablemente en español rioplatense (usando vos/tenés) "
+                    "para obtener detalles como la cantidad de ambientes a calefaccionar, si prefieren caldera o radiadores, "
+                    "o si es para calefacción o agua caliente. NUNCA nombres productos específicos."
+                )
+
             # Llamar a Ollama con control ESTRICTO de longitud
             # Usar cliente si está disponible; si no, usar API global
             generate_fn = self.client.generate if self.client else ollama.generate
             response = generate_fn(
                 model=self.model,
                 prompt=prompt,
-                system=self.system_prompt,
+                system=system_instruction,
                 options={
                     'temperature': temp,
                     # Límite de tokens (por defecto 80 para respuestas breves)

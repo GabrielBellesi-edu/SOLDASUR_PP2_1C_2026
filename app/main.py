@@ -395,7 +395,10 @@ def _filter_mentioned_products(text: str, products: List[Dict[str, Any]]) -> Lis
             else:
                 # 3. Probar si palabras clave específicas del modelo están presentes en el texto
                 parts = [part for part in model_clean.replace(".", " ").replace("-", " ").split() if len(part) > 3]
-                key_keywords = ["ceresita", "autonivela", "llaneado", "travertino", "microcolor", "microbase", "aquaboard", "solidtex"]
+                key_keywords = [
+                    "ceresita", "autonivela", "llaneado", "travertino", "microcolor", "microbase", "aquaboard", "solidtex",
+                    "diva", "prima", "tropical", "broen", "domino", "scala", "summa", "condens", "flex", "forte", "pingüino", "pinguino"
+                ]
                 for part in parts:
                     if part in key_keywords and part in text_lower:
                         if not any(m.get("model", "").lower().strip() == model_lower for m in mentioned):
@@ -423,6 +426,17 @@ async def api_chat(request: ChatRequest):
 
     # Clasificar intención usando enrutamiento híbrido/semántico con contexto activo
     intent = intent_classifier.classify(message, context)
+
+    if intent.type == IntentType.DISAMBIGUATION:
+        return {
+            "mode": "disambiguation",
+            "text": "No estoy seguro de si tu consulta se refiere a productos de calefacción (PEISA) o de construcción y revestimientos (Weber). ¿Podrías indicarme cuál te interesa?",
+            "options": [
+                "Construcción (Weber)",
+                "Calefacción (PEISA)"
+            ],
+            "products": []
+        }
 
     # Determinar la marca correspondiente
     brand_key = intent.metadata.get("brand_key")

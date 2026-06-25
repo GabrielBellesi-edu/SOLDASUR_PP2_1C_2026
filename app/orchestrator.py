@@ -17,6 +17,7 @@ class IntentType(Enum):
     CLARIFICATION = "clarification"            # Pregunta tangencial durante flujo
     WEBER_QUERY        = "weber_query"         # Consultas sobre productos Weber
     PEISA_QUERY        = "peisa_query"         # Consultas sobre productos PEISA
+    DISAMBIGUATION     = "disambiguation"      # Consulta ambigua que requiere aclaración de marca
 
 
 class ConversationMode(Enum):
@@ -196,6 +197,12 @@ class IntentClassifier:
             kws = brand_info.get("direct_keywords", [])
             brand_kw_matches[bk] = any(re.search(pat, message_lower) for pat in kws)
 
+        # Chequear si hay múltiples coincidencias directas (ambigüedad explícita por palabra clave)
+        matched_brands = [bk for bk, matched in brand_kw_matches.items() if matched]
+        if len(matched_brands) > 1:
+            print(f"[IntentClassifier] Múltiples marcas detectadas por palabra clave: {matched_brands}")
+            return Intent(IntentType.DISAMBIGUATION, confidence=1.0, metadata={"brands": matched_brands})
+
         # Enrutamiento Contextual por Marca Activa (si la pregunta es de seguimiento y no cambia de marca explícitamente)
         last_brand = (context.get("last_active_brand") or "").upper()
         
@@ -215,7 +222,7 @@ class IntentClassifier:
                         break
                 return Intent(resolved_type, confidence=0.95, metadata={"brand_key": last_brand})
 
-        # 3. Enrutamiento Rápido en Cascada (Heurística directa - 0ms)
+        # 3. Enrutamiento Rápido en Cascáda (Heurística directa - 0ms)
         for bk, brand_info in self.brands_registry.items():
             if brand_kw_matches[bk]:
                 intent_type_str = brand_info.get("intent_type", "hybrid")
@@ -248,10 +255,17 @@ class IntentClassifier:
                         sims_str = ", ".join([f"{bk}: {val:.3f}" for bk, val in sims.items()])
                         print(f"[IntentClassifier] Similitudes semánticas -> {sims_str}")
                         
-                        # Encontrar la marca con mayor similitud
-                        best_brand = max(sims, key=sims.get)
-                        best_sim = sims[best_brand]
-                        
+                        # Ordenar similitudes de mayor a menor
+                        sorted_sims = sorted(sims.items(), key=lambda x: x[1], reverse=True)
+                        best_brand, best_sim = sorted_sims[0]
+                        runner_up_brand, runner_up_sim = sorted_sims[1] if len(sorted_sims) > 1 else (None, 0.0)
+
+                        # Evaluar ambigüedad semántica (si ambos tienen similitud aceptable y están muy cerca)
+                        if best_sim >= 0.22 and runner_up_brand and abs(best_sim - runner_up_sim) < 0.08:
+                            print(f"[IntentClassifier] Ambigüedad semántica detectada entre {best_brand} ({best_sim:.3f}) y {runner_up_brand} ({runner_up_sim:.3f}). Requiere desambiguación.")
+                            return Intent(IntentType.DISAMBIGUATION, confidence=best_sim, metadata={"brands": [best_brand, runner_up_brand]})
+
+                        # Si no hay ambigüedad y el mejor supera el umbral
                         UMBRAL_SIMILITUD = 0.35
                         if best_sim >= UMBRAL_SIMILITUD:
                             brand_info = self.brands_registry[best_brand]

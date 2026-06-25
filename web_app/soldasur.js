@@ -90,6 +90,49 @@ function handleOptionClick(option) {
 
     appendMessage('user', cleanOption);
 
+    // Interceptar selección en flujo de aclaración/desambiguación de marca
+    if (cleanOption === 'Construcción (Weber)' || cleanOption === 'Calefacción (PEISA)') {
+        const selectedBrand = cleanOption.includes('Weber') ? 'WEBER' : 'PEISA';
+        lastActiveBrand = selectedBrand;
+        lastActiveProduct = null;
+
+        // Limpiar el área de opciones del asistente
+        const inputArea = document.getElementById('input-area');
+        if (inputArea) {
+            inputArea.innerHTML = '';
+        }
+        
+        // Volver a mostrar el área de entrada del chat
+        const chatInputArea = document.getElementById('chat-input-area');
+        if (chatInputArea) {
+            chatInputArea.style.display = 'block';
+        }
+
+        // Si hay una consulta original guardada, la enviamos con el nuevo contexto de marca
+        if (typeof pendingClarificationQuery !== 'undefined' && pendingClarificationQuery) {
+            const queryToRun = pendingClarificationQuery;
+            pendingClarificationQuery = null;
+
+            showLoadingIndicator();
+            callOllama(queryToRun).then(response => {
+                hideLoadingIndicator();
+                const cleanMessage = cleanHtmlFromMessage(response.message);
+                appendMessage('system', cleanMessage);
+                if (response.products && response.products.length > 0) {
+                    setTimeout(() => {
+                        renderProducts(response.products);
+                    }, 300);
+                }
+                showChatInput();
+            }).catch(error => {
+                hideLoadingIndicator();
+                appendMessage('system', 'Lo siento, hubo un error al procesar tu consulta. Por favor, intenta nuevamente.');
+                showChatInput();
+            });
+        }
+        return;
+    }
+
     // 1. ¿Es una marca registrada clicada directamente (para ver catálogo)?
     const matchedBrand = Object.values(registeredBrands).find(b => 
         b.display_name.toLowerCase() === cleanOption.toLowerCase() || 

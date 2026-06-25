@@ -74,7 +74,7 @@ def search_filtered(question: str, top_k: int = TOP_K_DEFAULT):
             dims, pwr, lts, pbar
         ) = rows[rowid]
 
-        if want_boiler and typ.lower() != "caldera":
+        if want_boiler and "caldera" not in typ.lower():
             continue
         if watts_req and (pwr or 0) < watts_req:
             continue

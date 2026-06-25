@@ -94,7 +94,34 @@ def answer_weber(
     Genera una respuesta usando Ollama con los productos Weber como contexto.
     """
     if not context_products:
-        return "No encontré productos Weber para tu consulta. Podés consultar el catálogo completo en ar.weber.com."
+        # Prompt de aclaración/desambiguación de producto
+        prompt = f"""No se encontraron productos en el catálogo de Weber que coincidan directamente con la consulta.
+Consulta del cliente: {query}
+
+Escribí una respuesta breve (máximo 2 oraciones) en español rioplatense (usando vos/tenés/podés, sin saludar de nuevo, sin presentarte). Pedile al cliente de manera muy amigable que te dé más detalles (como si la aplicación es para interiores o exteriores, qué tipo de base o superficie tiene, o si es para piso o pared) para poder recomendarle el producto Weber exacto. NUNCA inventes o asumas productos si no los tenés en el contexto.
+Respuesta:"""
+        config = _load_prompt_config()
+        model = _load_configured_model()
+        try:
+            response = requests.post(
+                OLLAMA_URL,
+                json={
+                    "model": model,
+                    "prompt": prompt,
+                    "system": config.get("system_prompt", SYSTEM_PROMPT_WEBER_DEFAULT),
+                    "stream": False,
+                    "options": {
+                        "num_predict": config.get("max_tokens", 250),
+                        "temperature": config.get("temperature", 0.3)
+                    }
+                },
+                timeout=30
+            )
+            if response.status_code == 200:
+                return response.json().get("response", "").strip()
+        except Exception as e:
+            print(f"[WeberRAG] Error Ollama en aclaración: {e}")
+        return "Para recomendarte el adhesivo o impermeabilizante Weber adecuado, ¿podrías indicarme si es para interior o exterior, y sobre qué tipo de base o superficie vas a colocarlo?"
 
     # Construir contexto de productos: usar solo los 2 más relevantes para
     # evitar que el LLM mencione un tercero poco relacionado con la consulta.
@@ -191,14 +218,28 @@ SIMILARITY_THRESHOLD = 0.25
 
 def _filter_by_relevance(
     productos: List[Dict[str, Any]],
+    query: str,
     min_score: float = SIMILARITY_THRESHOLD,
     keep_at_least: int = 1
 ) -> List[Dict[str, Any]]:
     """
-    Filtra productos por similarity_score.
-    Siempre retorna al menos `keep_at_least` producto (el más relevante),
-    aunque ninguno supere el umbral.
+    Filtra productos por similarity_score de manera dinámica según el largo de la consulta.
+    Evita falsos positivos estructurales en consultas largas.
     """
+    if not productos:
+        return []
+        
+    # Limpiar palabras vacías para contar palabras significativas
+    words = [w for w in re.findall(r'\w+', query.lower()) if len(w) > 2]
+    is_short = len(words) <= 2
+    
+    hard_min_score = 0.32 if is_short else 0.43
+    
+    best_score = productos[0].get("similarity_score", 0)
+    if best_score < hard_min_score:
+        print(f"[WeberRAG Relevance] La mejor similitud ({best_score:.3f}) es menor que el umbral estricto ({hard_min_score}) para consulta {'corta' if is_short else 'larga'}. Retornando lista vacía.")
+        return []
+
     filtered = [p for p in productos if p.get("similarity_score", 0) >= min_score]
     if not filtered and productos:
         # Garantía mínima: devolver el más relevante aunque no pase el umbral
@@ -224,7 +265,7 @@ def search_and_answer(
     productos = search_weber(query, top_k)
 
     # Filtrar por relevancia semántica antes de enviar al LLM
-    productos = _filter_by_relevance(productos)
+    productos = _filter_by_relevance(productos, query)
 
     # Si se especificó un producto activo y no está en los resultados, lo inyectamos al principio
     # pero solo si el usuario no ha cambiado explícitamente de tema hacia otro producto.

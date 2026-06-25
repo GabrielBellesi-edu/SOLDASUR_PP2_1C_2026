@@ -3,6 +3,7 @@ const MAX_HISTORY_LENGTH = 10; // Mantener últimos 10 mensajes para no saturar 
 let conversationContext = ''; // Resumen del contexto de la conversación
 let waitingForCity = false; // Estado para saber si estamos esperando que el usuario elija ciudad
 let selectedProductForConsult = null; // Producto elegido para consulta comercial
+let pendingClarificationQuery = null; // Para guardar la pregunta que causó ambigüedad de marcas
 // NOTA v4: peisaProductsFromJSON y loadProductCatalog viven en core.js
 
 /* Iniciar modo chatbot */
@@ -22,6 +23,15 @@ function resetChatHistory() {
     waitingForCity = false;
     lastActiveBrand = null;
     lastActiveProduct = null;
+    pendingClarificationQuery = null;
+    const chatInputArea = document.getElementById('chat-input-area');
+    if (chatInputArea) {
+        chatInputArea.style.display = 'block';
+    }
+    const inputArea = document.getElementById('input-area');
+    if (inputArea) {
+        inputArea.innerHTML = '';
+    }
 }
 
 /* Mostrar información de contacto según la ciudad */
@@ -154,6 +164,19 @@ async function handleChatInput() {
             // Limpiar y mostrar mensaje humanizado
             const cleanMessage = cleanHtmlFromMessage(response.message);
             appendMessage('system', cleanMessage);
+
+            if (response.isDisambiguation) {
+                // Ocultar la entrada del chat temporalmente
+                const chatInputArea = document.getElementById('chat-input-area');
+                if (chatInputArea) {
+                    chatInputArea.style.display = 'none';
+                }
+                // Renderizar los botones de aclaración
+                if (typeof renderOptions === 'function') {
+                    renderOptions(response.options, false);
+                }
+                return;
+            }
 
             // Detectar si la respuesta pregunta por la ciudad y mostrar botones
             if (response.message.toLowerCase().includes('río grande o ushuaia') ||
@@ -317,6 +340,28 @@ async function callOllama(userMessage) {
     }
 
     const data = await response.json();
+
+    // Si el backend detecta ambigüedad de marca
+    if (data.mode === 'disambiguation') {
+        pendingClarificationQuery = userMessage;
+
+        conversationHistory.push({
+            role: 'assistant',
+            content: data.text
+        });
+        if (conversationHistory.length > MAX_HISTORY_LENGTH) {
+            conversationHistory.shift();
+        }
+
+        updateConversationContext();
+
+        return {
+            message: data.text,
+            products: [],
+            isDisambiguation: true,
+            options: data.options || ['Construcción (Weber)', 'Calefacción (PEISA)']
+        };
+    }
 
     // Sincronizar contexto de marca y producto basado en la respuesta del chatbot
     if (data.mode && data.mode !== 'neutral') {
