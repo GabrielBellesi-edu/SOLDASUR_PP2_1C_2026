@@ -85,6 +85,16 @@ function hideBackButton() {
     inMainMenu = true;
 }
 
+function resetExpertSystem() {
+    conversationStep = 0;
+    activeExpert = null;
+    lastActiveBrand = null;
+    lastActiveProduct = null;
+    
+    if (typeof resetPeisaExpert === 'function') resetPeisaExpert();
+    if (typeof resetWeberExpert === 'function') resetWeberExpert();
+}
+
 function goBack() {
     resetExpertSystem();
     browsingBrand = null;

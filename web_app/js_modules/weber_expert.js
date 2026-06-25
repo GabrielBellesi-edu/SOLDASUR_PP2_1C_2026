@@ -237,6 +237,11 @@ const WEBER_DESPERDICIO = 0.10; // 10% de desperdicio técnico técnico
 let weberContext = {};
 let weberCurrentNodeId = 'inicio_weber';
 
+function resetWeberExpert() {
+    weberContext = {};
+    weberCurrentNodeId = 'inicio_weber';
+}
+
 /* ── Función de cálculo (Opción B e integrada) ───────────────────────── */
 function calcularMaterialesWeber(soporte, m2, context) {
     const config = WEBER_RENDIMIENTOS[soporte];

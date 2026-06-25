@@ -22,12 +22,10 @@ function startExpertSystem() {
     setTimeout(() => askQuestion(), 500);
 }
 
-function resetExpertSystem() {
-    conversationStep = 0;
+function resetPeisaExpert() {
     userInputs = {};
     contextData = {};
     lastRecommendedProduct = null;
-    activeExpert = null;
     updateContextPanel();
 }
 

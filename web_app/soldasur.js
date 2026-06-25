@@ -97,6 +97,8 @@ function handleOptionClick(option) {
     );
     if (matchedBrand) {
         browsingBrand = matchedBrand.key;
+        lastActiveBrand = matchedBrand.key;
+        lastActiveProduct = null;
         showCategoryMenu();
         return;
     }
@@ -104,6 +106,8 @@ function handleOptionClick(option) {
     // 2. ¿Es una opción de navegación general por catálogo?
     if (cleanOption === 'Ver otras marcas' || cleanOption === 'Ver todas las marcas') {
         browsingBrand = null;
+        lastActiveBrand = null;
+        lastActiveProduct = null;
         showBrandMenu();
         return;
     }

@@ -20,6 +20,8 @@ function resetChatHistory() {
     conversationHistory.length = 0;
     conversationContext = '';
     waitingForCity = false;
+    lastActiveBrand = null;
+    lastActiveProduct = null;
 }
 
 /* Mostrar información de contacto según la ciudad */
