@@ -34,15 +34,10 @@ function showContactInfo(city) {
                 <div class="font-bold text-blue-900 mb-2">RÍO GRANDE</div>
                 <div class="space-y-2 text-sm">
                     <div>
-                        <strong>Sucursal 1:</strong><br>
+                        <strong>Sucursal Río Grande:</strong><br>
                         Islas Malvinas 1950<br>
                         Tel. 02964 422350<br>
                         Email: ventasrg@soldasur.com.ar
-                    </div>
-                    <div class="pt-2 border-t border-blue-200">
-                        <strong>Sucursal 2:</strong><br>
-                        Av. San Martín 366<br>
-                        Tel. 02964 422131
                     </div>
                 </div>
             </div>
@@ -53,15 +48,10 @@ function showContactInfo(city) {
                 <div class="font-bold text-green-900 mb-2">USHUAIA</div>
                 <div class="space-y-2 text-sm">
                     <div>
-                        <strong>Sucursal 1:</strong><br>
+                        <strong>Sucursal Ushuaia:</strong><br>
                         Héroes de Malvinas 4180<br>
                         Tel. 02901 436392<br>
                         Email: ventasush@soldasur.com.ar
-                    </div>
-                    <div class="pt-2 border-t border-green-200">
-                        <strong>Sucursal 2:</strong><br>
-                        Gobernador Paz 665<br>
-                        Tel. 02901 430886
                     </div>
                 </div>
             </div>
@@ -193,8 +183,8 @@ async function handleChatInput() {
                 }, 300);
             }
 
-            // Si Ollama recomienda productos, mostrarlos
-            if (response.products && response.products.length > 0) {
+            // Si Ollama recomienda productos, mostrarlos (solo si no estamos esperando la ciudad por una consulta de precio)
+            if (!waitingForCity && response.products && response.products.length > 0) {
                 setTimeout(() => {
                     renderProducts(response.products);
                 }, 300);
