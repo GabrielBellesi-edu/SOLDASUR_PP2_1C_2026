@@ -14,9 +14,20 @@
         "microcemento",
         "microcolor",
         "microbase",
-        "autonivela"
+        "autonivela",
+        "humedad",
+        "filtracion",
+        "filtración",
+        "gotera",
+        "impermeable",
+        "impermeabilizante",
+        "impermeabilizar",
+        "pegamento",
+        "adhesivo",
+        "membrana líquida",
+        "membrana liquida"
       ],
-      "anchor_text": "colocación de revestimientos cerámicas porcelanatos baldosas impermeabilización de losas piscinas pastina revoque fino mezcla adhesivo cemento",
+      "anchor_text": "colocación de revestimientos cerámicas porcelanatos baldosas impermeabilización de losas piscinas pastina revoque fino mezcla adhesivo cemento humedad gotera filtración membrana líquida pegamento",
       "rag_module": "RAG_engine.query.rag_llm_weber",
       "rag_function": "search_and_answer",
       "response_formatter": "weber",
@@ -26,7 +37,7 @@
     "PEISA": {
       "key": "PEISA",
       "display_name": "PEISA",
-      "intent_type": "free_query",
+      "intent_type": "peisa_query",
       "direct_keywords": [
         "peisa",
         "caldera",

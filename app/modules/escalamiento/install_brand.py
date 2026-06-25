@@ -474,7 +474,6 @@ def _load_configured_model() -> str:
             pass
     return "llama3.2:3b"
 
-OLLAMA_MODEL = _load_configured_model()
 
 # Estandarizamos el System Prompt por defecto (fallback)
 SYSTEM_PROMPT_{brand_upper}_DEFAULT = """{system_prompt_escaped}"""
@@ -530,12 +529,13 @@ def answer_{brand_lower}(
 
     # Cargar prompts y configuraciones parametrizadas
     config = _load_prompt_config()
+    model = _load_configured_model()
 
     try:
         response = requests.post(
             OLLAMA_URL,
             json={{
-                "model": OLLAMA_MODEL,
+                "model": model,
                 "prompt": prompt,
                 "system": config.get("system_prompt", SYSTEM_PROMPT_{brand_upper}_DEFAULT),
                 "stream": False,

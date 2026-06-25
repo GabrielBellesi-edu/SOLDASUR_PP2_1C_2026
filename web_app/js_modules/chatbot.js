@@ -288,6 +288,15 @@ function filterRelevantProducts(userMessage, catalog) {
 async function callOllama(userMessage) {
     const BACKEND_URL = '/api/chat';
 
+    // Registrar mensaje del usuario en el historial
+    conversationHistory.push({
+        role: 'user',
+        content: userMessage
+    });
+    if (conversationHistory.length > MAX_HISTORY_LENGTH) {
+        conversationHistory.shift();
+    }
+
     const bodyPayload = {
         message: userMessage,
         conversation_id: conversationId,
@@ -329,6 +338,16 @@ async function callOllama(userMessage) {
             assistantMessage += `<br><br><strong>📊 Cálculo Estimado de Obra:</strong><br>• Superficie: ${data.calculo.superficie_m2} m²<br>• Producto: ${data.calculo.producto}<br>• Cantidad Necesaria: <strong>${data.calculo.bolsas_necesarias} bolsas</strong> (Rendimiento: ${data.calculo.rendimiento_kg_m2} kg/m²)`;
         }
 
+        conversationHistory.push({
+            role: 'assistant',
+            content: assistantMessage
+        });
+        if (conversationHistory.length > MAX_HISTORY_LENGTH) {
+            conversationHistory.shift();
+        }
+
+        updateConversationContext();
+
         return {
             message: assistantMessage,
             products: data.products || []
@@ -342,6 +361,9 @@ async function callOllama(userMessage) {
         role: 'assistant',
         content: assistantMessage
     });
+    if (conversationHistory.length > MAX_HISTORY_LENGTH) {
+        conversationHistory.shift();
+    }
 
     updateConversationContext();
 
@@ -419,7 +441,7 @@ function isCoolingQuestion(text) {
     if (!text) return false;
     const t = text.toLowerCase();
     const coolingKeywords = [
-        'aire acondicionado', 'aire', 'acondicionado', 'split', 'refrigeración', 'refrigeracion',
+        'aire acondicionado', 'acondicionado', 'split', 'refrigeración', 'refrigeracion',
         'enfriar', 'refrescar', 'ventilador', 'climatizador', 'fresco', 'frío verano'
     ];
     // Excluir falsos positivos
@@ -639,94 +661,6 @@ function enrichMessageWithLinks(message) {
     }
 
     return enrichedMessage;
-}
-
-/* Renderizar tarjetas de productos recomendados */
-function renderProducts(products) {
-    if (!products || products.length === 0) return;
-
-    const chatContainer = document.getElementById('chat-container');
-
-    products.forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card fade-in';
-        productCard.style.cssText = `
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            margin: 8px 0;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: stretch;
-            overflow: hidden;
-            min-height: 96px;
-        `;
-        const hasUrl = product.url && product.url !== '#';
-        const brandLabel = product.brand ? (product.brand === 'WEBER' ? 'Weber' : product.brand) : 'PEISA';
-        
-        // Determinar miniatura
-        const brandUpper = brandLabel.toUpperCase();
-        let imgUrl = '/img/peisa-logo.png';
-        if (brandUpper === 'WEBER') {
-            imgUrl = product.imagen_local ? `/scraping/${product.imagen_local.replace(/\\/g, '/')}` : '/img/weber-logo.png';
-        } else if (product.imagen_local) {
-            imgUrl = `/scraping/${product.imagen_local.replace(/\\/g, '/')}`;
-        } else if (product.imagen_url) {
-            imgUrl = product.imagen_url;
-        } else {
-            imgUrl = `/img/${brandUpper.toLowerCase()}-logo.png`;
-        }
-
-        productCard.innerHTML = `
-            <div style="flex:1; padding:12px; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
-                <div>
-                    <div style="font-weight: 600; color: #1e40af; margin-bottom: 6px; font-size:14px; line-height:1.3;">
-                        ${product.model}
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <span style="font-size: 11px; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 4px;">
-                            ${product.category || product.family || 'Producto'}
-                        </span>
-                    </div>
-                </div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    ${hasUrl ? `<a href="${product.url}" target="_blank"
-                        class="card-btn card-btn-primary"
-                        onclick="event.stopPropagation();">
-                        Ver en ${brandLabel}
-                    </a>` : ''}
-                    <button class="card-btn card-btn-secondary"
-                        onclick="(function(e){e.stopPropagation(); consultFromProduct('${product.model.replace(/'/g, "\\'")}');})(event)">
-                        Consultar
-                    </button>
-                </div>
-            </div>
-            <div style="width:80px; flex-shrink:0; background:white; border-left:1px solid #f3f4f6; display:flex; align-items:center; justify-content:center; padding:4px;" onclick="event.stopPropagation(); window.open('${product.url}', '_blank');">
-                <img src="${imgUrl}" alt="${product.model}" style="height:86px; width:auto; max-width:72px; object-fit:contain;" onerror="this.src='/img/logo.webp'" />
-            </div>
-        `;
-
-        // Hover effect
-        productCard.onmouseenter = () => {
-            productCard.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-            productCard.style.borderColor = '#2563eb';
-        };
-        productCard.onmouseleave = () => {
-            productCard.style.boxShadow = 'none';
-            productCard.style.borderColor = '#e5e7eb';
-        };
-
-        // Click para abrir enlace
-        productCard.onclick = () => {
-            window.open(product.url, '_blank');
-        };
-
-        chatContainer.appendChild(productCard);
-    });
-
-    scrollToBottom();
 }
 
 /* Indicadores de carga */

@@ -16,6 +16,7 @@ class IntentType(Enum):
     SWITCH_MODE = "switch_mode"                # Cambio de modo
     CLARIFICATION = "clarification"            # Pregunta tangencial durante flujo
     WEBER_QUERY        = "weber_query"         # Consultas sobre productos Weber
+    PEISA_QUERY        = "peisa_query"         # Consultas sobre productos PEISA
 
 
 class ConversationMode(Enum):
@@ -102,6 +103,24 @@ class IntentClassifier:
             r"micropiso",
             r"piso\s+decorativo",
             r"piso\s+sobre\s+piso",
+            r"humedad",
+            r"filtraci[oó]n",
+            r"gotera",
+            r"impermeable",
+            r"impermeabilizar",
+            r"pegamento",
+            r"membrana\s+l[ií]quida",
+        ],
+        IntentType.PEISA_QUERY: [
+            r"peisa",
+            r"caldera",
+            r"radiador",
+            r"toallero",
+            r"calef[oó]n",
+            r"termotanque",
+            r"climatiz",
+            r"calefacci[oó]n",
+            r"agua\s+caliente",
         ]
     }
     
@@ -246,9 +265,12 @@ class IntentClassifier:
             except Exception as e:
                 print(f"[IntentClassifier] Error durante la clasificación semántica: {e}")
 
-        # 5. Caída en Regex tradicional (para Weber si falló la carga del modelo)
+        # 5. Caída en Regex tradicional (para Weber/PEISA si falló la carga del modelo)
         if self._matches_patterns(message_lower, IntentType.WEBER_QUERY):   
             return Intent(IntentType.WEBER_QUERY, confidence=0.8, metadata={"brand_key": "WEBER"})           
+        
+        if self._matches_patterns(message_lower, IntentType.PEISA_QUERY):   
+            return Intent(IntentType.PEISA_QUERY, confidence=0.8, metadata={"brand_key": "PEISA"})           
         
         # 6. Resto de intenciones
         if self._matches_patterns(message_lower, IntentType.PRODUCT_SEARCH):

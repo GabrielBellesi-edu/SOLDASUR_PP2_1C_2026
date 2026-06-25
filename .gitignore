@@ -21,3 +21,7 @@ Dockerfile
 user_data/
 proceso_documentado
 .gradio/
+
+# Scripts de inicio local
+iniciar_servidor_venv.bat
+iniciar_servidor_sin_venv.bat

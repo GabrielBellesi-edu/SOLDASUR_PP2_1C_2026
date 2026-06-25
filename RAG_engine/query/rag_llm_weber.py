@@ -22,8 +22,6 @@ def _load_configured_model() -> str:
             pass
     return "llama3.2:3b"
 
-OLLAMA_MODEL = _load_configured_model()
-
 # Estandarizamos el System Prompt por defecto (fallback)
 SYSTEM_PROMPT_WEBER_DEFAULT = """Sos Soldy, asesor técnico de SOLDASUR especializado en productos Weber (Saint-Gobain) para construcción y reforma. Tu función es recomendar productos Weber adecuados para la necesidad del cliente, hablando siempre en representación de SOLDASUR.
 
@@ -129,12 +127,13 @@ def answer_weber(
 
     # Cargar prompts y configuraciones parametrizadas
     config = _load_prompt_config()
+    model = _load_configured_model()
 
     try:
         response = requests.post(
             OLLAMA_URL,
             json={
-                "model": OLLAMA_MODEL,
+                "model": model,
                 "prompt": prompt,
                 "system": config.get("system_prompt", SYSTEM_PROMPT_WEBER_DEFAULT),
                 "stream": False,

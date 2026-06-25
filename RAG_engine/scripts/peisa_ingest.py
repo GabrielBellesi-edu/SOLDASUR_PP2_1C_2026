@@ -1,6 +1,6 @@
 """
 peisa_ingest.py – Ingesta para PEISA a partir de peisa_catalog.json.
-Genera peisa_products.db y peisa_products.faiss.
+Genera products_peisa.db y products_peisa.faiss.
 """
 
 import os
@@ -14,8 +14,8 @@ from sentence_transformers import SentenceTransformer
 MODEL_NAME = "sentence-transformers/distiluse-base-multilingual-cased-v2"
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DB_PATH    = SCRIPT_DIR.parent / "database" / "peisa_products.db"
-INDEX_PATH = SCRIPT_DIR.parent / "database" / "peisa_products.faiss"
+DB_PATH    = SCRIPT_DIR.parent / "database" / "products_peisa.db"
+INDEX_PATH = SCRIPT_DIR.parent / "database" / "products_peisa.faiss"
 CATALOG_PATH = SCRIPT_DIR.parent.parent / "web_app" / "data" / "peisa_catalog.json"
 
 def normalize_text(p) -> str:

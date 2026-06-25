@@ -13,6 +13,7 @@ from pathlib import Path
 
 # Agregar el directorio actual al path de búsqueda de Python para permitir imports relativos y absolutos
 SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 try:
@@ -57,7 +58,10 @@ def main():
         print("\n=== INICIANDO INGESTA WEBER ===")
         if build_catalog and build_embeddings:
             print("[Weber Ingest] Paso 1: Consolidación de Catálogo...")
-            build_catalog("scraping/data_raw/weber", "web_app/data/weber_catalog.json")
+            build_catalog(
+                str(PROJECT_ROOT / "scraping" / "data_raw" / "weber"),
+                str(PROJECT_ROOT / "web_app" / "data" / "weber_catalog.json")
+            )
             print("\n[Weber Ingest] Paso 2: Generación de Embeddings e Indexación...")
             build_embeddings()
         else:
