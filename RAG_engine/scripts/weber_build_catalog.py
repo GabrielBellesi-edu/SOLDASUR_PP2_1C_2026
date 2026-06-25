@@ -66,9 +66,10 @@ def is_search_page(url: str) -> bool:
     """Detecta si la URL es una página de búsqueda/filtro."""
     return "/search-content/" in url
 
-def clean_datos_tecnicos(raw: str) -> dict:
+def clean_datos_tecnicos(raw: str, model_name: str = "") -> dict:
     result = {
         "descripcion_corta": "",
+        "descripcion_larga": "",
         "beneficios": [],
         "restricciones": [],
         "presentacion": "",
@@ -87,11 +88,56 @@ def clean_datos_tecnicos(raw: str) -> dict:
     content_lines = [l for l in lines if l.lower() not in nav_keywords
                      and not l.lower().startswith("(pdf")]
 
+    # 1. Buscar descripción corta (evitando breadcrumbs y títulos de categorías/modelos)
+    model_lower = model_name.lower()
+    model_short = model_lower.replace("weber ", "")
     for line in content_lines:
-        if len(line) > 30 and not any(k in line.lower() for k in ["buscar", "filtrar", "resetear"]):
+        ll = line.lower()
+        if len(line) <= 30:
+            continue
+        if any(k in ll for k in ["buscar", "filtrar", "resetear"]):
+            continue
+        if ll == model_lower or ll == model_short:
+            continue
+        
+        # Ignorar breadcrumbs y nombres de categorías del mapa
+        is_breadcrumb = False
+        for cat_name in CATEGORY_MAP.values():
+            if ll == cat_name.lower() or cat_name.lower() in ll:
+                is_breadcrumb = True
+                break
+        for cat_key in CATEGORY_MAP.keys():
+            clean_key = cat_key.replace("-", " ")
+            if ll == clean_key or clean_key in ll:
+                is_breadcrumb = True
+                break
+        if "soluciones para" in ll or "colocación cerámicas" in ll or "revestimiento de paredes" in ll:
+            is_breadcrumb = True
+            
+        if not is_breadcrumb:
             result["descripcion_corta"] = line
             break
 
+    # 2. Buscar descripción larga ("Acerca de este producto")
+    in_about = False
+    about_lines = []
+    for line in lines:
+        ll = line.lower()
+        if "acerca de este producto" in ll:
+            in_about = True
+            continue
+        if in_about:
+            headers = ["características y beneficios", "beneficios", "restricciones", 
+                       "productos relacionados", "documentación del producto", "presentación", "soporte"]
+            if any(h in ll for h in headers) or (len(line) < 30 and not line.endswith(".")):
+                in_about = False
+            else:
+                about_lines.append(line)
+
+    if about_lines:
+        result["descripcion_larga"] = " ".join(about_lines).strip()
+
+    # 3. Beneficios y restricciones
     in_benefits = False
     in_restricciones = False
     for line in content_lines:
@@ -113,6 +159,7 @@ def clean_datos_tecnicos(raw: str) -> dict:
         if in_restricciones and len(line) > 5:
             result["restricciones"].append(line)
 
+    # 4. Presentación
     for line in content_lines:
         if re.search(r'\d+\s*kg', line.lower()) or "presentación" in line.lower():
             pres = re.search(r'(\d+\s*kg)', line, re.IGNORECASE)
@@ -120,6 +167,7 @@ def clean_datos_tecnicos(raw: str) -> dict:
                 result["presentacion"] = pres.group(1)
                 break
 
+    # 5. Soporte
     soporte_idx = None
     for i, line in enumerate(content_lines):
         if line.lower() == "soporte":
@@ -180,7 +228,7 @@ def build_product_entry(json_path: Path, docs_dir: Path) -> dict | None:
         return None
 
     nombre = raw.get("nombre", "").strip()
-    datos = clean_datos_tecnicos(raw.get("datos_tecnicos", ""))
+    datos = clean_datos_tecnicos(raw.get("datos_tecnicos", ""), nombre)
     categoria = get_category(url)
     tipo = url.rstrip("/").split("/")[-2].replace("-", " ").title() if "/" in url else "Weber"
 
@@ -255,6 +303,7 @@ def build_product_entry(json_path: Path, docs_dir: Path) -> dict | None:
     entry = {
         "model": nombre,
         "description": descripcion,
+        "descripcion_larga": datos["descripcion_larga"],
         "category": categoria,
         "subcategory": tipo,
         "type": "PRODUCTO WEBER",

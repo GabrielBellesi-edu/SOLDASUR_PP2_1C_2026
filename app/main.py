@@ -361,6 +361,52 @@ def _get_neutral_response(message: str) -> str:
     return "¡Hola! Soy **Soldy**, el asistente inteligente de **SOLDASUR**. Puedo ayudarte con productos de calefacción **PEISA** o de construcción **Weber**. ¿Sobre qué te gustaría consultar hoy?"
 
 
+def _filter_mentioned_products(text: str, products: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Filtra los productos devueltos por el RAG para que solo se incluyan
+    los que realmente son nombrados o mencionados por el modelo en su respuesta.
+    """
+    if not text or not products:
+        return []
+    
+    text_lower = text.lower()
+    mentioned = []
+    
+    # Ordenar por longitud de nombre de modelo (más largos primero) para evitar coincidencias parciales tempranas
+    sorted_products = sorted(products, key=lambda x: len(x.get("model", "")), reverse=True)
+    
+    for p in sorted_products:
+        model = p.get("model", "")
+        if not model:
+            continue
+        model_lower = model.lower().strip()
+        
+        # 1. Coincidencia exacta de subcadena
+        if model_lower in text_lower:
+            if not any(m.get("model", "").lower().strip() == model_lower for m in mentioned):
+                mentioned.append(p)
+        else:
+            # 2. Coincidencia parcial inteligente (sin el prefijo de la marca 'weber' o 'peisa')
+            # Ej: Si el modelo es "weber flex porcellanato" y el texto dice "weber flex" o "flex porcellanato"
+            model_clean = model_lower.replace("weber ", "").replace("peisa ", "").strip()
+            if len(model_clean) > 3 and model_clean in text_lower:
+                if not any(m.get("model", "").lower().strip() == model_lower for m in mentioned):
+                    mentioned.append(p)
+            else:
+                # 3. Probar si palabras clave específicas del modelo están presentes en el texto
+                parts = [part for part in model_clean.replace(".", " ").replace("-", " ").split() if len(part) > 3]
+                key_keywords = ["ceresita", "autonivela", "llaneado", "travertino", "microcolor", "microbase", "aquaboard", "solidtex"]
+                for part in parts:
+                    if part in key_keywords and part in text_lower:
+                        if not any(m.get("model", "").lower().strip() == model_lower for m in mentioned):
+                            mentioned.append(p)
+                            break
+
+    # Conservar el orden original de relevancia en el que venían
+    ordered_mentioned = [p for p in products if any(m.get("model") == p.get("model") for m in mentioned)]
+    return ordered_mentioned
+
+
 @app.post("/api/chat")
 async def api_chat(request: ChatRequest):
     """
@@ -422,6 +468,9 @@ async def api_chat(request: ChatRequest):
                     for p in productos_weber
                 ]
 
+                # Filtrar para conservar solo los productos realmente mencionados
+                products_formatted = _filter_mentioned_products(response_text, products_formatted)
+
                 resp = {
                     "mode": brand_key.lower(),
                     "text": response_text,
@@ -461,6 +510,9 @@ async def api_chat(request: ChatRequest):
                         p_copy["brand"] = b_config.get("display_name", "PEISA")
                     products_formatted.append(p_copy)
 
+                # Filtrar para conservar solo los productos realmente mencionados
+                products_formatted = _filter_mentioned_products(respuesta, products_formatted)
+
                 return {
                     "mode": brand_key.lower(),
                     "text": respuesta,
@@ -481,6 +533,9 @@ async def api_chat(request: ChatRequest):
                     text = str(result)
                     products = []
                     
+                # Filtrar para conservar solo los productos realmente mencionados
+                products = _filter_mentioned_products(text, products)
+
                 return {
                     "mode": brand_key.lower(),
                     "text": text,

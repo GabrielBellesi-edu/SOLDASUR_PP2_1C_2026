@@ -4,6 +4,7 @@ rag_llm_weber.py – Generador RAG / LLM para productos Weber.
 
 import requests
 import json
+import re
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from .rag_query_weber import search_weber, calcular_cantidad, _extract_superficie
@@ -101,7 +102,10 @@ def answer_weber(
     # evitar que el LLM mencione un tercero poco relacionado con la consulta.
     context_lines = []
     for p in context_products[:2]:  # Top 2 productos
-        linea = f"- {p.get('model','')}: {p.get('description','')}"
+        desc = p.get("descripcion_larga") or p.get("description") or ""
+        linea = f"- {p.get('model','')}: {desc}"
+        if p.get("pdf_text_snippet"):
+            linea += f" | Detalles técnicos: {p['pdf_text_snippet']}"
         if p.get("rendimiento"):
             linea += f" | Rendimiento: {p['rendimiento']}"
         if p.get("presentacion"):
@@ -224,14 +228,41 @@ def search_and_answer(
     productos = _filter_by_relevance(productos)
 
     # Si se especificó un producto activo y no está en los resultados, lo inyectamos al principio
+    # pero solo si el usuario no ha cambiado explícitamente de tema hacia otro producto.
     effective_last_active = None
     if last_active_product:
-        p_activo = get_weber_product_by_model(last_active_product)
-        if p_activo:
-            # Remover duplicados si ya estaba en la lista
-            productos = [p for p in productos if p.get("model", "").lower().strip() != last_active_product.lower().strip()]
-            productos.insert(0, p_activo)
-            effective_last_active = last_active_product
+        is_topic_switch = False
+        query_lower = query.lower()
+        active_lower = last_active_product.lower().strip()
+        
+        # Analizar palabras clave de la consulta para detectar desvíos
+        keywords_query = set(re.findall(r'\w+', query_lower))
+        stop_words = {
+            "para", "que", "sirve", "la", "el", "un", "una", "de", "en", "con", "y", "o", "se", "del", 
+            "al", "los", "las", "como", "colores", "viene", "color", "weber", "peisa", "tiene", "tienen",
+            "sobre", "cuál", "cuales", "como", "cómo", "qué", "admiten", "admite"
+        }
+        query_important_words = keywords_query - stop_words
+        
+        if query_important_words and productos:
+            # Si el usuario menciona palabras clave que coinciden con algún producto recuperado
+            # pero no coinciden con el producto activo, detectamos un cambio de tema (topic switch).
+            for p in productos:
+                p_model = p.get("model", "").lower().strip()
+                if p_model != active_lower:
+                    matches_p = any(word in p_model for word in query_important_words)
+                    matches_active = any(word in active_lower for word in query_important_words)
+                    if matches_p and not matches_active:
+                        is_topic_switch = True
+                        break
+
+        if not is_topic_switch:
+            p_activo = get_weber_product_by_model(last_active_product)
+            if p_activo:
+                # Remover duplicados si ya estaba en la lista
+                productos = [p for p in productos if p.get("model", "").lower().strip() != last_active_product.lower().strip()]
+                productos.insert(0, p_activo)
+                effective_last_active = last_active_product
 
     # Generar respuesta
     respuesta = answer_weber(query, productos, superficie_m2, effective_last_active)

@@ -2,8 +2,8 @@
 weber_build_embeddings.py  –  Generación de embeddings Weber (Paso 2)
 ==================================================================
 Lee web_app/data/weber_catalog.json y genera embeddings con SentenceTransformers,
-guardando el índice FAISS en RAG_engine/database/weber_products.faiss
-y los metadatos en RAG_engine/database/weber_metadata.json.
+guardando el índice FAISS en RAG_engine/database/products_weber.faiss
+y los metadatos en RAG_engine/database/metadata_weber.json.
 """
 
 import json
@@ -26,8 +26,8 @@ except ImportError:
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 CATALOG_PATH = SCRIPT_DIR.parent.parent / "web_app" / "data" / "weber_catalog.json"
-FAISS_PATH   = SCRIPT_DIR.parent / "database" / "weber_products.faiss"
-META_PATH    = SCRIPT_DIR.parent / "database" / "weber_metadata.json"
+FAISS_PATH   = SCRIPT_DIR.parent / "database" / "products_weber.faiss"
+META_PATH    = SCRIPT_DIR.parent / "database" / "metadata_weber.json"
 
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
@@ -41,6 +41,9 @@ def build_chunk_text(product: dict) -> str:
         f"Categoría: {product.get('category', '')}",
         f"Descripción: {product.get('description', '')}",
     ]
+
+    if product.get("descripcion_larga"):
+        partes.append(f"Detalles: {product['descripcion_larga']}")
 
     if product.get("advantages"):
         partes.append("Beneficios: " + " | ".join(product["advantages"][:5]))
@@ -96,6 +99,7 @@ def build_embeddings():
         metadata.append({
             "model":       product.get("model", ""),
             "description": product.get("description", ""),
+            "descripcion_larga": product.get("descripcion_larga", ""),
             "category":    product.get("category", ""),
             "url":         product.get("url", ""),
             "brand":       "Weber",
@@ -110,6 +114,7 @@ def build_embeddings():
             "atributos_tecnicos": product.get("atributos_tecnicos", {}),
             "imagen_local": product.get("imagen_local", ""),
             "imagen_url":   product.get("imagen_url", ""),
+            "pdf_text_snippet": product.get("pdf_text", "")[:800],
         })
 
     # Generar embeddings

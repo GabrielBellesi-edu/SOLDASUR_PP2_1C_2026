@@ -65,18 +65,40 @@ def search_weber(query: str, top_k: int = 5) -> List[Dict[str, Any]]:
     query_vec = _model.encode([query], convert_to_numpy=True)
     faiss.normalize_L2(query_vec)
 
-    # Buscar en el índice
-    scores, indices = _index.search(query_vec, top_k)
+    # Buscar un pool de candidatos mayor en el índice para permitir re-ranking híbrido
+    candidate_k = max(top_k * 5, 30)
+    scores, indices = _index.search(query_vec, candidate_k)
 
     results = []
+    query_lower = query.lower()
+    # Extraer palabras clave de la consulta
+    query_words = set(re.findall(r'\w+', query_lower))
+    stop_words = {
+        "para", "que", "sirve", "la", "el", "un", "una", "de", "en", "con", "y", "o", "se", "del", 
+        "al", "los", "las", "como", "admite", "weber", "peisa", "viene", "color", "colores", "producto", 
+        "productos", "marca", "tipo"
+    }
+    important_query_words = query_words - stop_words
+
     for score, idx in zip(scores[0], indices[0]):
         if idx == -1:
             continue
         product = _metadata[idx].copy()
-        product["similarity_score"] = float(score)
+        base_score = float(score)
+        
+        # Boost léxico si el nombre comercial del producto contiene palabras clave importantes de la búsqueda
+        boost = 0.0
+        model_lower = product.get("model", "").lower()
+        for word in important_query_words:
+            if len(word) > 2 and word in model_lower:
+                boost += 0.15
+                
+        product["similarity_score"] = base_score + boost
         results.append(product)
 
-    return results
+    # Reordenar por score final (base + boost) y recortar al top_k solicitado
+    results.sort(key=lambda x: x["similarity_score"], reverse=True)
+    return results[:top_k]
 
 
 def _fallback_search(query: str, top_k: int) -> List[Dict[str, Any]]:
